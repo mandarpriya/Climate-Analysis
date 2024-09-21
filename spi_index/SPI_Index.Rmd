@@ -1,0 +1,652 @@
+---
+title: "SPI_Index"
+author: "Mandar"
+date: "2024-09-08"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup}
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
+                      message = FALSE,echo = TRUE, dpi = 360, warning = FALSE,
+                      fig.width = 8, fig.height = 6)
+
+```
+
+# libraries
+```{r}
+library(dplyr)
+library(SPEI)
+library(kableExtra)
+library(readxl)
+library(readr)
+library(writexl)
+library(tidyr)
+library(tidyverse)
+library(scales)
+library(ggplot2)
+library(plotly)
+library(timetk)
+library(broom)
+library(trend)
+library(lubridate)
+library(trend)
+library(Kendall)
+library(ggtext)
+```
+
+
+
+```{r }
+# Daily data 
+observational_data <- observational_data <- read.delim("/Users/mandarphatak/Downloads/Tina_Thesis/SPI_RDI_Data/Obseravtaionalfordroughtanalysis.txt", sep = ";") 
+observational_data |> head()
+```
+```{r}
+# selecting the required data
+observational_tbl <- observational_data |> 
+  rename(date= MESS_DATUM) |> 
+  mutate(date=ymd(date)) |>
+  dplyr::select(date,RSK,TMK,TNK,TXK,TGK)
+
+```
+
+
+
+
+## Data manipulation to account for missing values or in case not recorded
+```{r}
+## Daily Data
+observational_tbl <- observational_tbl |> 
+    mutate(RSK = ifelse(RSK == -999, NA, RSK)) 
+    
+
+observation_tbl <- observational_tbl |> 
+  rename(PREC = RSK)
+```
+
+
+## Conversion to Annual :- 
+```{r}
+# using the summarizing for year 
+observation_annual_tbl <- observation_tbl %>%
+        mutate(year = year(date)) %>%
+        group_by(year) %>%
+        summarize(
+            PREC = sum(PREC, na.rm = TRUE),  # Total annual precipitation
+            Tavg = mean(TMK, na.rm = TRUE),  # Average annual temperature
+            Tmax = mean(TXK, na.rm = TRUE),  # Average annual maximum temperature
+            Tmin = mean(TNK, na.rm = TRUE),  # Average annual minimum temperature
+            .groups = 'drop'
+        )
+
+observation_annual_tbl |> head()
+```
+## Coversion to timeseries for facilitating for SPEI
+
+```{r}
+# Step : Convert the annual data to a time series
+  data_ats_annual <- ts(observation_annual_tbl$PREC, start = 1936, frequency = 1)
+```
+## Using SPEI library :- We can compute the SPEI for different scales
+SPEI library:- 
+Beguería S, Vicente-Serrano SM (2023). SPEI: Calculation of the Standardized Precipitation-Evapotranspiration Index. https://spei.csic.es, https://github.com/sbegueria/SPEI.
+
+```{r}
+library(SPEI)
+# Step 3: Calculate SPI for scale = 12 (Annual SPI)
+    spi_12 <- spi(data_ats_annual, scale = 12)
+    spi_9 <- spi(data_ats_annual, scale = 9)
+    spi_6 <- spi(data_ats_annual, scale = 6)
+    spi_3 <- spi(data_ats_annual, scale = 3)
+    # Extract the fitted SPI values
+    spi_12 <- spi_12$fitted |> as_tibble()
+    spi_9 <- spi_9$fitted |> as_tibble()
+    spi_3 <- spi_3$fitted |> as_tibble()
+    spi_6 <- spi_6$fitted |> as_tibble()
+  years <- 1936:2023
+   spi_12 <- data.frame(Year = years,Value = spi_12)
+   spi_9 <- data.frame(Year = years,Value = spi_9)
+    spi_6 <- data.frame(Year = years,Value = spi_6)
+    spi_3 <- data.frame(Year = years,Value = spi_3)
+    
+    
+    colnames(spi_12) <- c("Year","spi_12")
+    colnames(spi_9) <- c("Year","spi_9")
+    colnames(spi_6) <- c("Year","spi_6")
+    colnames(spi_3) <- c("Year","spi_3")
+    
+```
+
+
+
+## Plotting the SPI Annual values for 1990-2023
+
+### spi_3
+```{r}
+spi_3 <- spi_3 |> 
+  filter(Year > 1989) |> 
+  mutate(sign = ifelse(spi_3 < 0, "neg","pos"))
+trend_model <- lm(spi_3 ~ Year, data = spi_3 )
+trend_value <- coef(trend_model)[2]  # This is the slope
+trend_value_rounded <- round(trend_value, 3)  # Round to 3 decimal places
+trend_text <- paste0("Trend: ", trend_value_rounded)
+trend_text
+
+
+spi_3_annual_plot <- spi_3 |> 
+    ggplot() +
+    geom_col(aes(x = Year, y = spi_3, fill = sign), show.legend = FALSE, width = 0.65) + 
+    geom_smooth(aes(x = Year, y = spi_3), color = "red", method = "lm", se = FALSE, size = 1) +
+    scale_fill_manual(values = c("pos" = "darkgreen", "neg" = "#f5896b")) +
+    scale_x_continuous(breaks = seq(1990, 2023, by = 3), expand = c(0,0)) +
+    scale_y_continuous(
+        breaks = seq(-2.5, 2, by = 0.5),
+        sec.axis = sec_axis(~ ., name = "", breaks = seq(-2.5, 2, by = 0.5)),
+        expand = c(0, 0)
+    ) +
+    labs(
+        title = "Hamburg Fuhlsbüttel Standardised Precipitation Index\nSPI 3 Annual",
+        subtitle = "1990-2023",
+        x = "", 
+        y = ""
+    ) +
+    theme_minimal() +
+    coord_cartesian(xlim = c(1990, 2023), ylim = c(-2.5, 2)) +
+    geom_hline(yintercept = 0, color = "black", size = 0.5)  +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "black", size = 1),
+        panel.background = element_rect(fill = "grey", color = NA),  # Set panel background to light grey
+        plot.background = element_rect(fill = "grey", color = NA),   # Set plot background to light grey
+        panel.grid.minor = element_blank(),  # Keep minor grid lines off
+        panel.grid.major = element_line(color = "lightgrey", linewidth  = 0.5),  # Set major grid lines to black for visibility
+        axis.line.y.right = element_line(color = "black", size = 1),
+        axis.text.y.right = element_text(face = "bold", color = "black"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    )  +
+    annotate("text", x = 2017, y = 1.8,
+             label = sprintf("Trend: %.3f", trend_value_rounded),
+             hjust = 0.45, vjust = 0.5, size = 3.5, fontface = "bold", color = "black")
+
+# Save the plot as a JPEG file with desired dimensions and dpi
+ggsave("spi_3_annual_plot.jpeg", plot = spi_3_annual_plot, width = 8, height = 6, dpi = 300, device = "jpeg")
+```
+### spi 6 annually 
+```{r}
+spi_6 <- spi_6 |> 
+  filter(Year > 1989) |> 
+  mutate(sign = ifelse(spi_6 < 0, "neg","pos"))
+trend_model <- lm(spi_6 ~ Year, data = spi_6 )
+trend_value <- coef(trend_model)[2]  # This is the slope
+trend_value_rounded <- round(trend_value, 3)  # Round to 3 decimal places
+trend_text <- paste0("Trend: ", trend_value_rounded)
+trend_text
+
+spi_6_annual_plot <- spi_6|> 
+    group_by(sign) |> 
+    ggplot() +
+    geom_col(aes(x = Year, y = spi_6, fill = sign), show.legend = FALSE, width = 0.65) + 
+    geom_smooth(aes(x = Year, y = spi_6), color = "red", method = "lm", se = FALSE, linewidth = 1) +
+    scale_fill_manual(values = c("pos" = "darkgreen", "neg" = "#f5896b")) +
+    scale_x_continuous(breaks = seq(1990, 2023, by = 3), expand = c(0,0)) +
+   scale_y_continuous(
+        breaks = seq(-2.5, 2, by = 0.5),
+        sec.axis = sec_axis(~ ., name = "", breaks = seq(-2.5, 2, by = 0.5)),
+        expand = c(0, 0)
+    ) +
+    geom_hline(yintercept = 0, color = "black", linewidth = 0.5) +
+    labs(
+        title = "Hamburg Fuhlsbüttel Standardised Precipitation Index\nSPI 6 Annual",
+        subtitle = "1990-2023",
+        x = "", 
+        y = ""
+    ) +
+    theme_minimal() +
+    coord_cartesian(xlim = c(1990, 2023), ylim = c(-2.5, 2)) +
+    
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "black", size = 1),
+        panel.background = element_rect(fill = "grey", color = NA),  # Set panel background to light grey
+        plot.background = element_rect(fill = "grey", color = NA),   # Set plot background to light grey
+        panel.grid.minor = element_blank(),  # Keep minor grid lines off
+        panel.grid.major = element_line(color = "lightgrey", size = 0.5),  # Set major grid lines to black for visibility
+        axis.line.y.right = element_line(color = "black", size = 1),
+        axis.text.y.right = element_text(face = "bold", color = "black"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    annotate("text", x = 2017, y = 1.8,
+             label = sprintf("Trend: %.3f", trend_value_rounded),
+             hjust = 0.45, vjust = 0.5, size = 3.5, fontface = "bold", color = "black")
+
+# Save the plot as a JPEG file with desired dimensions and dpi
+ggsave("spi_6_annual_plot.jpeg", plot = spi_6_annual_plot, width = 8, height = 6, dpi = 300, device = "jpeg")
+```
+### SPI 9 Annual
+
+```{r}
+spi_9 <- spi_9 |> filter(Year > 1989) |> 
+  mutate(sign = ifelse(spi_9 <0, "neg","pos"))
+trend_model <- lm(spi_9 ~ Year, data = spi_9 )
+trend_value <- coef(trend_model)[2]  # This is the slope
+trend_value_rounded <- round(trend_value, 3)  # Round to 3 decimal places
+trend_text <- paste0("Trend: ", trend_value_rounded)
+trend_text
+
+
+spi_9_annual_plot <- spi_9|> 
+    group_by(sign) |> 
+    ggplot() +
+    geom_col(aes(x = Year, y = spi_9, fill = sign), show.legend = FALSE, width = 0.65) + 
+    geom_smooth(aes(x = Year, y = spi_9), color = "red", method = "lm", se = FALSE, linewidth = 1) +
+    scale_fill_manual(values = c("pos" = "darkgreen", "neg" = "#f5896b")) +
+    scale_x_continuous(breaks = seq(1990, 2023, by = 3), expand = c(0,0)) +
+   scale_y_continuous(
+        breaks = seq(-2.5, 2, by = 0.5),
+        sec.axis = sec_axis(~ ., name = "", breaks = seq(-2.5, 2, by = 0.5)),
+        expand = c(0, 0)
+    ) +
+    geom_hline(yintercept = 0, color = "black", linewidth = 0.5)  +
+    labs(
+        title = "Hamburg Fuhlsbüttel Standardised Precipitation Index\nSPI 9 Annual",
+        subtitle = "1990-2023",
+        x = "", 
+        y = ""
+    ) +
+    theme_minimal() +
+    coord_cartesian(xlim = c(1990, 2023), ylim = c(-2.5, 2)) +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "black", size = 1),
+        panel.background = element_rect(fill = "grey", color = NA),  # Set panel background to light grey
+        plot.background = element_rect(fill = "grey", color = NA),   # Set plot background to light grey
+        panel.grid.minor = element_blank(),  # Keep minor grid lines off
+        panel.grid.major = element_line(color = "lightgrey", size = 0.5),  # Set major grid lines to black for visibility
+        axis.line.y.right = element_line(color = "black", size = 1),
+        axis.text.y.right = element_text(face = "bold", color = "black"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    annotate("text", x = 2017, y = 1.8,
+             label = sprintf("Trend: %.3f", trend_value_rounded),
+             hjust = 0.45, vjust = 0.5, size = 3.5, fontface = "bold", color = "black")
+# Save the plot as a JPEG file with desired dimensions and dpi
+ggsave("spi_9_annual_plot.jpeg", plot = spi_9_annual_plot, width = 8, height = 6, dpi = 300, device = "jpeg")
+
+```
+
+### SPI 12 Annual
+```{r}
+spi_12 <- spi_12 |> filter(Year>1989) |> 
+  mutate(sign = ifelse(spi_12 < 0, "neg","pos"))
+trend_model <- lm(spi_12 ~ Year, data = spi_12 )
+trend_value <- coef(trend_model)[2]  # This is the slope
+trend_value_rounded <- round(trend_value, 3)  # Round to 3 decimal places
+trend_text <- paste0("Trend: ", trend_value_rounded)
+trend_text
+
+
+spi_12_annual_plot <- spi_12 |> 
+    group_by(sign) |> 
+    ggplot() +
+    geom_col(aes(x = Year, y = spi_12, fill = sign), show.legend = FALSE, width = 0.65) + 
+    geom_smooth(aes(x = Year, y = spi_12), color = "red", method = "lm", se = FALSE, linewidth = 1) +
+    scale_fill_manual(values = c("pos" = "darkgreen", "neg" = "#f5896b")) +
+    scale_x_continuous(breaks = seq(1990, 2023, by = 3), expand = c(0,0)) +
+   scale_y_continuous(
+        breaks = seq(-2.5, 2, by = 0.5),
+        sec.axis = sec_axis(~ ., name = "", breaks = seq(-2.5, 2, by = 0.5)),
+        expand = c(0, 0)
+    ) +
+    geom_hline(yintercept = 0, color = "black", linewidth = 0.5)  +
+    labs(
+        title = "Hamburg Fuhlsbüttel Standardised Precipitation Index\nSPI 12 Annual",
+        subtitle = "1990-2023",
+        x = "", 
+        y = ""
+    ) +
+    theme_minimal() +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "black", size = 1),
+        panel.background = element_rect(fill = "grey", color = NA),  # Set panel background to light grey
+        plot.background = element_rect(fill = "grey", color = NA),   # Set plot background to light grey
+        panel.grid.minor = element_blank(),  # Keep minor grid lines off
+        panel.grid.major = element_line(color = "lightgrey", size = 0.5),  # Set major grid lines to black for visibility
+        axis.line.y.right = element_line(color = "black", size = 1),
+        axis.text.y.right = element_text(face = "bold", color = "black"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +  coord_cartesian(xlim = c(1990, 2023), ylim = c(-2.5, 2)) +
+    annotate("text", x = 2017, y = 1.8,
+             label = sprintf("Trend: %.3f", trend_value_rounded),
+             hjust = 0.45, vjust = 0.5, size = 3.5, fontface = "bold", color = "black")
+
+# Save the plot as a JPEG file with desired dimensions and dpi
+ggsave("spi_12_annual_plot.jpeg", plot = spi_12_annual_plot, width = 8, height = 6, dpi = 300, device = "jpeg")
+```
+
+### Monthly Data
+
+`
+```{r}
+observation_monthly_tbl <- observation_tbl %>%
+    mutate(year = year(date), month = month(date)) %>%
+    group_by(year,month) %>%
+    summarize(
+            PREC = sum(PREC, na.rm = TRUE),  # Total annual precipitation
+            Tavg = mean(TMK, na.rm = TRUE),  # Average annual temperature
+            Tmax = mean(TXK, na.rm = TRUE),  # Average annual maximum temperature
+            Tmin = mean(TNK, na.rm = TRUE),  # Average annual minimum temperature
+            .groups = 'drop'
+        )
+
+ data_ats_monthly <- ts(observation_monthly_tbl$PREC, start = 1936, frequency = 12)
+```
+
+
+```{r}
+library(SPEI)
+# Step 3: Calculate SPI for scale = 12 (Annual SPI)
+    spi_12m <- spi(data_ats_monthly, scale = 12)
+    spi_9m <- spi(data_ats_monthly, scale = 9)
+    spi_6m <- spi(data_ats_monthly, scale = 6)
+    spi_3m <- spi(data_ats_monthly, scale = 3)
+    # Extract the fitted SPI values
+    spi_12m <- spi_12m$fitted |> as_tibble()
+    spi_9m <- spi_9m$fitted |> as_tibble()
+    spi_3m <- spi_3m$fitted |> as_tibble()
+    spi_6m <- spi_6m$fitted |> as_tibble()
+ # Create the sequence of dates
+date_seq <- seq(from = as.Date("1936-01-01"), to = as.Date("2023-12-01"), by = "month")
+
+# View the first few dates to confirm
+head(date_seq)
+
+# View the last few dates to confirm
+tail(date_seq)
+
+# Check the length of the sequence
+length(date_seq)
+   spi_12m <- data.frame(date = date_seq,Value = spi_12m)
+   spi_9m <- data.frame(date = date_seq,Value = spi_9m)
+    spi_6m <- data.frame(date= date_seq,Value = spi_6m)
+    spi_3m <- data.frame(date = date_seq,Value = spi_3m)
+    
+    
+    colnames(spi_12m) <- c("date","spi_12")
+    colnames(spi_9m) <- c("date","spi_9")
+    colnames(spi_6m) <- c("date","spi_6")
+    colnames(spi_3m) <- c("date","spi_3")
+```
+## Monthly Plots 
+```{r}
+
+spi_3m <- spi_3m |> filter(date > "1989-12-01")
+spi_3m <- spi_3m |> mutate(sign = ifelse(spi_3 < 0, "neg","pos"))
+
+
+
+trend_model <- lm(spi_3 ~ date, data = spi_3m )
+trend_value <- coef(trend_model)[2]  # This is the slope
+trend_value_rounded <- round(trend_value, 5)  # Round to 3 decimal places
+trend_text <- paste0("Trend: ", trend_value_rounded)
+trend_text
+max(spi_3m$spi_3)
+min(spi_3m$spi_3)
+
+spi_3_monthly_plot <- spi_3m |> 
+    ggplot(aes(x = date, y = spi_3)) +
+    geom_col(aes(fill = sign), position = position_identity(), show.legend = FALSE, width = 60) + 
+    geom_smooth(color = "red", method = "lm", se = FALSE, linewidth = 1) +
+    scale_fill_manual(values = c("pos" = "darkgreen", "neg" = "#f5896b")) +
+    scale_x_date(
+        limits = c(as.Date("1990-01-01"), as.Date("2023-12-01")),
+        date_breaks = "3 years",
+        date_labels = "%Y",
+        expand = c(0,0)
+    ) +
+    scale_y_continuous(
+        breaks = seq(-5, 5, by = 0.5),
+        sec.axis = sec_axis(~ ., name = "", breaks = seq(-5, 5, by = 0.5)),
+        expand = c(0, 0)
+    ) +
+    geom_hline(yintercept = 0, color = "black", linewidth = 0.5) +
+    labs(
+        title = "Hamburg Fuhlsbüttel Standardised Precipitation Index\nSPI 3 Monthly",
+        subtitle = "1990-2023",
+        x = "", 
+        y = ""
+    ) +
+     theme_minimal() +
+    theme_minimal() + coord_cartesian(ylim = c(-5,5)) +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "black", size = 1),
+        panel.background = element_rect(fill = "grey", color = NA),
+        plot.background = element_rect(fill = "grey", color = NA),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", size = 0.5),
+        axis.line.y.right = element_line(color = "black", size = 1),
+        axis.text.y.right = element_text(face = "bold", color = "black"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    annotate("text", x = as.Date("2017-01-01"), y = 2.5,
+             label = sprintf("Trend: %.0e", trend_value_rounded),
+             hjust = 0, vjust = -1, size = 3.5, fontface = "bold", color = "black")
+
+# Save the plot as a JPEG file with desired dimensions and dpi
+ggsave("spi_3_monthly_plot.jpeg", plot = spi_3_monthly_plot, width = 8, height = 6, dpi = 300, device = "jpeg")
+```
+
+
+```{r}
+spi_6m <- spi_6m |> filter(date > "1989-12-01")
+spi_6m <- spi_6m |> mutate(sign = ifelse(spi_6 >=0, "pos","neg"))
+
+
+
+trend_model <- lm(spi_6 ~ date, data = spi_6m )
+trend_value <- coef(trend_model)[2]  # This is the slope
+trend_value_rounded <- round(trend_value, 5)  # Round to 3 decimal places
+trend_text <- paste0("Trend: ", trend_value_rounded)
+trend_text
+max(spi_6m$spi_6)
+min(spi_6m$spi_6)
+
+spi_6_monthly_plot <- spi_6m |> 
+    ggplot(aes(x = date, y = spi_6)) +
+    geom_col(aes(fill = sign), position = position_identity(), show.legend = FALSE, width = 60) + 
+    geom_smooth(color = "red", method = "lm", se = FALSE, linewidth = 1) +
+    scale_fill_manual(values = c("pos" = "darkgreen", "neg" = "#f5896b")) +
+    scale_x_date(
+        limits = c(as.Date("1990-01-01"), as.Date("2023-12-01")),
+        date_breaks = "3 years",
+        date_labels = "%Y",
+        expand = c(0,0)
+    ) +
+    scale_y_continuous(
+        breaks = seq(-3, 3, by = 0.5),
+        sec.axis = sec_axis(~ ., name = "", breaks = seq(-3, 3, by = 0.5)),
+        expand = c(0, 0)
+    ) +
+    geom_hline(yintercept = 0, color = "black", linewidth = 0.5) +
+    labs(
+        title = "Hamburg Fuhlsbüttel Standardised Precipitation Index\nSPI 6 Monthly",
+        subtitle = "1990-2023",
+        x = "", 
+        y = ""
+    ) +
+    theme_minimal() + coord_cartesian(ylim = c(-3,3)) +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "black", size = 1),
+        panel.background = element_rect(fill = "grey", color = NA),
+        plot.background = element_rect(fill = "grey", color = NA),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", size = 0.5),
+        axis.line.y.right = element_line(color = "black", size = 1),
+        axis.text.y.right = element_text(face = "bold", color = "black"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    annotate("text", x = as.Date("2017-01-01"), y = 2.5,
+             label = sprintf("Trend: %.0e", trend_value_rounded),
+             hjust = 0, vjust = -1, size = 3.5, fontface = "bold", color = "black")
+
+ggsave("spi_6_monthly_plot.jpeg", plot = spi_6_monthly_plot, width = 8, height = 6, dpi = 300, device = "jpeg")
+
+```
+```{r}
+spi_9m <- spi_9m |> filter(date > "1989-12-01")
+spi_9m <- spi_9m |> mutate(sign = ifelse(spi_9 >=0, "pos","neg"))
+
+
+
+trend_model <- lm(spi_9 ~ date, data = spi_9m )
+trend_value <- coef(trend_model)[2]  # This is the slope
+trend_value_rounded <- round(trend_value, 5)  # Round to 3 decimal places
+trend_text <- paste0("Trend: ", trend_value_rounded)
+trend_text
+max(spi_9m$spi_9)
+min(spi_9m$spi_9)
+
+
+
+spi_9_monthly_plot <- spi_9m |> 
+    ggplot(aes(x = date, y = spi_9)) +
+    geom_col(aes(fill = sign), position = position_identity(), show.legend = FALSE, width = 60) + 
+    geom_smooth(color = "red", method = "lm", se = FALSE, linewidth = 1) +
+    scale_fill_manual(values = c("pos" = "darkgreen", "neg" = "#f5896b")) +
+    scale_x_date(
+        limits = c(as.Date("1990-01-01"), as.Date("2023-12-01")),
+        date_breaks = "3 years",
+        date_labels = "%Y",
+        expand = c(0,0)
+    ) +
+    scale_y_continuous(
+        breaks = seq(-3, 3, by = 0.5),
+        sec.axis = sec_axis(~ ., name = "", breaks = seq(-3, 3, by = 0.5)),
+        expand = c(0, 0)
+    ) +
+    geom_hline(yintercept = 0, color = "black", linewidth = 0.5) +
+    labs(
+        title = "Hamburg Fuhlsbüttel Standardised Precipitation Index\nSPI 9 Monthly",
+        subtitle = "1990-2023",
+        x = "", 
+        y = ""
+    ) +
+    theme_minimal() + coord_cartesian(ylim = c(-3,3)) +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "black", size = 1),
+        panel.background = element_rect(fill = "grey", color = NA),
+        plot.background = element_rect(fill = "grey", color = NA),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", size = 0.5),
+        axis.line.y.right = element_line(color = "black", size = 1),
+        axis.text.y.right = element_text(face = "bold", color = "black"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    annotate("text", x = as.Date("2017-01-01"), y = 2.5,
+             label = sprintf("Trend: %.0e", trend_value_rounded),
+             hjust = 0, vjust = -1, size = 3.5, fontface = "bold", color = "black")
+
+
+ggsave("spi_9_monthly_plot.jpeg", plot = spi_9_monthly_plot, width = 8, height = 6, dpi = 300, device = "jpeg")
+
+```
+```{r}
+spi_12m <- spi_12m |> filter(date > "1989-12-01")
+spi_12m <- spi_12m |> mutate(sign = ifelse(spi_12 >=0, "pos","neg"))
+
+
+
+trend_model <- lm(spi_12 ~ date, data = spi_12m )
+trend_value <- coef(trend_model)[2]  # This is the slope
+trend_value_rounded <- round(trend_value, 5)  # Round to 3 decimal places
+trend_text <- paste0("Trend: ", trend_value_rounded)
+trend_text
+max(spi_12m$spi_12)
+min(spi_12m$spi_12)
+
+spi_12_monthly_plot <- spi_12m |> 
+    ggplot(aes(x = date, y = spi_12)) +
+    geom_col(aes(fill = sign), position = position_identity(), show.legend = FALSE, width = 60) + 
+    geom_smooth(color = "red", method = "lm", se = FALSE, linewidth = 1) +
+    scale_fill_manual(values = c("pos" = "darkgreen", "neg" = "#f5896b")) +
+    scale_x_date(
+        limits = c(as.Date("1990-01-01"), as.Date("2023-12-01")),
+        date_breaks = "3 years",
+        date_labels = "%Y",
+        expand = c(0,0)
+    ) +
+    scale_y_continuous(
+        breaks = seq(-3.5, 3.5, by = 0.5),
+        sec.axis = sec_axis(~ ., name = "", breaks = seq(-3.5, 3.5, by = 0.5)),
+        expand = c(0, 0)
+    ) +
+    geom_hline(yintercept = 0, color = "black", linewidth = 0.5) +
+    labs(
+        title = "Hamburg Fuhlsbüttel Standardised Precipitation Index\nSPI 12 Monthly",
+        subtitle = "1990-2023",
+        x = "", 
+        y = ""
+    ) +
+    theme_minimal() + coord_cartesian(ylim = c(-3.5,3.5)) +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "black", size = 1),
+        panel.background = element_rect(fill = "grey", color = NA),
+        plot.background = element_rect(fill = "grey", color = NA),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", size = 0.5),
+        axis.line.y.right = element_line(color = "black", size = 1),
+        axis.text.y.right = element_text(face = "bold", color = "black"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    annotate("text", x = as.Date("2017-01-01"), y = 2.5,
+             label = sprintf("Trend: %.0e", trend_value_rounded),
+             hjust = 0, vjust = -1, size = 3.5, fontface = "bold", color = "black")
+
+ggsave("spi_12_monthly_plot.jpeg", plot = spi_12_monthly_plot, width = 8, height = 6, dpi = 300, device = "jpeg")
+```
