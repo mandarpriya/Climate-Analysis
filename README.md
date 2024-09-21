@@ -13,3 +13,21 @@
 - Palmers drought index will be added to have the complete analysis of Climate and Droughts. 
 
  
+## Drought Indices
+
+## SPI Index
+
+## SPEI Index
+
+## Palmer Drought Severity Index (Self Calibrated):- To be added ......
+
+
+# Climate
+
+## Temperature  :- To be added
+
+## Precipitation :- To be added
+
+
+## Net Conclusion
+
