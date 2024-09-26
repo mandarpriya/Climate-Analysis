@@ -1,8 +1,10 @@
 ---
-title: "Temperature_final"
+title: "Average_Temperature_Hamburg"
 author: "Tina"
 date: "2024-09-09"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 ```{r}
@@ -70,7 +72,9 @@ observation_annual_tbl <- observation_tbl %>%
 ```
 
 
-## Average Temperatures: Plot is as follows
+## Average Temperatures: 
+
+Plot is as follows
 
 
 
@@ -80,10 +84,7 @@ observation_annual_tbl <- observation_tbl %>%
 mean_temp <- mean(observation_annual_tbl$Tavg, na.rm = TRUE)
 trend_model <- lm(Tavg ~ year, data = observation_annual_tbl)
 trend_value <- coef(trend_model)[2]  # Slope of the trend line
-```
 
-
-```{r}
 # Create the plot
 ggplot(observation_annual_tbl, aes(x = year, y = Tavg)) +
     geom_ribbon(aes(ymin = 6.5, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
@@ -119,7 +120,7 @@ ggplot(observation_annual_tbl, aes(x = year, y = Tavg)) +
         axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "#3D4551"),
         axis.text.y = element_text(face = "bold", color = "#3D4551"),
         axis.title = element_text(face = "bold", color = "black"),
-        axis.line = element_line(color = "#7393B3", size = 0.5),
+        axis.line = element_line(color = "#7393B3", linewidth  = 0.5),
         panel.background = element_blank(),
         plot.background = element_blank(),
         panel.grid.minor = element_blank(),
@@ -136,16 +137,90 @@ ggplot(observation_annual_tbl, aes(x = year, y = Tavg)) +
              label = paste("Mean: ", round(mean_temp, 3), "°C"),
              hjust = 3, vjust = -1.5, color = "black", fontface="bold")
 ```
+# We can use a plot in the following way
+```{r}
+library(dplyr)
+library(gridExtra)
+library(cowplot)
+
+# Assuming observation_annual_tbl and mean_temp are already defined
+
+# Calculate the trend
+trend <- lm(Tavg ~ year, data = observation_annual_tbl)
+trend_per_year <- coef(trend)[2]
+mean_temp <- mean(observation_annual_tbl$Tavg, na.rm = TRUE)
+
+# Create the main plot
+p <- ggplot(observation_annual_tbl, aes(x = year, y = Tavg)) +
+    geom_ribbon(aes(ymin = 6.5, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#FF8109", size = 2) +
+    geom_line(color = "#FDA666") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 1) +
+    geom_smooth(method = "loess", color = "darkgreen", se = FALSE, size = 1, span = .2) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1936, 2023, by = 10), 2023), expand = c(0,0)) +
+    scale_y_continuous(
+        limits = c(6.5, 11.5),
+        breaks = seq(6.5, 11.5, by = 0.5),
+        labels = function(x) paste0(format(x, nsmall = 1), " °C"),
+        expand = c(0, 0),
+        sec.axis = sec_axis(~ . * 1.8 + 32, 
+                            breaks = seq(43.7, 52.7, by = 1),  
+                            labels = function(x) paste0(format(x, nsmall = 1), " °F"))
+    ) +
+    coord_cartesian(xlim = c(1936,2023)) +
+    theme_minimal() +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "#3D4551"),
+        axis.text.y = element_text(face = "bold", color = "#3D4551"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "#7393B3", linewidth  = 0.5),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", linewidth  = 0.5),
+        axis.line.y.right = element_line(color = "#7393B3", linewidth = 0.5),
+        axis.text.y.right = element_text(face = "bold", color = "#3D4551"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    labs(x = "", y = "") +
+    annotate("text", x = 1999, y = mean_temp, 
+             label = paste("Mean: ", round(mean_temp, 3), "°C"),
+             hjust = 2.5, vjust = -1.5, color = "black", fontface="bold") 
+
+
+# Create the title with legend elements
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Average Temperature", 
+               fontface = "bold", x = 0, y = 0.10, hjust = 0, size = 14) +
+    draw_label("1936-2023", x = 0.06, y = -.6, hjust = -0.3, size = 10, fontface = "bold") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "darkgreen", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10,fontface="bold") +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1936-2023 Trend \n(", sprintf("%+.4f", trend_per_year), "°C/year)"), 
+              x = 0.69, y = -.6, hjust = -0.3, size = 10,fontface="bold") 
+
+# Combine the title and the main plot
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+# Display the plot
+print(final_plot)
+
+```
 
 
 
 ### Analysis:- 
 
-From the above plot We  see that the Average Temperature witness an increasing trend of 0.0239°C for each year. Thus we can sum this to say that based on the trend for the period 1936-2023 (88 years), the average temperature has risen by an approximate 2°C. 
+From the above plot We  see that the Average Temperature witness an increasing trend of 0.0239°C for each year. Thus we can summarize t that based on the trend value each year for the period 1936-2023 (88 years) the average temperature  might risen by an approximate 2°C. 
 
 
 
 
+In order to confirm our prediction we divide the data in two periods and check for the trend
 
 
 ### Checking the Trend from 1936-1990
@@ -158,8 +233,7 @@ data_36_90$Tavg |> max()
 mean_temp <- mean(data_36_90$Tavg, na.rm = TRUE)
 trend_model <- lm(Tavg ~ year, data = data_36_90)
 trend_value <- coef(trend_model)[2]  # S
-```
-```{r}
+
 data_36_90 |> 
 ggplot( aes(x = year, y = Tavg)) +
     geom_ribbon(aes(ymin = 6.5, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
@@ -210,48 +284,42 @@ ggplot( aes(x = year, y = Tavg)) +
              label = paste("Mean: ", round(mean_temp, 3), "°C"),
              hjust = 0.5, vjust = -1, color = "black", fontface="bold")
 ```
-Analysis:- From the above plot We can observe that there is a very small +ve trend, so over the period the change in temperature would be around = 54 * 0.0073
-
-
-
-## Checking for Trend for last 30 years :- From 1990-2023
+## For the second period 1990-2023
 
 ```{r}
-data <- observation_annual_tbl |> 
-  filter(year >=1990)
-# Calculate mean temperature and trend
-mean_temp <- mean(data$Tavg, na.rm = TRUE)
-trend_model <- lm(Tavg ~ year, data = data)
-trend_value <- coef(trend_model)[2]  # Slope of
-```
+data_90_2023 <- observation_annual_tbl |> filter(year >= 1990)
 
+data_90_2023$Tavg |> max()
 
-```{r}
-data |> 
+mean_temp <- mean(data_90_2023$Tavg, na.rm = TRUE)
+trend_model <- lm(Tavg ~ year, data = data_90_2023)
+trend_value <- coef(trend_model)[2]  # S
+
+data_90_2023 |> 
 ggplot( aes(x = year, y = Tavg)) +
     geom_ribbon(aes(ymin = 7, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
-    geom_point(color = "#FF8109", size = 2) +
-    geom_line(color = "#FDA666") +
+    geom_point(color = "#ff9733", size = 3, shape = 20) +
+    geom_line(color = "#ff942f") +
     geom_smooth(method = "lm", color = "black", se = FALSE, size = 0.5) +
     geom_hline(yintercept = mean_temp, color = "#818589", size = .75) +
     labs(
         title = "Hamburg Fuhlsbüttel Average Temperature",
         subtitle = sprintf(
-            "1990-2023%s —1990-2023 Trend\n%s(+ 0.0326°C/year)",
+            "1990-2023%s —1990-2023 Trend\n%s(+ 0.032606°C/year)",
             sprintf("%*s", 80, ""),  # Adjust 30 to change spacing
             sprintf("%*s", 100, "")   # Adjust 55 to change alignment
         ),
         x = "",
         y = ""
-    )  +
-    scale_x_continuous(breaks = c(seq(1990, 2023, by = 5), 2023), expand = c(0,0)) +
+    ) +
+   scale_x_continuous(breaks = c(seq(1990, 2023, by = 5), 2023), expand = c(0,0)) +
     scale_y_continuous(
         limits = c(7, 11),
-        breaks = seq(7, 11, by = 0.5),
+        breaks = seq(6.5, 11, by = 0.5),
         labels = function(x) paste0(format(x, nsmall = 1), " °C"),
         expand = c(0, 0),
         sec.axis = sec_axis(~ . * 1.8 + 32, 
-                            breaks = seq(44.6, 51.8, by = 1),  
+                            breaks = seq(44.6, 51.8, by = .9),  
                             labels = function(x) paste0(format(x, nsmall = 1), " °F"))
     ) +
     coord_cartesian(xlim = c(1990,2023)) +
@@ -275,9 +343,79 @@ ggplot( aes(x = year, y = Tavg)) +
   
     annotate("text", x = 1995, y = mean_temp, 
              label = paste("Mean: ", round(mean_temp, 3), "°C"),
-             hjust = 0.5, vjust = -1.5, color = "black", fontface="bold")
+             hjust = 0.5, vjust = -1, color = "black", fontface="bold")
 ```
-## From the above plot we can clearly observe tha trend for average temperature for last 30 Years has increased in comparsion the  to the whole time period.  What  inference can be drawn from the above plot is that Average Temperature has been rising at fast pace. Since the trend is on an average increase each year by 0.0326°C , so it means that there has been an increase in temperature by 1°C in last 30 Years. 
+
+
+## Clearly we can see that the trend has increased 4.5 times in the period 1990-2023 in comparison to 1936-1989. The key result is also shows that the trend for 1990-2023 is even higher than for the whole time period 1936-2023.
+ We can  summarize our findings that  as it is expected that  in last 34years(1990-2023) on an average the temperature has increased by 34 * 0.0326 = 1.1°C 
+
+## In order to verify our analysis we perform he following calculations
+
+```{r}
+
+
+mean_1936_1990 <- data_36_90 |> 
+  summarise(
+    mean = mean(Tavg)
+  )
+mean_1990_2023 <- data_90_2023 |> 
+  summarise(
+    mean = mean(Tavg)
+  )
+
+dff = mean_1990_2023 - mean_1936_1990
+
+print(dff)
+```
+## Our analysis is  correct that the average annual temperature has increased by 1.257°C  
+
+
+
+We can also plot our Average temperature as follows
+```{r}
+Average_Temperature_Plot <- observation_annual_tbl |> 
+    ggplot(aes(year,Tavg)) +
+    geom_line(aes(color = "1"), size = 1,show.legend = FALSE) +
+    geom_point(fill = "gray",aes(color = "1"), shape = 21, show.legend = TRUE)+
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.5,show.legend = FALSE) +
+    theme_light() +
+    geom_smooth(method = "loess",se = FALSE, aes(color ="2"), size = 1, span = 0.15,show.legend = FALSE) +
+    scale_x_continuous(breaks = c(seq(1936,2023,10),2023), expand = c(0,0), limits = c(1936, 2023)) +
+    scale_y_continuous(limits = c(6.5,11),
+                       breaks = c(seq(6.5,11,.5),11.5), expand = c(0,0),
+                       labels = function(x) paste0(format(x, nsmall = 1), " °C")) +
+    scale_color_manual(name = NULL, 
+                       breaks = c(1,2),
+                       values = c("gray","black"),
+                       labels = c("Annual Mean","Loess"),
+                       guide = guide_legend(override.aes = list(shape =15,size =5))) +
+    labs(
+        x = "",
+        y = "Temperature(C)°",
+        title = "Average Temperature ",
+        subtitle = "Hamburg Fuhlsbüttel "
+    ) +
+    theme(
+        axis.ticks = element_blank(),
+        plot.title.position = "plot",
+        plot.title = element_text(margin = margin(b=10),colour  = "black",face="bold"),
+        plot.subtitle = element_text(size = 8, margin = margin(b=10),face = "bold"),
+        legend.position = c(0.10,0.90),
+        legend.title = element_text(size = 0),
+        legend.key.height = unit(10,"pt"),
+        legend.margin = margin(0,0,0,0),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    )
+
+
+print(Average_Temperature_Plot)
+```
+
+
+
+
+
 
 
 
@@ -376,8 +514,5 @@ observation_monthly_tbl |>
 ## Analysis We can observe that there is a postive trend of 0.00006741746 for each month.So in 88 years  around an increase of 0.07°C in average temperature. Which is acceptable change given the monthly data. 
 
 
-# Our focus now shifts to  the Seasonal Variation in the Average Temperature:- We would be using the annual data as less data points this making the trend clearly visible.
-
-
-
+# Our focus will now shifts to  the Seasonal Variation in the Average Temperature
 
