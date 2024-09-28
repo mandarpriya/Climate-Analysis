@@ -1,0 +1,309 @@
+---
+title: "Maximum Temperature"
+author: "Mandar"
+date: "2024-09-26"
+output: 
+  html_document:
+    toc: yes
+    toc_depth: '2'
+    df_print: paged
+  pdf_document:
+    latex_engine: xelatex
+    toc: yes
+    toc_depth: '2'
+  word_document:
+    toc: yes
+    toc_depth: '2'
+---
+
+```{r}
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
+                      message = FALSE,echo = TRUE, dpi = 360, warning = FALSE,
+                      fig.width = 8, fig.height = 6)
+```
+
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(cowplot)
+library(lubridate)
+library(ggplot2)
+library(ggtext)
+library(readr)
+
+```
+
+
+```{r }
+ observational_data <- read.delim("/Users/mandarphatak/Downloads/Tina_Thesis/SPI_RDI_Data/Obseravtaionalfordroughtanalysis.txt", sep = ";") 
+observational_data |> head()
+```
+## Daily Data
+```{r}
+observational_tbl <- observational_data |> 
+  rename(date= MESS_DATUM) |> 
+  mutate(date=ymd(date)) |>
+  dplyr::select(date,RSK,TMK,TNK,TXK,TGK)
+observational_tbl <- observational_tbl |> 
+    mutate(RSK = ifelse(RSK == -999, NA, RSK)) 
+    
+
+observation_tbl <- observational_tbl |> 
+  rename(PREC = RSK)
+```
+```{r}
+max_temp_tbl <- observation_tbl |> 
+    mutate(year = year(date)) |> 
+    group_by(year) |> 
+    summarize(
+        Tmax = mean(TXK)
+    )
+max_temp_tbl |> head()
+```
+
+## Plots for max temperatures
+```{r}
+# Calculate mean temperature and trend
+mean_temp <- mean(max_temp_tbl$Tmax, na.rm = TRUE)
+trend <- lm(Tmax ~ year, data = max_temp_tbl)
+trend_per_year <- coef(trend)[2]  # Slope of the trend line
+
+max_temp_tbl$Tmax |> max()
+
+celsius_breaks <- seq(10.5, 15.5, by = 0.5)
+
+fahrenheit_breaks <- celsius_breaks * 1.8 + 32
+```
+
+
+
+```{r}
+p <- ggplot(max_temp_tbl, aes(x = year, y = Tmax)) +
+    geom_ribbon(aes(ymin = 10.5, ymax = Tmax), fill = "#e68b88", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#e17773", size = 2, fill = "#dd635e", shape = 21) +
+    geom_line(color = "#C50003") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 1) +
+    geom_smooth(method = "loess", color = "#03A66A", se = FALSE, size = 1, span = .15) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1936, 2023, by = 10), 2023), expand = c(0,0)) +
+    scale_y_continuous(
+        limits = c(10.5, 15.5),
+        breaks = celsius_breaks,
+        labels = function(x) paste0(format(x, nsmall = 1), " °C"),
+        expand = c(0, 0),
+        sec.axis = sec_axis(~ . * 1.8 + 32, 
+                            breaks = fahrenheit_breaks, 
+                            labels = function(x) paste0(format(x, nsmall = 1), " °F"))) +
+    coord_cartesian(xlim = c(1936,2023)) +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "#3D4551"),
+        axis.text.y = element_text(face = "bold", color = "#3D4551"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "#7393B3", linewidth  = 0.5),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", linewidth  = 0.5),
+        axis.line.y.right = element_line(color = "#7393B3", linewidth = 0.5),
+        axis.text.y.right = element_text(face = "bold", color = "#3D4551"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    labs(x = "", y = "") +
+    annotate("text", x = 1999, y = mean_temp, 
+             label = paste("Mean: ", round(mean_temp, 3), "°C"),
+             hjust = 2.5, vjust = -1.5, color = "black", fontface="bold") 
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Maximum Temperature", 
+               fontface = "bold", x = 0, y = 0.10, hjust = 0, size = 14) +
+    draw_label("1936-2023", x = 0.06, y = -.6, hjust = -0.3, size = 10, fontface = "bold") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "#03A66A", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10,fontface="bold") +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1936-2023 Trend \n(", sprintf("%+.4f", trend_per_year), "°C/year)"), 
+              x = 0.69, y = -.6, hjust = -0.3, size = 10,fontface="bold") 
+# Combine the title and the main plot
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+# Display the plot
+print(final_plot)
+```
+```{r}
+max_temp_tbl |> 
+    ggplot(aes(year,Tmax)) +
+    geom_line(aes(color = "1"), size = 1,show.legend = FALSE) +
+    geom_point(fill = "gray",aes(color = "1"), shape = 21, show.legend = TRUE)+
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.3,show.legend = FALSE) +
+    theme_light() +
+    geom_smooth(method = "loess",se = FALSE, aes(color ="2"), size = 1, span = 0.15,show.legend = FALSE) +
+    scale_x_continuous(breaks = c(seq(1936,2023,10),2023), expand = c(0,0), limits = c(1936, 2023)) +
+    scale_y_continuous(limits = c(10.5,15.5),
+                       breaks = c(seq(10.5,15.5,.5),15.5), expand = c(0,0),
+                       labels = function(x) paste0(format(x, nsmall = 1), " °C")) +
+    scale_color_manual(name = NULL, 
+                       breaks = c(1,2),
+                       values = c("gray","black"),
+                       labels = c("Annual Max","Loess"),
+                       guide = guide_legend(override.aes = list(shape =15,size =5))) +
+    labs(
+        x = "",
+        y = "Temperature(C)°",
+        title = "Maximum Temperature ",
+        subtitle = "Hamburg Fuhlsbüttel "
+    )  +
+    theme(
+        axis.ticks = element_blank(),
+        plot.title.position = "plot",
+        plot.title = element_text(margin = margin(b=10),colour  = "red",face="bold"),
+        plot.subtitle = element_text(size = 10, margin = margin(b=10),face = "bold",colour = "black"),
+        legend.position = c(0.10,0.90),
+        legend.title = element_text(size = 0),
+        legend.key.height = unit(10,"pt"),
+        legend.margin = margin(0,0,0,0),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    )
+
+```
+
+### Comparison of  two time frames 
+
+#### From 1936-1989
+```{r}
+max_temp_1936_1989_tbl <- max_temp_tbl |> filter (year < 1990)
+
+mean_temp <- mean(max_temp_1936_1989_tbl$Tmax, na.rm = TRUE)
+trend <- lm(Tmax ~ year, data = max_temp_1936_1989_tbl)
+trend_per_year <- coef(trend)[2]  # Slope of the trend line
+
+celsius_breaks <- seq(10.5, 14.5, by = 0.5)
+
+fahrenheit_breaks <- celsius_breaks * 1.8 + 32
+
+p <- ggplot(max_temp_1936_1989_tbl, aes(x = year, y = Tmax)) +
+    geom_ribbon(aes(ymin = 10.5, ymax = Tmax), fill = "#e68b88", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#e17773", size = 2, fill = "#dd635e", shape = 21) +
+    geom_line(color = "#C50003") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 1) +
+    geom_smooth(method = "loess", color = "#03A66A", se = FALSE, size = 1, span = .15) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1936, 1989, by = 5), 1989), expand = c(0,0)) +
+    scale_y_continuous(
+        limits = c(10.5, 15.5),
+        breaks = celsius_breaks,
+        labels = function(x) paste0(format(x, nsmall = 1), " °C"),
+        expand = c(0, 0),
+        sec.axis = sec_axis(~ . * 1.8 + 32, 
+                            breaks = fahrenheit_breaks, 
+                            labels = function(x) paste0(format(x, nsmall = 1), " °F"))) +
+    coord_cartesian(xlim = c(1936,1989)) +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "#3D4551"),
+        axis.text.y = element_text(face = "bold", color = "#3D4551"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "#7393B3", linewidth  = 0.5),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", linewidth  = 0.5),
+        axis.line.y.right = element_line(color = "#7393B3", linewidth = 0.5),
+        axis.text.y.right = element_text(face = "bold", color = "#3D4551"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    labs(x = "", y = "") +
+    annotate("text", x = 1969, y = mean_temp, 
+             label = paste("Mean: ", round(mean_temp, 3), "°C"),
+             hjust = 2.5, vjust = -1.5, color = "black", fontface="bold") 
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Maximum Temperature", 
+               fontface = "bold", x = 0, y = 0.10, hjust = 0, size = 14) +
+    draw_label("1936-1989", x = 0.06, y = -.6, hjust = -0.3, size = 10, fontface = "bold") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "#03A66A", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10,fontface="bold") +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1936-2023 Trend \n(", sprintf("%+.4f", trend_per_year), "°C/year)"), 
+              x = 0.69, y = -.6, hjust = -0.3, size = 10,fontface="bold") 
+# Combine the title and the main plot
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+# Display the plot
+print(final_plot)
+```
+
+
+### from 1990-2023
+```{r}
+max_temp_1990_2023_tbl <- max_temp_tbl |> filter(year>=1990)
+
+mean_temp <- mean(max_temp_1990_2023_tbl$Tmax, na.rm = TRUE)
+trend <- lm(Tmax ~ year, data = max_temp_1990_2023_tbl)
+trend_per_year <- coef(trend)[2]  # Slope of the trend line
+
+celsius_breaks <- seq(11, 15.5, by = 0.5)
+
+fahrenheit_breaks <- celsius_breaks * 1.8 + 32
+```
+
+
+```{r}
+p <- ggplot(max_temp_1990_2023_tbl, aes(x = year, y = Tmax)) +
+    geom_ribbon(aes(ymin = 11, ymax = Tmax), fill = "#e68b88", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#e17773", size = 2, fill = "#dd635e", shape = 21) +
+    geom_line(color = "#C50003") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 1) +
+    geom_smooth(method = "loess", color = "#03A66A", se = FALSE, size = 1, span = .15) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1990, 2023, by = 5), 2023), expand = c(0,0)) +
+    scale_y_continuous(
+        limits = c(11, 15.5),
+        breaks = celsius_breaks,
+        labels = function(x) paste0(format(x, nsmall = 1), " °C"),
+        expand = c(0, 0),
+        sec.axis = sec_axis(~ . * 1.8 + 32, 
+                            breaks = fahrenheit_breaks, 
+                            labels = function(x) paste0(format(x, nsmall = 1), " °F"))) +
+    coord_cartesian(xlim = c(1990,2023)) +
+    theme(
+        plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
+        plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "#3D4551"),
+        axis.text.y = element_text(face = "bold", color = "#3D4551"),
+        axis.title = element_text(face = "bold", color = "black"),
+        axis.line = element_line(color = "#7393B3", linewidth  = 0.5),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", linewidth  = 0.5),
+        axis.line.y.right = element_line(color = "#7393B3", linewidth = 0.5),
+        axis.text.y.right = element_text(face = "bold", color = "#3D4551"),
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    labs(x = "", y = "") +
+    annotate("text", x = 1999, y = mean_temp, 
+             label = paste("Mean: ", round(mean_temp, 3), "°C"),
+             hjust = 1, vjust = -1.5, color = "black", fontface="bold") 
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Maximum Temperature", 
+               fontface = "bold", x = 0, y = 0.10, hjust = 0, size = 14) +
+    draw_label("1990-2023", x = 0.06, y = -.6, hjust = -0.3, size = 10, fontface = "bold") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "#03A66A", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10,fontface="bold") +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1990-2023 Trend \n(", sprintf("%+.4f", trend_per_year), "°C/year)"), 
+              x = 0.69, y = -.6, hjust = -0.3, size = 10,fontface="bold") 
+# Combine the title and the main plot
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+# Display the plot
+print(final_plot)
+```
+
+
+
+
