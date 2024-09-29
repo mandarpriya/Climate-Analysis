@@ -1,0 +1,389 @@
+---
+title: "Seasonal_Temperature_Hamburg"
+author: "Mandar"
+date: "2024-09-09"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
+                      message = FALSE,echo = TRUE, dpi = 400, warning = FALSE,
+                      fig.width = 15, fig.height = 10)
+
+```
+
+
+
+```{r}
+library(dplyr)
+library(SPEI)
+library(kableExtra)
+library(readxl)
+library(readr)
+library(writexl)
+library(tidyr)
+library(tidyverse)
+library(scales)
+library(ggplot2)
+library(plotly)
+library(timetk)
+library(broom)
+library(trend)
+library(lubridate)
+library(trend)
+library(Kendall)
+library(ggtext)
+library(cowplot)
+
+```
+
+
+
+```{r}
+observational_data <- observational_data <- read.delim("/Users/mandarphatak/Downloads/Tina_Thesis/SPI_RDI_Data/Obseravtaionalfordroughtanalysis.txt", sep = ";") 
+observational_data |> head()
+```
+```{r}
+observational_tbl <- observational_data |> 
+  rename(date= MESS_DATUM) |> 
+  mutate(date=ymd(date)) |>
+  dplyr::select(date,RSK,TMK,TNK,TXK,TGK)
+observational_tbl <- observational_tbl |> 
+    mutate(RSK = ifelse(RSK == -999, NA, RSK)) 
+    
+
+observation_tbl <- observational_tbl |> 
+  rename(PREC = RSK)
+```
+
+## We need to convert to monthly data for clear data visualization and identifying the trend.
+```{r}
+library(dplyr)
+library(lubridate)
+
+monthly_seasonal_tbl <- seasonal_tbl <- observation_tbl |> 
+  mutate(
+    year = year(date),
+    month = month(date)
+  ) |> 
+  mutate(
+    season = case_when(
+      month == 12 | month == 1 | month == 2 ~ "Winter",
+      month >= 3 & month <= 5 ~ "Spring",
+      month >= 6 & month <= 8 ~ "Summer",
+      month == 9 | month == 10 | month == 11 ~ "Fall",
+      TRUE ~ NA_character_  # Handle any other unexpected values
+    )
+  )
+```
+
+
+```{r}
+annual_seasonal_tbl <- seasonal_tbl |> 
+  group_by(year, season) |> 
+  summarise(
+    Tavg = mean(TMK,na.rm = TRUE),
+    .groups = "drop"
+  )
+  
+    
+```
+
+
+## Seasonal Average Temperatures: I have tried to create a seasonal variation table for average temperature over the period 1936-2023. The granularity is not there for getting a broader visualization for seasons across years.
+```{r}
+# Assuming observation_annual_tbl already defined
+
+summer_tbl <- annual_seasonal_tbl |> 
+  filter(season == "Summer")
+
+# Calculate the trend
+trend <- lm(Tavg ~ year, data = summer_tbl)
+trend_per_year <- coef(trend)[2]
+mean_temp <- mean(summer_tbl$Tavg, na.rm = TRUE)
+
+
+# the main plot
+ p <- ggplot(summer_tbl, aes(x = year, y = Tavg)) +
+    geom_ribbon(aes(ymin = 14, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#FF8109", size = 2) +
+    geom_line(color = "#FDA666") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.7) +
+    geom_smooth(method = "loess", color = "darkgreen", se = FALSE, size = 0.7, span = .15) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1936, 2023, by = 10), 2023), expand = c(0,0)) +
+    scale_y_continuous(
+        limits = c(14, 19.2),
+        breaks = seq(14, 19.5, by = 0.5),
+        labels = function(x) paste0(format(x, nsmall = 1), " °C"),
+        expand = c(0, 0),
+        sec.axis = sec_axis(
+            ~ . * 1.8 + 32,
+            breaks = seq(57.2, 67.1, by = 1),
+            labels = function(x) paste0(format(x, nsmall = 1), " °F")
+        )) +
+    theme_minimal() +
+    theme(
+        plot.title = element_text(hjust = 0),
+        plot.subtitle = element_text(hjust = 0),
+        axis.text.x = element_text(angle = 45, hjust = 1, color = "#3D4551"),
+        axis.text.y = element_text( color = "#3D4551"),
+        axis.title = element_text( color = "#3D4551" ),
+        axis.line = element_line(color = "#7393B3", linewidth  = 0.5),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", linewidth  = 0.5),
+        axis.line.y.right = element_line(color = "#7393B3", linewidth = 0.5),
+        axis.text.y.right = element_text(color = "#3D4551"),
+        axis.title.y.right = element_text( angle = 90),
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+    labs(x = "", y = "") +
+    annotate("text", x = 1999, y = mean_temp, 
+             label = paste("Mean: ", round(mean_temp, 3),"°C"),
+             hjust = 2.5, vjust = -1.5) 
+
+# Create the title with legend elements
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Average Summer Temperature", 
+                x = 0, y = 0.10, hjust = 0, size = 14, fontface = "bold") +
+    draw_label("1936-2023\n  Jun-Aug", x = 0.06, y = -.6, hjust = -0.3, size = 10, color = "black") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "darkgreen", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10) +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1936-2023 Trend\n(", sprintf("%+.4f", trend_per_year),"°C/year)"), 
+              x = 0.69, y = -.6, hjust = -0.3, size = 10) 
+
+# Combine the title and the main plot
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+# Display the plot
+print(final_plot)
+
+```
+
+# Spring Plot:-
+
+```{r}
+spring_tbl <- annual_seasonal_tbl |> 
+  filter(season == "Spring")
+
+trend <- lm(Tavg ~ year, data = spring_tbl)
+trend_per_year <- coef(trend)[2]
+mean_temp <- mean(spring_tbl$Tavg, na.rm = TRUE)
+
+
+
+p <- ggplot(spring_tbl, aes(x = year, y = Tavg)) +
+    geom_ribbon(aes(ymin = 5, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#FF8109", size = 2) +
+    geom_line(color = "#FDA666") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.7) +
+    geom_smooth(method = "loess", color = "darkgreen", se = FALSE, size = 0.7, span = .15) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1936, 2023, by = 10), 2023), expand = c(0,0)) +
+    scale_y_continuous(
+        limits = c(5, 11),
+        breaks = seq(5, 11, by = 0.5),
+        labels = function(x) paste0(format(x, nsmall = 1), " °C"),
+        expand = c(0, 0),
+        sec.axis = sec_axis(
+            ~ (. - 5) * (52 - 41) / (11 - 5) + 41,
+            breaks = seq(41, 52, by = 1),
+            labels = function(x) paste0(x, " °F")
+        )
+    ) +
+    theme_minimal() +
+    theme(
+        plot.title = element_text(hjust = 0),
+        plot.subtitle = element_text(hjust = 0),
+        axis.text.x = element_text(angle = 45, hjust = 1, color = "#3D4551"),
+        axis.text.y = element_text(color = "#3D4551"),
+        axis.title = element_text(color = "#3D4551"),
+        axis.line = element_line(color = "#7393B3", linewidth = 0.5),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", linewidth = 0.5),
+        axis.line.y.right = element_line(color = "#7393B3", linewidth = 0.5),
+        axis.text.y.right = element_text(color = "#3D4551"),
+        axis.title.y.right = element_text(angle = 90) ,
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+  labs(x = "", y = "") +
+    annotate("text", x = 1999, y = mean_temp, 
+             label = paste("Mean: ", round(mean_temp, 3),"°C"),
+             hjust = 2.5, vjust = -1.5)
+  
+  # Create the title with legend elements
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Average Spring Temperature", 
+                x = 0, y = 0.10, hjust = 0, size = 14, fontface = "bold") +
+    draw_label("1936-2023\n  Mar-May", x = 0.06, y = -.6, hjust = -0.3, size = 10, color = "black") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "darkgreen", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10) +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1936-2023 Trend\n(", sprintf("%+.4f", trend_per_year),"°C/year)"), 
+              x = 0.69, y = -.6, hjust = -0.3, size = 10) 
+
+# Combine the title and the main plot
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+# Display the plot
+print(final_plot)
+  
+
+```
+
+# Winter Plot:-
+
+```{r}
+winter_tbl <- annual_seasonal_tbl |> 
+  filter(season == "Winter")
+
+trend <- lm(Tavg ~ year, data = winter_tbl)
+trend_per_year <- coef(trend)[2]
+mean_temp <- mean(winter_tbl$Tavg, na.rm = TRUE)
+
+winter_tbl$Tavg |> min()
+
+p <- ggplot(winter_tbl, aes(x = year, y = Tavg)) +
+    geom_ribbon(aes(ymin = -5.5, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#FF8109", size = 2) +
+    geom_line(color = "#FDA666") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.7) +
+    geom_smooth(method = "loess", color = "darkgreen", se = FALSE, size = 0.7, span = .15) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1936, 2023, by = 10), 2023), expand = c(0,0)) +
+    scale_y_continuous(
+        limits = c(-5.5, 5.5),
+        breaks = seq(-5.5, 5.5, by = 1),
+        labels = function(x) paste0(format(x, nsmall = 1), " °C"),
+        expand = c(0, 0),
+        sec.axis = sec_axis(
+            ~ (. + 5.5) * (42 - 22) / (5.5 + 5.5) + 22,
+            breaks = seq(22, 42, by = 2),
+            labels = function(x) paste0(x, " °F")
+        )
+    ) +
+  theme_minimal() +
+    theme(
+        plot.title = element_text(hjust = 0),
+        plot.subtitle = element_text(hjust = 0),
+        axis.text.x = element_text(angle = 45, hjust = 1, color = "#3D4551"),
+        axis.text.y = element_text(color = "#3D4551"),
+        axis.title = element_text(color = "#3D4551"),
+        axis.line = element_line(color = "#7393B3", linewidth = 0.5),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", linewidth = 0.5),
+        axis.line.y.right = element_line(color = "#7393B3", linewidth = 0.5),
+        axis.text.y.right = element_text(color = "#3D4551"),
+        axis.title.y.right = element_text(angle = 90) ,
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+  labs(x = "", y = "") +
+    annotate("text", x = 1999, y = mean_temp, 
+             label = paste("Mean: ", round(mean_temp, 3),"°C"),
+             hjust = 3, vjust = -1.5)
+  
+  # Create the title with legend elements
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Average Winter Temperature", 
+                x = 0, y = 0.10, hjust = 0, size = 14, fontface = "bold") +
+    draw_label("1936-2023\n  Dec-Feb", x = 0.06, y = -.6, hjust = -0.3, size = 10, color = "black") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "darkgreen", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10) +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1936-2023 Trend\n(", sprintf("%+.4f", trend_per_year),"°C/year)"), 
+              x = 0.69, y = -.6, hjust = -0.3, size = 10) 
+
+# Combine the title and the main plot
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+# Display the plot
+print(final_plot)
+  
+  
+```
+# Fall Plot:-
+
+```{r}
+fall_tbl <- annual_seasonal_tbl |> 
+  filter(season == "Fall")
+
+trend <- lm(Tavg ~ year, data = fall_tbl)
+trend_per_year <- coef(trend)[2]
+mean_temp <- mean(fall_tbl$Tavg, na.rm = TRUE)
+
+ p <- ggplot(fall_tbl, aes(x = year, y = Tavg)) +
+    geom_ribbon(aes(ymin = 6, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#FF8109", size = 2) +
+    geom_line(color = "#FDA666") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.7) +
+    geom_smooth(method = "loess", color = "darkgreen", se = FALSE, size = 0.7, span = .15) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1936, 2023, by = 10), 2023), expand = c(0,0)) +
+    scale_y_continuous(
+        limits = c(6, 13),
+        breaks = seq(6, 13, by = 1),
+        labels = function(x) paste0(format(x, nsmall = 1), " °C"),
+        expand = c(0, 0),
+        sec.axis = sec_axis(
+            ~ (. - 6) * (55 - 43) / (13 - 6) + 43,
+            breaks = seq(43, 55, by = 2),
+            labels = function(x) paste0(x, " °F")
+        )
+    ) +
+theme_minimal() +
+    theme(
+        plot.title = element_text(hjust = 0),
+        plot.subtitle = element_text(hjust = 0),
+        axis.text.x = element_text(angle = 45, hjust = 1, color = "#3D4551"),
+        axis.text.y = element_text(color = "#3D4551"),
+        axis.title = element_text(color = "#3D4551"),
+        axis.line = element_line(color = "#7393B3", linewidth = 0.5),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "lightgrey", linewidth = 0.5),
+        axis.line.y.right = element_line(color = "#7393B3", linewidth = 0.5),
+        axis.text.y.right = element_text(color = "#3D4551"),
+        axis.title.y.right = element_text(angle = 90) ,
+        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+    ) +
+  labs(x = "", y = "") +
+    annotate("text", x = 1999, y = mean_temp, 
+             label = paste("Mean: ", round(mean_temp, 3),"°C"),
+             hjust = 3, vjust = -1.5)
+  
+  # Create the title with legend elements
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Average Fall Temperature", 
+                x = 0, y = 0.10, hjust = 0, size = 14, fontface = "bold") +
+    draw_label("1936-2023\n  Sept-Nov", x = 0.06, y = -.6, hjust = -0.3, size = 10, color = "black") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "darkgreen", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10) +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1936-2023 Trend\n(",sprintf("%+.4f",trend_per_year),"°C/year)"), 
+              x = 0.69, y = -.6, hjust = -0.3, size = 10) 
+
+# Combine the title and the main plot
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+# Display the plot
+print(final_plot)
+  
+  
+```
+
+
+Analysis:-
+
+We can see that  the time period 1936-2023, for the  station  Hamburg Fuhlsbüttel trend for  average temperature is the highest for Winter Season followed by a Spring and Fall. Summer season has the lowest of  the trend observed. In addtion the trends are all positive , and thus show that in  future the average temperature for Hamburg would have increased by  range of 1.5°C to 3°C in totality.
+
+
