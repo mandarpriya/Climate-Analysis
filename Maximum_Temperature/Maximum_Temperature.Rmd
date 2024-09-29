@@ -74,11 +74,7 @@ max_temp_tbl$Tmax |> max()
 celsius_breaks <- seq(10.5, 15.5, by = 0.5)
 
 fahrenheit_breaks <- celsius_breaks * 1.8 + 32
-```
 
-
-
-```{r}
 p <- ggplot(max_temp_tbl, aes(x = year, y = Tmax)) +
     geom_ribbon(aes(ymin = 10.5, ymax = Tmax), fill = "#e68b88", alpha = 0.3, na.rm = TRUE) +
     geom_point(color = "#e17773", size = 2, fill = "#dd635e", shape = 21) +
@@ -130,42 +126,6 @@ final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
 
 # Display the plot
 print(final_plot)
-```
-```{r}
-max_temp_tbl |> 
-    ggplot(aes(year,Tmax)) +
-    geom_line(aes(color = "1"), size = 1,show.legend = FALSE) +
-    geom_point(fill = "gray",aes(color = "1"), shape = 21, show.legend = TRUE)+
-    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.3,show.legend = FALSE) +
-    theme_light() +
-    geom_smooth(method = "loess",se = FALSE, aes(color ="2"), size = 1, span = 0.15,show.legend = FALSE) +
-    scale_x_continuous(breaks = c(seq(1936,2023,10),2023), expand = c(0,0), limits = c(1936, 2023)) +
-    scale_y_continuous(limits = c(10.5,15.5),
-                       breaks = c(seq(10.5,15.5,.5),15.5), expand = c(0,0),
-                       labels = function(x) paste0(format(x, nsmall = 1), " °C")) +
-    scale_color_manual(name = NULL, 
-                       breaks = c(1,2),
-                       values = c("gray","black"),
-                       labels = c("Annual Max","Loess"),
-                       guide = guide_legend(override.aes = list(shape =15,size =5))) +
-    labs(
-        x = "",
-        y = "Temperature(C)°",
-        title = "Maximum Temperature ",
-        subtitle = "Hamburg Fuhlsbüttel "
-    )  +
-    theme(
-        axis.ticks = element_blank(),
-        plot.title.position = "plot",
-        plot.title = element_text(margin = margin(b=10),colour  = "red",face="bold"),
-        plot.subtitle = element_text(size = 10, margin = margin(b=10),face = "bold",colour = "black"),
-        legend.position = c(0.10,0.90),
-        legend.title = element_text(size = 0),
-        legend.key.height = unit(10,"pt"),
-        legend.margin = margin(0,0,0,0),
-        axis.text.x = element_text(angle = 45, hjust = 1)
-    )
-
 ```
 
 ### Comparison of  two time frames 
@@ -226,7 +186,7 @@ title <- ggdraw() +
     draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "#03A66A", size = 1) +
     draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10,fontface="bold") +
     draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
-    draw_text(paste0("1936-2023 Trend \n(", sprintf("%+.4f", trend_per_year), "°C/year)"), 
+    draw_text(paste0("1936-1989 Trend \n(", sprintf("%+.4f", trend_per_year), "°C/year)"), 
               x = 0.69, y = -.6, hjust = -0.3, size = 10,fontface="bold") 
 # Combine the title and the main plot
 final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
@@ -244,9 +204,11 @@ mean_temp <- mean(max_temp_1990_2023_tbl$Tmax, na.rm = TRUE)
 trend <- lm(Tmax ~ year, data = max_temp_1990_2023_tbl)
 trend_per_year <- coef(trend)[2]  # Slope of the trend line
 
-celsius_breaks <- seq(11, 15.5, by = 0.5)
+celsius_breaks <- seq(11, 16, by = .5)
 
 fahrenheit_breaks <- celsius_breaks * 1.8 + 32
+
+max_temp_1990_2023_tbl$Tmax |> max()
 ```
 
 
@@ -255,12 +217,12 @@ p <- ggplot(max_temp_1990_2023_tbl, aes(x = year, y = Tmax)) +
     geom_ribbon(aes(ymin = 11, ymax = Tmax), fill = "#e68b88", alpha = 0.3, na.rm = TRUE) +
     geom_point(color = "#e17773", size = 2, fill = "#dd635e", shape = 21) +
     geom_line(color = "#C50003") +
-    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 1) +
-    geom_smooth(method = "loess", color = "#03A66A", se = FALSE, size = 1, span = .15) +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 1,na.rm = TRUE) +
+    geom_smooth(method = "loess", color = "#03A66A", se = FALSE, size = 1, span = 0.25, na.rm = TRUE) +
     geom_hline(yintercept = mean_temp, color = "black", size = .75) +
     scale_x_continuous(breaks = c(seq(1990, 2023, by = 5), 2023), expand = c(0,0)) +
     scale_y_continuous(
-        limits = c(11, 15.5),
+        limits = c(11, 16),
         breaks = celsius_breaks,
         labels = function(x) paste0(format(x, nsmall = 1), " °C"),
         expand = c(0, 0),
@@ -304,6 +266,8 @@ final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
 print(final_plot)
 ```
 
+Analysis:-
+For Hamburg Fuhlbüttel the maximum temperature for whole period 1936-2023 shows a trend of +0.0226, which means that temperature has increased by 1.9°C , while in last 34 years it seems to havr increased by 1.5°C based on the Trend. So we can say that last 34 years Hamburg Fuhlsbüttel has witnessed an increase in maximum temperatures.
 
 
 
