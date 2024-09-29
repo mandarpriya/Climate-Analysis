@@ -1,10 +1,19 @@
 ---
-title: "Average_Temperature_Hamburg"
-author: "Tina"
-date: "2024-09-09"
-output:
-  word_document: default
-  html_document: default
+title: "Average_Temperature_Hamburg_Fuhlsbüttel"
+author: "Mandar"
+date: "2024-09-26"
+output: 
+  html_document:
+    toc: yes
+    toc_depth: '2'
+    df_print: paged
+  pdf_document:
+    latex_engine: xelatex
+    toc: yes
+    toc_depth: '2'
+  word_document:
+    toc: yes
+    toc_depth: '2'
 ---
 
 ```{r}
@@ -72,9 +81,9 @@ observation_annual_tbl <- observation_tbl %>%
 ```
 
 
-## Average Temperatures: 
+## Average Temperatures: I am converting the data into Annual Data for simplifying the visualization of the data.
 
-Plot is as follows
+
 
 
 
@@ -137,7 +146,7 @@ ggplot(observation_annual_tbl, aes(x = year, y = Tavg)) +
              label = paste("Mean: ", round(mean_temp, 3), "°C"),
              hjust = 3, vjust = -1.5, color = "black", fontface="bold")
 ```
-# We can use a plot in the following way
+# We can use a plot in the following way displaying the Trend and Loess
 ```{r}
 library(dplyr)
 library(gridExtra)
@@ -155,8 +164,8 @@ p <- ggplot(observation_annual_tbl, aes(x = year, y = Tavg)) +
     geom_ribbon(aes(ymin = 6.5, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
     geom_point(color = "#FF8109", size = 2) +
     geom_line(color = "#FDA666") +
-    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 1) +
-    geom_smooth(method = "loess", color = "darkgreen", se = FALSE, size = 1, span = .2) +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.7) +
+    geom_smooth(method = "loess", color = "darkgreen", se = FALSE, size = 0.7, span = .2) +
     geom_hline(yintercept = mean_temp, color = "black", size = .75) +
     scale_x_continuous(breaks = c(seq(1936, 2023, by = 10), 2023), expand = c(0,0)) +
     scale_y_continuous(
@@ -215,50 +224,39 @@ print(final_plot)
 
 ### Analysis:- 
 
-From the above plot We  see that the Average Temperature witness an increasing trend of 0.0239°C for each year. Thus we can summarize t that based on the trend value each year for the period 1936-2023 (88 years) the average temperature  might risen by an approximate 2°C. 
+From the above plot We  see that the Average Temperature witness an increasing trend of 0.0239°C for each year. Thus we can summarize t that based on the trend value each year for the period 1936-2023 (88 years) the average temperature  might risen by an approximate 2°C. *So if the data is available for previous years we can confirm our results. 
 
 
 
 
-In order to confirm our prediction we divide the data in two periods and check for the trend
+## Next logical Step is to divide the data and check for if the trend is changing over the period of time. For a simple reason of German Unification in 1990, so i decide to break from 1936-1989 and 1990-2023 
 
-
-### Checking the Trend from 1936-1990
+### Checking the Trend from 1936-1989
 
 ```{r}
-data_36_90 <- observation_annual_tbl |> filter(year < 1990)
+data_36_89 <- observation_annual_tbl |> filter(year < 1990)
 
-data_36_90$Tavg |> max()
 
-mean_temp <- mean(data_36_90$Tavg, na.rm = TRUE)
+mean_temp <- mean(data_36_89$Tavg, na.rm = TRUE)
 trend_model <- lm(Tavg ~ year, data = data_36_90)
 trend_value <- coef(trend_model)[2]  # S
 
-data_36_90 |> 
-ggplot( aes(x = year, y = Tavg)) +
-    geom_ribbon(aes(ymin = 6.5, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
-    geom_point(color = "#ff9733", size = 3, shape = 20) +
-    geom_line(color = "#ff942f") +
-    geom_smooth(method = "lm", color = "black", se = FALSE, size = 0.5) +
-    geom_hline(yintercept = mean_temp, color = "#818589", size = .75) +
-    labs(
-        title = "Hamburg Fuhlsbüttel Average Temperature",
-        subtitle = sprintf(
-            "1936-1989%s —1936-1989 Trend\n%s(+ 0.0073°C/year)",
-            sprintf("%*s", 80, ""),  # Adjust 30 to change spacing
-            sprintf("%*s", 100, "")   # Adjust 55 to change alignment
-        ),
-        x = "",
-        y = ""
-    ) +
-   scale_x_continuous(breaks = c(seq(1936, 1989, by = 5), 1989), expand = c(0,0)) +
+p <- data_36_89 |> 
+  ggplot(aes(year,Tavg)) +
+   geom_ribbon(aes(ymin = 6.5, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#FF8109", size = 2) +
+    geom_line(color = "#FDA666") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.7) +
+    geom_smooth(method = "loess", color = "darkgreen", se = FALSE, size = 0.9, span = .2) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1936, 1989, by = 5), 1989), expand = c(0,0)) +
     scale_y_continuous(
         limits = c(6.5, 10.5),
         breaks = seq(6.5, 10.5, by = 0.5),
         labels = function(x) paste0(format(x, nsmall = 1), " °C"),
         expand = c(0, 0),
         sec.axis = sec_axis(~ . * 1.8 + 32, 
-                            breaks = seq(43.7, 50.9, by = .9),  
+                            breaks = seq(43.7, 51, by = 1),  
                             labels = function(x) paste0(format(x, nsmall = 1), " °F"))
     ) +
     coord_cartesian(xlim = c(1936,1989)) +
@@ -269,7 +267,7 @@ ggplot( aes(x = year, y = Tavg)) +
         axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "#3D4551"),
         axis.text.y = element_text(face = "bold", color = "#3D4551"),
         axis.title = element_text(face = "bold", color = "black"),
-        axis.line = element_line(color = "#7393B3", size = 0.5),
+        axis.line = element_line(color = "#7393B3", linewidth  = 0.5),
         panel.background = element_blank(),
         plot.background = element_blank(),
         panel.grid.minor = element_blank(),
@@ -279,10 +277,25 @@ ggplot( aes(x = year, y = Tavg)) +
         axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
         plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
     ) +
-  
-    annotate("text", x = 1946, y = mean_temp, 
-             label = paste("Mean: ", round(mean_temp, 3), "°C"),
-             hjust = 0.5, vjust = -1, color = "black", fontface="bold")
+    labs(x = "", y = "") +
+    annotate("text", x = 1950, y = mean_temp, 
+             label = paste("Mean:",round(mean_temp, 3),"°C"),
+             hjust = 1, vjust = -0.5, color = "black", fontface="bold")  
+
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Average Temperature", 
+               fontface = "bold", x = 0, y = 0.10, hjust = 0, size = 14) +
+    draw_label("1936-1989", x = 0.06, y = -.6, hjust = -0.3, size = 10, fontface = "bold") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "darkgreen", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10,fontface="bold") +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1936-1989 Trend \n(", sprintf("%+.4f", trend_value), "°C/year)"), 
+              x = 0.69, y = -.59, hjust = -0.3, size = 10,fontface="bold") 
+
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+print(final_plot)
+
 ```
 ## For the second period 1990-2023
 
@@ -294,35 +307,29 @@ data_90_2023$Tavg |> max()
 mean_temp <- mean(data_90_2023$Tavg, na.rm = TRUE)
 trend_model <- lm(Tavg ~ year, data = data_90_2023)
 trend_value <- coef(trend_model)[2]  # S
+```
 
-data_90_2023 |> 
+
+```{r}
+p <- data_90_2023 |> 
 ggplot( aes(x = year, y = Tavg)) +
-    geom_ribbon(aes(ymin = 7, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
-    geom_point(color = "#ff9733", size = 3, shape = 20) +
-    geom_line(color = "#ff942f") +
-    geom_smooth(method = "lm", color = "black", se = FALSE, size = 0.5) +
-    geom_hline(yintercept = mean_temp, color = "#818589", size = .75) +
-    labs(
-        title = "Hamburg Fuhlsbüttel Average Temperature",
-        subtitle = sprintf(
-            "1990-2023%s —1990-2023 Trend\n%s(+ 0.032606°C/year)",
-            sprintf("%*s", 80, ""),  # Adjust 30 to change spacing
-            sprintf("%*s", 100, "")   # Adjust 55 to change alignment
-        ),
-        x = "",
-        y = ""
-    ) +
-   scale_x_continuous(breaks = c(seq(1990, 2023, by = 5), 2023), expand = c(0,0)) +
+  geom_ribbon(aes(ymin = 7, ymax = Tavg), fill = "#ffc288", alpha = 0.3, na.rm = TRUE) +
+    geom_point(color = "#FF8109", size = 2) +
+    geom_line(color = "#FDA666") +
+    geom_smooth(method = "lm", color = "blue", se = FALSE, size = 0.7) +
+    geom_smooth(method = "loess", color = "darkgreen", se = FALSE, size = 0.7, span = .2) +
+    geom_hline(yintercept = mean_temp, color = "black", size = .75) +
+    scale_x_continuous(breaks = c(seq(1990, 2023, by = 5), 2023), expand = c(0,0)) +
     scale_y_continuous(
         limits = c(7, 11),
-        breaks = seq(6.5, 11, by = 0.5),
+        breaks = seq(7, 11, by = 0.5),
         labels = function(x) paste0(format(x, nsmall = 1), " °C"),
         expand = c(0, 0),
         sec.axis = sec_axis(~ . * 1.8 + 32, 
-                            breaks = seq(44.6, 51.8, by = .9),  
+                            breaks = seq(44.6, 51.8, by = 1),  
                             labels = function(x) paste0(format(x, nsmall = 1), " °F"))
     ) +
-    coord_cartesian(xlim = c(1990,2023)) +
+    coord_cartesian(xlim = c(1990,2023), c(7,11)) +
     theme_minimal() +
     theme(
         plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
@@ -330,7 +337,7 @@ ggplot( aes(x = year, y = Tavg)) +
         axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "#3D4551"),
         axis.text.y = element_text(face = "bold", color = "#3D4551"),
         axis.title = element_text(face = "bold", color = "black"),
-        axis.line = element_line(color = "#7393B3", size = 0.5),
+        axis.line = element_line(color = "#7393B3", linewidth  = 0.5),
         panel.background = element_blank(),
         plot.background = element_blank(),
         panel.grid.minor = element_blank(),
@@ -340,17 +347,40 @@ ggplot( aes(x = year, y = Tavg)) +
         axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
         plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
     ) +
-  
+    labs(x = "", y = "") +
+   
     annotate("text", x = 1995, y = mean_temp, 
              label = paste("Mean: ", round(mean_temp, 3), "°C"),
-             hjust = 0.5, vjust = -1, color = "black", fontface="bold")
+             hjust = 0.5, vjust = -1, color = "black", fontface="bold") 
+
+
+title <- ggdraw() + 
+    draw_label("Hamburg Fuhlsbüttel Average Temperature", 
+               fontface = "bold", x = 0, y = 0.10, hjust = 0, size = 14) +
+    draw_label("1990-2023", x = 0.06, y = -.6, hjust = -0.3, size = 10, fontface = "bold") +
+    draw_line(x = c(0.5, 0.53), y = c(-.6, -.6), color = "darkgreen", size = 1) +
+    draw_text("LOESS", x = 0.531, y = -.6, hjust = 0, size = 10,fontface="bold") +
+    draw_line(x = c(0.68, 0.72), y = c(-0.6, -.6), color = "blue", size = 1) +
+    draw_text(paste0("1936-1989 Trend \n(", sprintf("%+.4f", trend_value),"°C/year)"), 
+              x = 0.69, y = -.59, hjust = -0.3, size = 10,fontface="bold") 
+
+final_plot <- plot_grid(title, p, ncol = 1, rel_heights = c(0.1, 0.9))
+
+print(final_plot)
+
+
+
 ```
 
 
 ## Clearly we can see that the trend has increased 4.5 times in the period 1990-2023 in comparison to 1936-1989. The key result is also shows that the trend for 1990-2023 is even higher than for the whole time period 1936-2023.
  We can  summarize our findings that  as it is expected that  in last 34years(1990-2023) on an average the temperature has increased by 34 * 0.0326 = 1.1°C 
+ 
+ 
+ 
+ 
 
-## In order to verify our analysis we perform he following calculations
+## In order to verify our analysis we perform the following calculations
 
 ```{r}
 
@@ -368,7 +398,7 @@ dff = mean_1990_2023 - mean_1936_1990
 
 print(dff)
 ```
-## Our analysis is  correct that the average annual temperature has increased by 1.257°C  
+## Our analysis seems to be correct that the average annual temperature has increased by an approx 1.2°C over the period of time  
 
 
 
@@ -411,6 +441,7 @@ Average_Temperature_Plot <- observation_annual_tbl |>
 
 print(Average_Temperature_Plot)
 ```
+
 
 
 
