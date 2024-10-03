@@ -1,17 +1,18 @@
-# Climate_Droughts
+# Climate_Droughts :- 
+This objective of this project is about analysing the Climate data and Drought Indices for Hamburg based on the data from the following 
+https://www.dwd.de/DE/wetter/wetterundklima_vorort/schleswig-holstein_hamburg/hamburg/_node.html
+The data collected  is from the time period  1936-2023 based on daily frequency. 
 
-# Station Hamburg Fuhlsbüttel Latitutde 53.6332 
+# Station Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.33
 
+# Software:- R studio has been used for the whole analysis 
 
 # This repository contains R code and data for climate and drought analysis, including:
 - SPEI and SPI index estimation
 - Time Series Plots for SPEI and SPI Indices ( monthly & annual)
 - Temperature analysis (Average Temperature, Maximum Temperature) based on Annual , Monthly and Seasonality.
-- I will be adding Precipitation plots ( Annual and Seasonal) 
-- Palmers drought index will be added to have the complete analysis of Climate and Droughts. 
 
- 
-## Drought Indices
+## Drought Indices 
 
 ## SPI Index :- Standardized Precipitation index (SPI) 
 The Standardized Precipitation Index (SPI) is the most commonly used indicator worldwide fordetecting and characterizing meteorological droughts. The SPI indicator, which was developed by McKee et al. (1993), and described in detail by Edwards and McKee (1997), measures precipitation anomalies at a given location, based on a comparison of observed total precipitation amounts for an accumulation period of interest (e.g. 1, 3, 12, 48 months), with the long-term historic rainfallrecord for that period. The historic record is fitted to a probability distribution (the “gamma” distribution), which is then transformed into a normal distribution such that the mean SPI value for
