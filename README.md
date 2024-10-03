@@ -1,15 +1,28 @@
-# Climate_Droughts :- 
-This objective of this project is about analysing the Climate data and Drought Indices for Hamburg based on the data from the following 
+# Climate Analysis :- 
+This objective of this project is about analysing the Climate data afor Hamburg based on the data from the following 
 https://www.dwd.de/DE/wetter/wetterundklima_vorort/schleswig-holstein_hamburg/hamburg/_node.html
 The data collected  is from the time period  1936-2023 based on daily frequency. 
-
-# Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881 
+Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881 
 
 # Software:- R studio has been used for the whole analysis 
 
-# This repository contains code and data for climate and drought analysis
+The Analysis is done in two aspects. The first aspect deals with Climate and the second aspect deals with Drought. 
 
-## Drought Indices 
+# Climate:-  For Climate Analysis the i analyse the data for Temperature and Precipitation
+
+## Temperature  :- For Temperature I analyse the Average, Maximum and Minimum Temperatures based on annual and monthly frequency and also seasonal variations for understanding the trend .
+### The average_temp folder contains the script for Average Temperature Analysis
+### The Average_Temperature_Plots folder contains the plots for Average Temperature based on annual and seasonal and monthly data.
+### The Maximum_Temperature folder contains the script for Maximum Temperature Analysis
+### The Maximum_Temperature_Plots contains the plots for Maximum Temperature based on annual, seasonal data
+
+## Precipitation :- To be added ......
+
+
+
+
+
+# Drought:- For Drought I  estimate the commonly used drought indices like SPI,SPEI,RDI and PDSI indices and then analyse them based on annual and monthly frequnecy to understand the trend 
 
 ## SPI Index :- Standardized Precipitation index (SPI) 
 The Standardized Precipitation Index (SPI) is the most commonly used indicator worldwide fordetecting and characterizing meteorological droughts. The SPI indicator, which was developed by McKee et al. (1993), and described in detail by Edwards and McKee (1997), measures precipitation anomalies at a given location, based on a comparison of observed total precipitation amounts for an accumulation period of interest (e.g. 1, 3, 12, 48 months), with the long-term historic rainfallrecord for that period. The historic record is fitted to a probability distribution (the “gamma” distribution), which is then transformed into a normal distribution such that the mean SPI value for
@@ -26,17 +39,11 @@ The Standardized Precipitation Evapotranspiration Index (SPEI) is an extension o
 ## Palmer Drought Severity Index (Self Calibrated):- To be added ......
 
 
-# Climate:- 
-
-## Temperature  :-
-### The average_temp folder contains the script for Average Temperature Analysis
-### The Average_Temperature_Plots folder contains the plots for Average Temperature based on annual and seasonal and monthly data.
-### The Maximum_Temperature folder contains the script for Maximum Temperature Analysis
-### The Maximum_Temperature_Plots contains the plots for Maximum Temperature based on annual, seasonal data
 
 
-## Precipitation :- To be added
 
 
-#  Analysis :- To be added.........
+
+
+#  Analysis :- To be added......... 
 
