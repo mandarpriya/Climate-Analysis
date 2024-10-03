@@ -7,10 +7,7 @@ The data collected  is from the time period  1936-2023 based on daily frequency.
 
 # Software:- R studio has been used for the whole analysis 
 
-# This repository contains R code and data for climate and drought analysis, including:
-- SPEI and SPI index estimation
-- Time Series Plots for SPEI and SPI Indices ( monthly & annual)
-- Temperature analysis (Average Temperature, Maximum Temperature) based on Annual , Monthly and Seasonality.
+# This repository contains code and data for climate and drought analysis
 
 ## Drought Indices 
 
@@ -29,7 +26,7 @@ The Standardized Precipitation Evapotranspiration Index (SPEI) is an extension o
 ## Palmer Drought Severity Index (Self Calibrated):- To be added ......
 
 
-# Climate
+# Climate:- 
 
 ## Temperature  :-
 ### The average_temp folder contains the script for Average Temperature Analysis
@@ -41,5 +38,5 @@ The Standardized Precipitation Evapotranspiration Index (SPEI) is an extension o
 ## Precipitation :- To be added
 
 
-###  Analysis :- To be added.........
+#  Analysis :- To be added.........
 
