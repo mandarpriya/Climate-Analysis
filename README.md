@@ -3,7 +3,7 @@ This objective of this project is about analysing the Climate data and Drought I
 https://www.dwd.de/DE/wetter/wetterundklima_vorort/schleswig-holstein_hamburg/hamburg/_node.html
 The data collected  is from the time period  1936-2023 based on daily frequency. 
 
-# Station Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.33
+# Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881 
 
 # Software:- R studio has been used for the whole analysis 
 
