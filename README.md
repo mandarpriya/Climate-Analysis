@@ -6,9 +6,7 @@
 # This repository contains R code and data for climate and drought analysis, including:
 - SPEI and SPI index estimation
 - Time Series Plots for SPEI and SPI Indices ( monthly & annual)
-- R program has been used for the full analysis
-- Temperature analysis (Average Temperature, Maximum Temperature and Minimum Temperature) based on Annual , Monthly and Seasonality.
-
+- Temperature analysis (Average Temperature, Maximum Temperature) based on Annual , Monthly and Seasonality.
 - I will be adding Precipitation plots ( Annual and Seasonal) 
 - Palmers drought index will be added to have the complete analysis of Climate and Droughts. 
 
@@ -33,6 +31,7 @@ The Standardized Precipitation Evapotranspiration Index (SPEI) is an extension o
 # Climate
 
 ## Temperature  :-
+### 
 
 
 ## Precipitation :- To be added
