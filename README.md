@@ -37,6 +37,8 @@ The Standardized Precipitation Evapotranspiration Index (SPEI) is an extension o
 ### The spei_plots folder contains the plots for spei_index for 3,6,9,12 and annual series respectively.
 
 
+#### Future:- based on data availability for other cities in Germany the analysis will be done. 
+
 
 
 
