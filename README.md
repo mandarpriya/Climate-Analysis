@@ -22,7 +22,7 @@ The Analysis is done in two aspects. The first aspect deals with Climate and the
 
 
 
-# Drought:- For Drought I  estimate the commonly used drought indices like SPI,SPEI,RDI and PDSI indices and then analyse them based on annual and monthly frequnecy to understand the trend 
+# Drought:- For Drought the commonly used drought indices have been computed and analysed SPI,SPEI,RDI indices and then analyse them based on annual and monthly frequnecy to understand the trend 
 
 ## SPI Index :- Standardized Precipitation index (SPI) 
 The Standardized Precipitation Index (SPI) is the most commonly used indicator worldwide fordetecting and characterizing meteorological droughts. The SPI indicator, which was developed by McKee et al. (1993), and described in detail by Edwards and McKee (1997), measures precipitation anomalies at a given location, based on a comparison of observed total precipitation amounts for an accumulation period of interest (e.g. 1, 3, 12, 48 months), with the long-term historic rainfallrecord for that period. The historic record is fitted to a probability distribution (the “gamma” distribution), which is then transformed into a normal distribution such that the mean SPI value for
@@ -36,7 +36,7 @@ The Standardized Precipitation Evapotranspiration Index (SPEI) is an extension o
 ### The spei_index folder contains the script for spei_index analysis
 ### The spei_plots folder contains the plots for spei_index for 3,6,9,12 and annual series respectively.
 
-## Palmer Drought Severity Index (Self Calibrated):- To be added ......
+
 
 
 
