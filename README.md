@@ -8,7 +8,7 @@ Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881
 
 The Analysis is done in two aspects. The first aspect deals with Climate and the second aspect deals with Drought. 
 
-# Climate:-  For Climate Analysis the i analyse the data for Temperature and Precipitation
+# Climate:-  For Climate-Analysis the i analyse the data for Temperature and Precipitation
 
 ## Temperature  :- For Temperature I analyse the Average, Maximum and Minimum Temperatures based on annual and monthly frequency and also seasonal variations for understanding the trend .
 ### The average_temp folder contains the script for Average Temperature Analysis
