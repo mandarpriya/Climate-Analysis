@@ -62,5 +62,6 @@ The Reconnaissance Drought Index (RDI) has been introduced by Tsakiris and Vange
 
 
 
-#  Analysis :- To be added......... 
+#  Analysis :- 
+Results & Analysis will be added in few days....
 
