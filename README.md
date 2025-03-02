@@ -44,8 +44,7 @@ is usually modified to include the accumulation period. Thus, SPI-3 and SPI-12, 
 
 ## SPEI Index :- Standardised Precipitation Evapotranspiration Index (SPEI) 
 The Standardized Precipitation Evapotranspiration Index (SPEI) is an extension of the widely used Standardized Precipitation Index (SPI). The SPEI is designed to take into account both precipitation and potential evapotranspiration (PET) in determining drought. Thus, unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand. Like the SPI, the SPEI can be calculated on a range of timescales from 1-48 months.
-### The spei_index folder contains the script for spei_index analysis
-### The spei_plots folder contains the plots for spei_index for 3,6,9,12 and annual series respectively.
+
 
 
 ## RDI Index:- Reconniasance Drought Index (RDI)
