@@ -54,16 +54,23 @@ table |>
 Step2:- Extracting the data  for HAMBURG FUHLSBUETTEL
 
 ```{r}
-# reading the file directly from the url:- for HAMBURG FUHLSBUETTEL
+# Downloading the file directly from the url:- for HAMBURG FUHLSBUETTEL
+#url <- "https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_station/GM000010147.csv.gz"
+
+
 url <- "https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_station/GM000010147.csv.gz"
+destfile <- "GM000010147.csv.gz"
 
+# Download the file
+download.file(url, destfile, mode = "wb")
 
+# Read the file from the downloaded location
 data_hamburg <- read_csv(
-  url,
+  destfile,
   col_names = c("station_id", "date", "element", "value", "quality_flag", "source_flag", "observation_flag", "time_flag"),
   col_types = cols(
     station_id = col_character(),
-    date = col_date(format = "%Y%m%d"),  # Changed to parse date correctly
+    date = col_date(format = "%Y%m%d"),
     element = col_character(),
     value = col_double(),
     quality_flag = col_character(),
@@ -74,13 +81,74 @@ data_hamburg <- read_csv(
   na = c("NA", "")
 )
 
-saveRDS(data_hamburg, file = "/Users/mandarphatak/Climate-Analysis/data/hamburg.rds")
+saveRDS(object = data_hamburg, file = "/Users/mandarphatak/Climate-Analysis/data/hamburg.rds")
+#unique(data_hamburg$element)
 
 ```
-# We can start our data understanding 
+
+
+
+
+Step1:- We cleaned the data,and  scaled the data as the variables are measured as tenths of respective scales.
+
 
 
 ```{r}
-readRDS()
+# reading the rds file from the folder 
+data <- readRDS("/Users/mandarphatak/Climate-Analysis/data/hamburg.rds")
+# glimpse of the data
+
+# data understanding , we don't need the station_id, and SNWD for our analysis
+data <- data |> 
+  select(station_id,date,element,value) |> 
+  pivot_wider(names_from = element, values_from = value) |> 
+  select(date:TAVG) |> 
+  # data cleaning and manipulation
+  mutate(
+    # Calculate TAVG when we have both TMAX and TMIN but no TAVG
+    TAVG = case_when(
+      !is.na(TMAX) & !is.na(TMIN) & is.na(TAVG) ~ (TMAX + TMIN) / 2,
+      TRUE ~ TAVG
+    ),
+     TMAX = case_when(
+      is.na(TMAX) & !is.na(TMIN) & !is.na(TAVG) ~ 2 * TAVG - TMIN,
+      TRUE ~ TMAX
+    ),
+    # Calculate TMIN when we have TMAX and TAVG but no TMIN
+    TMIN= case_when(
+      !is.na(TMAX) & is.na(TMIN) & !is.na(TAVG) ~ 2 * TAVG - TMAX,
+      TRUE ~ TMIN
+    )
+  ) |> 
+  mutate(across(c(TMAX, TAVG, TMIN, PRCP), ~ ./10))
+
+# Saving the cleaned data
+saveRDS(object = data, file = "/Users/mandarphatak/Climate-Analysis/data/hamburg_clean.rds")
+
+
+
 ```
+Step2:-  Monthly data conversion. Since our data is of daily frequnecy we need to convert to monthly frequency
+
+```{r}
+data <- readRDS("/Users/mandarphatak/Climate-Analysis/data/hamburg_clean.rds") 
+monthly_tbl <- data |> 
+  mutate(year = year(date), 
+         month = month(date)) |> 
+  group_by(year, month) |> 
+  summarise(
+    TMAX = mean(TMAX, na.rm = TRUE),
+    TMIN = mean(TMIN, na.rm = TRUE),
+    TAVG = mean(TAVG, na.rm = TRUE),
+    PRCP = sum(PRCP, na.rm = TRUE),
+    .groups = "drop"
+  ) |> 
+  mutate(date = make_date(year, month))
+monthly_tbl
+
+# monthly data
+saveRDS(monthly_tbl, file = "/Users/mandarphatak/Climate-Analysis/data/monthly_tbl.rds")
+```
+### End of Part 1 :- Data Compiling ###
+
 
