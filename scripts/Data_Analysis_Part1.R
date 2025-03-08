@@ -37,7 +37,10 @@ axis.title.y.right = element_text( angle = 90)) +
   labs(title = "Hamburg Fuhlsbüttel Average Temperature",
        subtitle = "Period:-1891-2024",
         x = "", 
-       y = "Average Temperature",) 
+       y = "Average Temperature",
+       caption = "Source:-NCEI NOAA") 
+
+
   
 
 
