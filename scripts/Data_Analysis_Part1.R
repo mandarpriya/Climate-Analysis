@@ -121,13 +121,14 @@ Hamburg_TMIN_plot <-  monthly_tbl |>
        caption = "Source:-NCEI NOAA") 
 
 
-ggsave("Temperature_Plots/Hamburg_TMAX_plot.png", width = 10, height = 6, dpi = 300)
+ggsave("Temperature_Plots/Hamburg_TMIN_plot.png", width = 10, height = 6, dpi = 300)
 
 
 #########################
 # We move to decade wise changes in Average Temperature ###
 
 # Decade changes for Average Temperature
+
 # First, create your decade tibble correctly
 decade_tbl <- monthly_tbl %>% 
   mutate(
@@ -153,25 +154,38 @@ decade_summary <- decade_tbl %>%
   ) 
 
 # Create the plot with NUMERIC y-axis (not discrete)
-Hamburg_TAVG_decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tavg)) +
+Hamburg_TAVG_Decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tavg)) +
   geom_line(color = "blue", size = 1) +
   geom_point(color = "white", fill = "#FF8109", size = 2.5, shape = 21, stroke = 1) +
-  geom_text(aes(label = round(avg_tavg, 2)), vjust = -1.5,hjust = .15, size = 3.5) +
-  # Use scale_y_continuous instead of scale_y_discrete
+  geom_text(aes(label = round(avg_tavg, 2)), vjust = -1.5, hjust = 0.35, size = 3.5) +
   scale_y_continuous(
-    limits = c(8,11),
-    breaks = c(seq(8, 11, by = 0.5),11),  # Changed step to 0.5 for better visibility
+    limits = c(8, 11),
+    breaks = c(seq(8, 11, by = 0.5), 11),
     labels = function(x) paste0(format(x, nsmall = 2), " °C")
   ) +
   scale_x_continuous(breaks = decade_summary$decade, labels = decade_summary$decade_label) +
   labs(
-    title = "Hamburg Fuhlsbüttel\nAverage Temperature Trend by Decade",
-    subtitle = "Period: 1891-2024",
+    title = "Hamburg Fuhlsbüttel Average Temperature\nTrend by Decade",
+    subtitle = "Period:1891-2024",
     x = "",
     y = "Average Temperature"
   ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        axis.line = element_line(color = "#7393B3", linewidth = 1))
-
-
+  theme(
+    
+    plot.title = element_text(
+      family = "Goldenbeachpersonaluse",
+      size = 18,
+    ),
+    plot.title.position = "plot",
+    plot.subtitle = element_text( # For subtitle
+      size = 14
+      
+    ),
+    axis.title.y = element_text(
+      # Using your new font
+      size = 12
+    ),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.line = element_line(color = "#7393B3", linewidth = 1),
+  )
+ggsave("Temperature_Plots/Hamburg_TAVG_Decade_plot.png", width = 10, height = 6, dpi = 300)
