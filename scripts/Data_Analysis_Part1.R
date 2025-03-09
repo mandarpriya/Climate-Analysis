@@ -165,15 +165,16 @@ Hamburg_TAVG_Decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tavg)
   ) +
   scale_x_continuous(breaks = decade_summary$decade, labels = decade_summary$decade_label) +
   labs(
-    title = "Hamburg Fuhlsbüttel Average Temperature\nTrend by Decade",
+    title = "Hamburg Fuhlsbüttel Average Temperature:Trend by Decade",
     subtitle = "Period:1891-2024",
     x = "",
-    y = "Average Temperature"
+    y = "Average Temperature",
+    caption = "Source:- NCEI NOAA"
   ) +
   theme(
     
     plot.title = element_text(
-      family = "Goldenbeachpersonaluse",
+      family = "MouldyCheeseRegular",
       size = 24,
     ),
     plot.title.position = "plot",
@@ -190,3 +191,5 @@ Hamburg_TAVG_Decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tavg)
     axis.text.y = element_text(  size = 15)
   )
 ggsave("Temperature_Plots/Hamburg_TAVG_Decade_plot.png", width = 10, height = 6, dpi = 300)
+
+
