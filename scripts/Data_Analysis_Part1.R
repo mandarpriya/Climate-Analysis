@@ -43,7 +43,7 @@ axis.title.y.right = element_text( angle = 90)) +
        caption = "Source:-NCEI NOAA") 
 
 
-ggsave("Temperaure_Plots/Hamburg_TAVG_plot.png", width = 10, height = 6, dpi = 300)
+ggsave("Temperature_Plots/Hamburg_TAVG_plot.png", width = 10, height = 6, dpi = 300)
 
 
 Hamburg_TMAX_plot <-  monthly_tbl |> 
@@ -82,7 +82,48 @@ axis.title.y.right = element_text( angle = 90)) +
        caption = "Source:-NCEI NOAA") 
 
 
-ggsave("Temperaure_Plots/Hamburg_TMAX_plot.png", width = 10, height = 6, dpi = 300)
+ggsave("Temperature_Plots/Hamburg_TMAX_plot.png", width = 10, height = 6, dpi = 300)
+
+
+Hamburg_TMIN_plot <-  monthly_tbl |> 
+  ggplot(aes(date, TMIN)) +
+  geom_point(color = "white", fill = "#0774d2", size = 2.5, shape = 21, stroke = 1) +
+  geom_line(color = "#17619f")  +
+  
+  scale_x_date(breaks = c(seq(as.Date("1891-01-01"), as.Date("2021-01-01"), by = "10 years"), 
+                          as.Date("2025-01-01"))) +
+  scale_y_continuous(
+    breaks = c(seq(-15, 20, by = 5),20),
+    labels = function(x) paste0(format(x, nsmall = 0), " °C")
+  ) + 
+  coord_cartesian(xlim = c(as.Date("1891-01-01"), as.Date("2025-01-01")),
+                  ylim = c(-15, 20)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0,face = "bold"),
+    plot.title.position = "plot",
+    plot.subtitle = element_text(hjust = 0,face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, color = "#3D4551"),
+    axis.text.y = element_text( color = "#3D4551"),
+    axis.title = element_text( color = "#3D4551" ),
+    axis.line = element_line(color = "#7393B3", linewidth  = 1),
+    panel.background = element_blank(),
+    plot.background = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "lightgrey", linewidth  = 0.5),
+    axis.line.y.right = element_line(color = "#7393B3", linewidth = 0.5),
+    axis.text.y.right = element_text(color = "#3D4551"),
+    axis.title.y.right = element_text( angle = 90)) +
+  labs(title = "Hamburg Fuhlsbüttel Minimum Temperature",
+       subtitle = "Period:-1891-2024",
+       x = "", 
+       y = "Minimum Temperature",
+       caption = "Source:-NCEI NOAA") 
+
+
+ggsave("Temperature_Plots/Hamburg_TMAX_plot.png", width = 10, height = 6, dpi = 300)
+
+
 #########################
 # We move to decade wise changes in Average Temperature ###
 
@@ -112,7 +153,7 @@ decade_summary <- decade_tbl %>%
   ) 
 
 # Create the plot with NUMERIC y-axis (not discrete)
-ggplot(decade_summary, aes(x = decade, y = avg_tavg)) +
+Hamburg_TAVG_decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tavg)) +
   geom_line(color = "blue", size = 1) +
   geom_point(color = "white", fill = "#FF8109", size = 2.5, shape = 21, stroke = 1) +
   geom_text(aes(label = round(avg_tavg, 2)), vjust = -1.5,hjust = .15, size = 3.5) +
