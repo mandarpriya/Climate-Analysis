@@ -9,7 +9,9 @@ monthly_tbl <- monthly_tbl |> mutate(date = ymd(date)) |> drop_na()
 
 monthly_tbl |> 
   ggplot(aes(date, TAVG)) +
-  geom_line(color = "#FDA666",linewidth  = 0.5) +
+  geom_point(color = "white", fill = "#FF8109", size = 2.5, shape = 21, stroke = 1) +
+  geom_line(color = "#FDA666")  +
+
   scale_x_date(breaks = c(seq(as.Date("1891-01-01"), as.Date("2021-01-01"), by = "10 years"), 
              as.Date("2025-01-01"))) +
   scale_y_continuous(
