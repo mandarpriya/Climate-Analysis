@@ -157,7 +157,7 @@ decade_summary <- decade_tbl %>%
 Hamburg_TAVG_Decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tavg)) +
   geom_line(color = "blue", size = 1) +
   geom_point(color = "white", fill = "#FF8109", size = 2.5, shape = 21, stroke = 1) +
-  geom_text(aes(label = round(avg_tavg, 2)), vjust = -1.5, hjust = 0.35, size = 3.5) +
+  geom_text(aes(label = round(avg_tavg, 2)), vjust = -1.5, hjust = 0.35, size = 4) +
   scale_y_continuous(
     limits = c(8, 11),
     breaks = c(seq(8, 11, by = 0.5), 11),
@@ -174,18 +174,19 @@ Hamburg_TAVG_Decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tavg)
     
     plot.title = element_text(
       family = "Goldenbeachpersonaluse",
-      size = 18,
+      size = 24,
     ),
     plot.title.position = "plot",
     plot.subtitle = element_text( # For subtitle
-      size = 14
+      size = 18
       
     ),
     axis.title.y = element_text(
       # Using your new font
-      size = 12
+      size = 18
     ),
-    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
     axis.line = element_line(color = "#7393B3", linewidth = 1),
+    axis.text.y = element_text(  size = 15)
   )
 ggsave("Temperature_Plots/Hamburg_TAVG_Decade_plot.png", width = 10, height = 6, dpi = 300)
