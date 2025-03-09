@@ -166,7 +166,7 @@ decade_summary <- decade_tbl %>%
 Hamburg_TAVG_Decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tavg)) +
   geom_line(color = "blue", size = 1) +
   geom_point(color = "white", fill = "#FF8109", size = 2.5, shape = 21, stroke = 1) +
-  geom_text(aes(label = round(avg_tavg, 2)), vjust = -1.5, hjust = 0.35, size = 4) +
+  geom_text(aes(label = round(avg_tavg, 2)), vjust = -1.5, hjust = 0.35, size = 8) +
   scale_y_continuous(
     limits = c(8, 11),
     breaks = c(seq(8, 11, by = 0.5), 11),
@@ -205,7 +205,7 @@ ggsave("Temperature_Plots/Hamburg_TAVG_Decade_plot.png", width = 10, height = 6,
 Hamburg_TMAX_Decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tmax)) +
   geom_line(color = "#b71c1a", size = 1) +
   geom_point(color = "white", fill = "#b81c1a", size = 2.5, shape = 21, stroke = 1) +
-  geom_text(aes(label = round(avg_tmax, 2)), vjust = -.65, hjust = 0.35, size = 4) +
+  geom_text(aes(label = round(avg_tmax, 2)), vjust = -.65, hjust = 0.35, size = 8) +
   scale_y_continuous(
     limits = c(11,15),
     breaks = c(seq(11, 15,by = 0.5),15),
@@ -248,7 +248,7 @@ ggsave("Temperature_Plots/Hamburg_TMAX_Decade_plot.png", width = 10, height = 6,
 Hamburg_TMIN_Decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tmin)) +
   geom_point(color = "white", fill = "#0774d2", size = 2.5, shape = 21, stroke = 1) +
   geom_line(color = "#17619f")  +
-  geom_text(aes(label = round(avg_tmin, 2)), vjust = -.65, hjust = 0.35, size = 4) +
+  geom_text(aes(label = round(avg_tmin, 1)), vjust = -.65, hjust = 0.35, size = 8) +
   scale_y_continuous(
     limits = c(4,6.5),
     breaks = c(seq(4, 6.5,by = 0.5),6.5),
@@ -284,5 +284,5 @@ Hamburg_TMIN_Decade_plot <- ggplot(decade_summary, aes(x = decade, y = avg_tmin)
     axis.line = element_line(color = "#7393B3", linewidth = 1),
     axis.text.y = element_text(  size = 15)
   )
-
-ggsave("Temperature_Plots/Hamburg_TMIN_Decade_plot.png", width = 10, height = 6, dpi = 300)
+print(Hamburg_TMIN_Decade_plot)
+ggsave("Temperature_Plots/Hamburg_TMIN_Decade_plot.png", width = 10, height = 8, dpi = 300)
