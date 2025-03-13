@@ -313,7 +313,8 @@ monthly_tbl |>
        x = "Month",
        y = "Average Temperature") +
   theme_minimal()
-#### Change in season ####
+
+#### Seasonal Temperature Variation ####
 Hamburg_seasonal_temperature_variation_plot <- monthly_tbl |> 
   mutate(month = factor(month(date), levels = 1:12, 
                         labels = month.abb),
@@ -348,4 +349,6 @@ Hamburg_seasonal_temperature_variation_plot <- monthly_tbl |>
     plot.subtitle = element_text(family = "Angelos", size = 16)
       
   )
-print(Hamburg_monthly_temperature_variation_plot)
+print(Hamburg_seasonal_temperature_variation_plot)
+
+ggsave("Temperature_Plots/Hamburg_seasonal_temperature_variation_plot.png", width = 10, height = 8, dpi = 300)
