@@ -15,7 +15,7 @@ showtext_auto()
 
 
 
-###### reading the monthly data fr#om the folder ######
+##### reading the monthly data fr#om the folder ######
 monthly_tbl <- readRDS("data/monthly_tbl.rds")
 monthly_tbl <- monthly_tbl |> mutate(date = ymd(date)) |> drop_na()
 #### Average Temperature ####
