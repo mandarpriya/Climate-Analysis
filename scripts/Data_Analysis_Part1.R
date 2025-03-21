@@ -353,3 +353,4 @@ Hamburg_seasonal_temperature_variation_plot <- monthly_tbl |>
 print(Hamburg_seasonal_temperature_variation_plot)
 
 ggsave("Temperature_Plots/Hamburg_seasonal_temperature_variation_plot.png", width = 10, height = 8, dpi = 300)
+
