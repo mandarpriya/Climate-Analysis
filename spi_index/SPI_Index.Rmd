@@ -162,10 +162,10 @@ spi_3_annual_plot <- spi_3 |>
         axis.text.y = element_text(face = "bold", color = "black"),
         axis.title = element_text(face = "bold", color = "black"),
         axis.line = element_line(color = "black", size = 1),
-        panel.background = element_rect(fill = "grey", color = NA),  # Set panel background to light grey
-        plot.background = element_rect(fill = "grey", color = NA),   # Set plot background to light grey
+        panel.background = element_blank(),  # Set panel background to light grey
+        plot.background = element_blank(),   # Set plot background to light grey
         panel.grid.minor = element_blank(),  # Keep minor grid lines off
-        panel.grid.major = element_line(color = "lightgrey", linewidth  = 0.5),  # Set major grid lines to black for visibility
+        panel.grid.major = element_blank(),,  # Set major grid lines to black for visibility
         axis.line.y.right = element_line(color = "black", size = 1),
         axis.text.y.right = element_text(face = "bold", color = "black"),
         axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
@@ -210,7 +210,7 @@ spi_6_annual_plot <- spi_6|>
     ) +
     theme_minimal() +
     coord_cartesian(xlim = c(1990, 2023), ylim = c(-2.5, 2)) +
-    
+
     theme(
         plot.title = element_text(hjust = 0, face = "bold", colour = "black"),
         plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black"),
@@ -218,14 +218,13 @@ spi_6_annual_plot <- spi_6|>
         axis.text.y = element_text(face = "bold", color = "black"),
         axis.title = element_text(face = "bold", color = "black"),
         axis.line = element_line(color = "black", size = 1),
-        panel.background = element_rect(fill = "grey", color = NA),  # Set panel background to light grey
-        plot.background = element_rect(fill = "grey", color = NA),   # Set plot background to light grey
+        panel.background = element_blank(),  # Set panel background to light grey
+        plot.background = element_blank(),   # Set plot background to light grey
         panel.grid.minor = element_blank(),  # Keep minor grid lines off
-        panel.grid.major = element_line(color = "lightgrey", size = 0.5),  # Set major grid lines to black for visibility
+        panel.grid.major = element_line( size = 0.5),  # Set major grid lines to black for visibility
         axis.line.y.right = element_line(color = "black", size = 1),
         axis.text.y.right = element_text(face = "bold", color = "black"),
         axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
-        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
     ) +
     annotate("text", x = 2017, y = 1.8,
              label = sprintf("Trend: %.3f", trend_value_rounded),
@@ -274,14 +273,13 @@ spi_9_annual_plot <- spi_9|>
         axis.text.y = element_text(face = "bold", color = "black"),
         axis.title = element_text(face = "bold", color = "black"),
         axis.line = element_line(color = "black", size = 1),
-        panel.background = element_rect(fill = "grey", color = NA),  # Set panel background to light grey
-        plot.background = element_rect(fill = "grey", color = NA),   # Set plot background to light grey
+        panel.background = element_blank(),  # Set panel background to light grey
+        plot.background = element_blank(),   # Set plot background to light grey
         panel.grid.minor = element_blank(),  # Keep minor grid lines off
-        panel.grid.major = element_line(color = "lightgrey", size = 0.5),  # Set major grid lines to black for visibility
+        panel.grid.major = element_line( size = 0.5),  # Set major grid lines to black for visibility
         axis.line.y.right = element_line(color = "black", size = 1),
         axis.text.y.right = element_text(face = "bold", color = "black"),
         axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
-        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
     ) +
     annotate("text", x = 2017, y = 1.8,
              label = sprintf("Trend: %.3f", trend_value_rounded),
@@ -329,14 +327,13 @@ spi_12_annual_plot <- spi_12 |>
         axis.text.y = element_text(face = "bold", color = "black"),
         axis.title = element_text(face = "bold", color = "black"),
         axis.line = element_line(color = "black", size = 1),
-        panel.background = element_rect(fill = "grey", color = NA),  # Set panel background to light grey
-        plot.background = element_rect(fill = "grey", color = NA),   # Set plot background to light grey
+        panel.background = element_blank(),  # Set panel background to light grey
+        plot.background = element_blank(),   # Set plot background to light grey
         panel.grid.minor = element_blank(),  # Keep minor grid lines off
-        panel.grid.major = element_line(color = "lightgrey", size = 0.5),  # Set major grid lines to black for visibility
+        panel.grid.major = element_line( size = 0.5),  # Set major grid lines to black for visibility
         axis.line.y.right = element_line(color = "black", size = 1),
         axis.text.y.right = element_text(face = "bold", color = "black"),
-        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90),
-        plot.margin = margin(t = 40, r = 40, b = 20, l = 20, unit = "pt")
+        axis.title.y.right = element_text(face = "bold", color = "black", angle = 90)
     ) +  coord_cartesian(xlim = c(1990, 2023), ylim = c(-2.5, 2)) +
     annotate("text", x = 2017, y = 1.8,
              label = sprintf("Trend: %.3f", trend_value_rounded),
@@ -348,7 +345,7 @@ ggsave("spi_12_annual_plot.jpeg", plot = spi_12_annual_plot, width = 8, height =
 
 ### Monthly Data
 
-`
+
 ```{r}
 observation_monthly_tbl <- observation_tbl %>%
     mutate(year = year(date), month = month(date)) %>%
@@ -527,6 +524,7 @@ ggsave("spi_6_monthly_plot.jpeg", plot = spi_6_monthly_plot, width = 8, height =
 
 ```
 ```{r}
+
 spi_9m <- spi_9m |> filter(date > "1989-12-01")
 spi_9m <- spi_9m |> mutate(sign = ifelse(spi_9 >=0, "pos","neg"))
 
