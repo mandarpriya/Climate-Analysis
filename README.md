@@ -15,7 +15,7 @@ This research consists of two complementary analyses: first, an examination of c
 ##### Climate Variables
   # Temperature  :-  The plot for the temperature variations 1936-2023 is given as below.  
 
-markdownCopy![Temperature Plot](./Temperature_Plots/000014.png)
+![Temperature Plot](./Temperature_Plots/000014.png)
 
 ## Precipitation :-  The pplot for precipitation from 1936-2023 is given as below
   markdownCopy![Precipitation Plot](./Precipitation_Plots/Precipitation.png)
