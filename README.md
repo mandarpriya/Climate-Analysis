@@ -1,8 +1,8 @@
  # Climate Analysis :- 
-The objective of this project is about analysing the Climate data for Hamburg. 
+ The  project is on analysing the Climate data for Hamburg. 
 
-## Source of the data
-The source for this data is in the following link :- https://www.dwd.de/DE/wetter/wetterundklima_vorort/schleswig-holstein_hamburg/hamburg/_node.html
+## Data Source:-
+The source for this data is in the following link :- opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily
 The data collected  is from the time period  1936-2023 based on daily frequency. 
 Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881 
 
