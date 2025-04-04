@@ -17,13 +17,13 @@ This research consists of two complementary analyses: first, an examination of c
 
 ![Temperature Plot](./Temperature_Plots/000014.png)
 
-## Precipitation :-  The pplot for precipitation from 1936-2023 is given as below
+## Precipitation :-  The plot for precipitation from 1936-2023 is given as below
   ![Precipitation Plot](./Precipitation_Plots/Precipitation.png)
 
 
 ### Drought Analysis:- 
 
-# Drought:-  When We speak of drought, we see that it is based on the climate conditions (climate data). For analysis we compute the drought incices SPI,RDI and SPEI based on monthly and annual frequency. We find that SPI index is not that good indicator  for the Hamburg, while RDI and SPEI gives use a clear indications for the changes in the climate condiitions.
+# Drought:-  When We speak of drought, we see that it is based on the climate conditions. For analysis we compute the drought indices SPI,RDI and SPEI based on monthly and annual frequency. We find that SPI index is not that good indicator  for the Hamburg, while RDI and SPEI gives use a clear indications for the changes in the climate condiitions.
 
 ### Drought Indices ### 
 
