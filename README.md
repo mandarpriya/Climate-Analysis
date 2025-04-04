@@ -5,20 +5,15 @@
 The source for this data is in the following link :- opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily
 The data collected  is from the time period  1936-2023 based on daily frequency. 
 Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881 
+Note:- The data has not been updated after 2023. In addition the data for other stations is not complete and time frame is small.
+So we decided to use another reliable data source NCEI data, which gets a regular update.
 
 
-  
+#### Analysis 
+This research consists of two complementary analyses: first, an examination of climate variables to identify trends and changes; and second, an analysis of drought indices to determine whether they support the identified climate changes. 
 
-### Software Program:-
-R  has been extensively used for the whole analysis, visualiaztion. 
-
-#### Analysis ###
-The Analysis was done in two aspects. First aspect was based on Climate, and the Second aspect was on the Drought.
-
-#Climate Analysis :-   Climate-Analysis was done based on data for temperature (maximum, minimum & average) and precipitation. 
-
-
-## Temperature  :- For Temperature  analysis the focus was on  the Average, Maximum and Minimum Temperatures based on  monthly/annual frequency and  seasonal variations for understanding the trend . We find that the avergae temperature has increased by roughly 2°C over based on 1936-2023 data. 
+##### Climate Variables
+  # Temperature  :-  
 ![Average Temperature Plot](./Average_Temperature_Plots/Average_Temperature_Plot.png)
 
 
@@ -60,6 +55,6 @@ The Reconnaissance Drought Index (RDI) has been introduced by Tsakiris and Vange
 
 
 
-#  Analysis :- 
-Results & Analysis will be added in few days....
+### Software Program:-
+R  has been extensively used for the whole analysis, visualiaztion. 
 
