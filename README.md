@@ -13,13 +13,11 @@ So we decided to use another reliable data source NCEI data, which gets a regula
 This research consists of two complementary analyses: first, an examination of climate variables to identify trends and changes; and second, an analysis of drought indices to determine whether they support the identified climate changes. 
 
 ##### Climate Variables
-  # Temperature  :-  
-![Average Temperature Plot](./Average_Temperature_Plots/Average_Temperature_Plot.png)
+  # Temperature  :-  The plot for the temperature variations is given as below.  
 
+markdownCopy![Temperature Plot](./Temperature_Plots/000014.png)
 
-
-## Precipitation :- For Precipitation analysis the focus was on the monthly/annual frequency and  seasonal variations for understanding the trend .
-We find that the Precipitation has a declining trend in the period 1990-2023 (DWD data). 
+## Precipitation :- 
 
 
 ### Drought Analysis:- 
