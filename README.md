@@ -6,10 +6,7 @@ The source for this data is in the following link :- opendata.dwd.de/climate_env
 The data collected  is from the time period  1936-2023 based on daily frequency. 
 Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881 
 
-### Updates:- 
-In order to have more concrete analysis, we have extended our research and analysis to other station in Germany and also the data source has changed.
-Since the DWD data is not available due to academic requirements, we took the data from other reliable source. The data will be shared in coming time. The data is rich and also for some other stations too is avalible for a longer period with the same features as the DWD data. 
-So the period of data is from 1900-2024 based on daily frequency. 
+
   
 
 ### Software Program:-
