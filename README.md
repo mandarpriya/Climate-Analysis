@@ -21,8 +21,9 @@ The Analysis was done in two aspects. First aspect was based on Climate, and the
 #Climate Analysis :-   Climate-Analysis was done based on data for temperature (maximum, minimum & average) and precipitation. 
 
 
-## Temperature  :- For Temperature  analysis the focus was on  the Average, Maximum and Minimum Temperatures based on  monthly/annual frequency and  seasonal variations for understanding the trend . We find that the avergae temperature has increased by roughly 2°C over based on 1990-2023 data. 
+## Temperature  :- For Temperature  analysis the focus was on  the Average, Maximum and Minimum Temperatures based on  monthly/annual frequency and  seasonal variations for understanding the trend . We find that the avergae temperature has increased by roughly 2°C over based on 1936-2023 data. 
 ![Average Temperature Plot](./Average_Temperature_Plots/Average_Temperature_Plot.png)
+
 
 
 ## Precipitation :- For Precipitation analysis the focus was on the monthly/annual frequency and  seasonal variations for understanding the trend .
