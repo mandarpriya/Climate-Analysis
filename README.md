@@ -18,7 +18,7 @@ This research consists of two complementary analyses: first, an examination of c
 ![Temperature Plot](./Temperature_Plots/000014.png)
 
 ## Precipitation :-  The pplot for precipitation from 1936-2023 is given as below
-  markdownCopy![Precipitation Plot](./Precipitation_Plots/Precipitation.png)
+  ![Precipitation Plot](./Precipitation_Plots/Precipitation.png)
 
 
 ### Drought Analysis:- 
