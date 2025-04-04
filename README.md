@@ -1,27 +1,20 @@
  # Climate Analysis :- 
-The objective of this project is about analysing the Climate data for Hamburg. 
+ The  project is on analysing the Climate data for Hamburg. 
 
-## Source of the data
-The source for this data is in the following link :- https://www.dwd.de/DE/wetter/wetterundklima_vorort/schleswig-holstein_hamburg/hamburg/_node.html
+## Data Source:-
+The source for this data is in the following link :- opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily
 The data collected  is from the time period  1936-2023 based on daily frequency. 
 Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881 
-
-### Updates:- 
-In order to have more concrete analysis, we have extended our research and analysis to other station in Germany and also the data source has changed.
-Since the DWD data is not available due to academic requirements, we took the data from other reliable source. The data will be shared in coming time. The data is rich and also for some other stations too is avalible for a longer period with the same features as the DWD data. 
-So the period of data is from 1900-2024 based on daily frequency. 
-  
-
-### Software Program:-
-R  has been extensively used for the whole analysis, visualiaztion. 
-
-#### Analysis ###
-The Analysis was done in two aspects. First aspect was based on Climate, and the Second aspect was on the Drought.
-
-#Climate Analysis :-   Climate-Analysis was done based on data for temperature (maximum, minimum & average) and precipitation. 
+Note:- The data has not been updated after 2023. In addition the data for other stations is not complete and time frame is small.
+So we decided to use another reliable data source NCEI data, which gets a regular update.
 
 
-## Temperature  :- For Temperature  analysis the focus was on  the Average, Maximum and Minimum Temperatures based on  monthly/annual frequency and  seasonal variations for understanding the trend . We find that the avergae temperature has increased by roughly 2°C over based on 1990-2023 data. 
+#### Analysis 
+This research consists of two complementary analyses: first, an examination of climate variables to identify trends and changes; and second, an analysis of drought indices to determine whether they support the identified climate changes. 
+
+##### Climate Variables
+  # Temperature  :-  
+![Average Temperature Plot](./Average_Temperature_Plots/Average_Temperature_Plot.png)
 
 
 
@@ -62,6 +55,6 @@ The Reconnaissance Drought Index (RDI) has been introduced by Tsakiris and Vange
 
 
 
-#  Analysis :- 
-Results & Analysis will be added in few days....
+### Software Program:-
+R  has been extensively used for the whole analysis, visualiaztion. 
 
