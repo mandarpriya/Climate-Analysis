@@ -17,13 +17,21 @@ This research consists of two complementary analyses: first, an examination of c
 
 ![Temperature Plot](./Temperature_Plots/Temperature_Variations.png)
 
+
+We can clearly see that the temperature is rising over last decade. 
+
 ## Precipitation :-  The plot for precipitation from 1936-2023 is given as below
   ![Precipitation Plot](./Precipitation_Plots/Precipitation.png)
+
+
+We can clearly see tha the precipitation over last decade is declining. Although the trend line (linear) is slopng upwards but the absolute value is decreasing over the decade.
 
 
 ### Drought Analysis:- 
 
 # Drought:-  When We speak of drought, we see that it is based on the climate conditions. For analysis we compute the drought indices SPI,RDI and SPEI based on monthly and annual frequency. We find that SPI index is not that good indicator  for the Hamburg, while RDI and SPEI gives use a clear indications for the changes in the climate condiitions.
+
+
 
 ### Drought Indices ### 
 
@@ -47,6 +55,8 @@ The Reconnaissance Drought Index (RDI) has been introduced by Tsakiris and Vange
 #Note:- DrinC software is commonly used by many , but we find it a bit strange that the default refrence period is Oc-Nov. This results in completely affecting the computation for the drought indces. Especialy for SPI/SPEI index in our case if we are taking from Oct to Nov (next year) then the precipitation is affected as many months do not witness precipitation. For some stations it could be RDI may suffer. We could not find it reasonable enough to accept the DrinC computation. 
 
 
+
+# Analysis:- 
 
 
 
