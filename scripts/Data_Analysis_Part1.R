@@ -316,7 +316,7 @@ monthly_tbl |>
   theme_minimal()
 
 #### Seasonal Temperature Variation ####
-Hamburg_seasonal_temperature_variation_plot <- monthly_tbl |> 
+Hamburg_seasonal_temperature_variation_plot <- observation_monthly_tbl |> 
   mutate(month = factor(month(date), levels = 1:12, 
                         labels = month.abb),
          season = case_when(
@@ -325,21 +325,21 @@ Hamburg_seasonal_temperature_variation_plot <- monthly_tbl |>
            month %in% c("Jun", "Jul", "Aug") ~ "Summer",
            TRUE ~ "Autumn"
          )) |>
-  ggplot(aes(x = month, y = TAVG, fill = season)) +
+  ggplot(aes(x = month, y = Tavg, fill = season)) +
   geom_boxplot() +
   scale_fill_manual(values = c("Winter" = "#A1D6E2", 
                                "Spring" = "#81C784", 
                                "Summer" = "#FFB74D", 
                                "Autumn" = "#A1887F")) +
   scale_y_continuous(breaks = seq(-10, 25, by = 5),
-                     labels = function(x) paste0(format(x, nsmall = 0), " °C") ) +
+                     labels = function(x) paste0(format(x, nsmall = 0)) ) +
   coord_cartesian(ylim = c(-10,25)) +
   labs(title = "Seasonal Temperature Variation",
-       subtitle = "Hamburg (1891-2024)",
+       subtitle = "Hamburg (1936-2023)",
        x = "",
-       y = "",
+       y = "Temperature(°C)",
        fill = "Season", 
-       caption = "Source:- NCEI NOA") +
+       caption = "Source:- DWD") +
   theme_minimal() +
   theme(
     plot.title = element_text(
@@ -352,5 +352,7 @@ Hamburg_seasonal_temperature_variation_plot <- monthly_tbl |>
   )
 print(Hamburg_seasonal_temperature_variation_plot)
 
-ggsave("Temperature_Plots/Hamburg_seasonal_temperature_variation_plot.png", width = 10, height = 8, dpi = 300)
+#ggsave("Temperature_Plots/Hamburg_seasonal_temperature_variation_plot.png", width = 10, height = 8, dpi = 300)
+
+
 
