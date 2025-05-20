@@ -3,9 +3,32 @@ library(dplyr)
 library(scales)
 library(ggrepel)  # For repelling labels
 
+
+observation_tbl <- observation_tbl[!is.na(observation_tbl$TXK), ]
+
+heatwaves_events <- identify_heatwaves(
+  dates = observation_tbl$date,
+  tmax = observation_tbl$TXK,
+  threshold = 28,
+  min_duration = 3
+)
+
+heatwave_count_per_year <- heatwaves_events %>%
+  group_by(year) %>%
+  summarise(num_events = n())
+
+heatwave_summary <- heatwaves_events %>%
+  group_by(year) %>%
+  summarise(
+    total_duration = sum(duration),
+    avg_intensity = mean(intensity),
+    num_events = n()
+  )
 # Convert date columns
 heatwaves_events$start_date <- as.Date(heatwaves_events$start_date)
 heatwaves_events$end_date <- as.Date(heatwaves_events$end_date)
+
+heatwaves_events$year <- as.numeric(heatwaves_events$year)
 
 
 # Custom color palette
@@ -13,7 +36,7 @@ custom_colors <- c("#f8f800", "#fdc70c", "#f3903f", "#ff4d00", "#e60000", "#5e00
 
 # Identify recent events since 1990 with intensity > 5
 recent_events <- heatwaves_events %>% 
-  filter(year >= 2010) %>%
+  filter(year >1990) %>%
   summarize(count = n()) %>%
   pull(count)
 
@@ -49,16 +72,19 @@ p <- ggplot(heatwaves_events, aes(x = year, y = intensity)) +
   geom_point(aes(size = duration, color = intensity), alpha = 0.85) +
   
   geom_vline(xintercept = 1990, linetype = "dashed", color = "blue", linewidth = 0.6) +
-  annotate("text", x = 1990, y = 6.25, label = "1990", 
+  annotate("text", x = 1990, y = 6.2, label = "1990", 
            color = "blue", fontface = "bold", size = 3) +
   
   geom_smooth(method = "loess", formula = y ~ x, se = FALSE,
               color = "darkblue", linetype = "solid", linewidth = 0.8, alpha = 0.6) +
   
-  # Annotate max intensity
   geom_text(data = max_intensity_event, aes(label = label),
-            hjust = 1, vjust = 0, size = 3, fontface = "bold", color = "#5e0000") +
-  
+            hjust = 1, vjust = 1.2, size = 3, fontface = "bold", color = "#5e0000") +
+  # Annotate max intensity
+  # ggrepel::geom_text_repel(data = max_intensity_event, aes(label = label),
+  #                          size = 3, fontface = "bold", color = "#5e0000",
+  #                          max.overlaps = 5, box.padding = 0.4, point.padding = 0.4,
+  #                          direction = "both") +
   # Annotate longest duration using repel to avoid overlap
   ggrepel::geom_text_repel(data = longest_duration_event, aes(label = label),
                            size = 3, fontface = "bold", color = "#5e0000",
@@ -71,8 +97,8 @@ p <- ggplot(heatwaves_events, aes(x = year, y = intensity)) +
                            max.overlaps = 10, box.padding = 0.4, point.padding = 0.3) +
   
   # Axis scales
-  scale_y_continuous(limits = c(0, 6.25), breaks = seq(0, 6.25, 0.5),
-                     expand = c(0, 0.2)) +
+  scale_y_continuous(limits = c(0, 6.25),breaks = seq(0,6.25, 0.5),
+                     expand = c(0, 0.05)) +
   
   scale_x_continuous(limits = c(1936, 2024),
                      breaks = c(seq(1936, 2024, by = 10), 2024)) +
@@ -93,7 +119,7 @@ p <- ggplot(heatwaves_events, aes(x = year, y = intensity)) +
   labs(
     title = "Heatwave Events in Hamburg Fuhlsbüttel (1936–2024)",
     subtitle = paste0("Based on threshold of 28°C for minimum 3 consecutive days\n",
-                      percent_recent, "% of all events occurred since 2010"),
+                      percent_recent, "% of all events occurred since 1990"),
     x = "",
     y = "Intensity",
     caption = "Source:-Deutscher Wetterdienst (DWD)"
@@ -116,5 +142,7 @@ p <- ggplot(heatwaves_events, aes(x = year, y = intensity)) +
     panel.grid.major.y = element_line(color = "gray80", linetype = "dotted")
   )
 p
+
+
 
 ggsave("heatwaves_germany_1936_2023.png", plot = p, width = 10, height = 6, dpi = 600, bg = "white")
