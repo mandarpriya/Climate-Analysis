@@ -1,0 +1,27 @@
+Stations_ID;Stations_Name;Parameter;Von_Datum;Bis_Datum;Anzahl_Fehlwerte;Beschreibung;eor;                                                                                                              
+1975;Hamburg-Fuhlsbüttel;PM;28.05.2024;28.05.2024;1;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;PM;09.05.2025;13.05.2025;5;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;FM;28.05.2024;28.05.2024;1;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;FM;04.04.2025;08.04.2025;5;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;FM;09.05.2025;14.05.2025;6;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;FX;28.05.2024;28.05.2024;1;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;FX;26.02.2025;26.02.2025;1;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;FX;04.04.2025;07.04.2025;4;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;FX;09.05.2025;13.05.2025;5;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;UPM;28.05.2024;28.05.2024;1;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;UPM;04.04.2025;04.04.2025;1;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;UPM;16.04.2025;16.04.2025;1;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;UPM;28.04.2025;28.04.2025;1;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;UPM;09.05.2025;13.05.2025;5;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;VPM;28.05.2024;28.05.2024;1;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;VPM;04.04.2025;04.04.2025;1;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;VPM;16.04.2025;16.04.2025;1;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;VPM;28.04.2025;28.04.2025;1;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;VPM;09.05.2025;13.05.2025;5;;eor;                                                                                                                                              
+1975;Hamburg-Fuhlsbüttel;NM;28.05.2024;28.05.2024;1;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;NM;04.04.2025;04.04.2025;1;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;NM;16.04.2025;16.04.2025;1;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;NM;28.04.2025;28.04.2025;1;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;NM;09.05.2025;14.05.2025;6;;eor;                                                                                                                                               
+1975;Hamburg-Fuhlsbüttel;SHK_TAG;29.11.2023;04.12.2023;6;;eor;                                                                                                                                          
+generiert: 29.05.2025 --  Deutscher Wetterdienst  --                                                                                                                                                    

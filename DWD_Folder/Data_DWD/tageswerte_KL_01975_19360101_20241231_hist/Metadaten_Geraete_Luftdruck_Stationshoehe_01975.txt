@@ -1,0 +1,11 @@
+Stations_ID;Stationsname;Geo. Laenge [Grad];Geo. Breite [Grad];Stationshoehe [m];Barometerhoehe ueber NN [m];Von_Datum;Bis_Datum;Geraetetyp Name;Messverfahren;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.63;12;16.33;19360101;19461031;Stationsbarometer;Luftdruckmessung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.64;11.7;16.37;19461101;19680711;Stationsbarometer;Luftdruckmessung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.64;13;16.35;19680712;19950904;Stationsbarometer;Luftdruckmessung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;11;15.11;19950905;19950930;Stationsbarometer;Luftdruckmessung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;11;15.11;19951001;20080531;Digitalbarometer AIR-DB;Luftdruckmessung, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;15.11;20080601;20100827;Digitalbarometer AIR-DB;Luftdruckmessung, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;15.11;20100828;20140903;Luftdrucksensor Vaisala PTB 220;Luftdruckmessung, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;15.11;20140904;20230515;Digitalbarometer PTB 330 (mit Anzeige, dreifach);Luftdruckmessung, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;15.11;20230516;20250506;Digitalbarometer PTB 330 (ohne Anzeige, einfach);Luftdruckmessung, elektr.;eor;
+generiert: 15.05.2025 --  Deutscher Wetterdienst  --

@@ -1,0 +1,12 @@
+Stations_ID;Stationsname;Geo. Laenge [Grad];Geo. Breite [Grad];Stationshoehe [m];Geberhoehe ueber Grund [m];Von_Datum;Bis_Datum;Geraetetyp Name;Messverfahren;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.63;12;16;19380901;19461031;Sonnenscheinschreiber nach Campbell-Stokes;Sonnenscheinregistrierung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.64;11.7;8.2;19461101;19680710;Sonnenscheinschreiber nach Campbell-Stokes;Sonnenscheinregistrierung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.64;11.7;3.4;19680711;19680711;Sonnenscheinschreiber nach Campbell-Stokes;Sonnenscheinregistrierung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.64;13;3.4;19680712;19950904;Sonnenscheinschreiber nach Campbell-Stokes;Sonnenscheinregistrierung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;11;3.4;19950905;19950930;Sonnenscheinschreiber nach Campbell-Stokes;Sonnenscheinregistrierung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;11;2;19951001;20080531;SONIe Sonnenenergie-Sensor;Sonnenscheindauer, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;2;20080601;20170525;SONIe Sonnenenergie-Sensor;Sonnenscheindauer, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;2;20170526;20190603;SONIe Sonnenenergie-Sensor e3;Sonnenscheindauer, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;2;20190604;20210331;SONIe Sonnenenergie-Sensor e2;Sonnenscheindauer, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;;20210401;20250506;Pyranometer CMP22 (+Sonne);Sonnenscheind/Strahlungs-/Sonnenscheinmessung, elektr.;eor;
+generiert: 15.05.2025 --  Deutscher Wetterdienst  --

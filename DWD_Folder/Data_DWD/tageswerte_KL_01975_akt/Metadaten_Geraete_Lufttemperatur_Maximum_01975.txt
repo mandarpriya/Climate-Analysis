@@ -1,0 +1,8 @@
+Stations_ID;Stationsname;Geo. Laenge [Grad];Geo. Breite [Grad];Stationshoehe [m];Geberhoehe ueber Grund [m];Von_Datum;Bis_Datum;Geraetetyp Name;Messverfahren;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.63;12;2.2;19360101;19461031;Maximumthermometer;Temperaturmessung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.64;11.7;2.2;19461101;19680711;Maximumthermometer;Temperaturmessung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;10;53.64;13;2.2;19680712;19950904;Maximumthermometer;Temperaturmessung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;11;2.2;19950905;19950930;Maximumthermometer;Temperaturmessung, konv.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;11;2;19951001;20080531;PT 100 (Luft);Temperaturmessung, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;2;20080601;20250528;PT 100 (Luft);Temperaturmessung, elektr.;eor;
+generiert: 29.05.2025 --  Deutscher Wetterdienst  --

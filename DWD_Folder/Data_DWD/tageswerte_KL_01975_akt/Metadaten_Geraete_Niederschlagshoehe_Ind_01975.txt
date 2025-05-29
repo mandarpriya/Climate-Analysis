@@ -1,0 +1,5 @@
+Stations_ID;Stationsname;Geo. Laenge [Grad];Geo. Breite [Grad];Stationshoehe [m];Geberhoehe ueber Grund [m];Von_Datum;Bis_Datum;Geraetetyp Name;Messverfahren;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;11;1;19951001;20080531;Niederschlags-Detektor;Niederschlagsdauer, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;1;20080601;20080615;Niederschlags-Detektor;Niederschlagsdauer, elektr.;eor;
+1975;Hamburg-Fuhlsbüttel;9.99;53.63;10.65;1;20080616;20250528;Niederschlagswächter;Niederschlagsdauer, elektr.;eor;
+generiert: 29.05.2025 --  Deutscher Wetterdienst  --
