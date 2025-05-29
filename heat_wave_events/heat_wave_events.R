@@ -8,7 +8,7 @@ library(ggrepel)  # For repelling labels
 
 
 
-identify_heatwaves <- function(dates, tmax, threshold, min_duration = 3) {
+identify_heatwaves <- function(date, tmax, threshold, min_duration = 3) {
   # Ensure inputs are valid
   stopifnot(length(dates) == length(tmax))
   stopifnot(is.numeric(tmax))

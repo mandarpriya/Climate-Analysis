@@ -8,7 +8,7 @@ library(ggrepel)  # For repelling labels
 
 
 
-identify_heatwaves <- function(dates, tmax, threshold, min_duration = 3) {
+identify_heatwaves <- function(date, tmax, threshold, min_duration = 3) {
   # Ensure inputs are valid
   stopifnot(length(dates) == length(tmax))
   stopifnot(is.numeric(tmax))
@@ -118,7 +118,7 @@ heatwave_events_tbl <- identify_heatwaves(
   min_duration = 3
 )
 
-heatwave_count_per_year <- heatwaves_events %>%
+heatwave_count_per_year <- heatwave_events_tbl %>%
   group_by(year) %>%
   summarise(num_events = n())
 
@@ -224,7 +224,7 @@ p <- ggplot(heatwaves_events, aes(x = year, y = intensity)) +
   
   # Labels
   labs(
-    title = "Heatwave Events in Hamburg Fuhlsbüttel (1936–2024)",
+    title = "Heatwave Events in Hamburg Fuhlsbüttel (1936–2025)",
     subtitle = paste0("Based on threshold of 28°C for minimum 3 consecutive days\n",
                       percent_recent, "% of all events occurred since 1990"),
     x = "",
@@ -252,4 +252,4 @@ p
 
 
 
-ggsave("heatwaves_germany_1936_2024.png", plot = p, width = 10, height = 6, dpi = 600, bg = "white")
+ggsave("/Users/mandarphatak/Climate-Analysis/heat_wave_event_plot/heatwaves_hamburg_fuhlsbüttel_1936_2025.png", plot = p, width = 14, height = 10, dpi = 300, bg = "white")
