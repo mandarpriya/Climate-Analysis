@@ -1,5 +1,5 @@
 ---
-title: "Average_Temperature_Hamburg_Fuhlsbüttel"
+title: "Hamburg_Fuhlsbüttel"
 author: "Mandar"
 date: "2024-09-26"
 output: 
@@ -47,25 +47,39 @@ library(ggtext)
 
 ```
 
-
+## Reading the data from the folder
 
 ```{r}
-observational_data <- observational_data <- read.delim("/Users/mandarphatak/Downloads/Tina_Thesis/SPI_RDI_Data/Obseravtaionalfordroughtanalysis.txt", sep = ";") 
-observational_data |> head()
+
+observational_data_1936_2024 <- read.delim("/Users/mandarphatak/Climate-Analysis/DWD_Folder/Data_DWD/tageswerte_KL_01975_19360101_20241231_hist/produkt_klima_tag_19360101_20241231_01975.txt", sep = ";") |> 
+  mutate(MESS_DATUM = ymd(MESS_DATUM))
+
+
+
+## Updated Data 
+
+observational_data_updated <- read.delim("/Users/mandarphatak/Climate-Analysis/DWD_Folder/Data_DWD/tageswerte_KL_01975_akt/produkt_klima_tag_20231126_20250528_01975.txt", sep = ";") |> 
+  mutate(MESS_DATUM = ymd(MESS_DATUM)) |> 
+  filter(MESS_DATUM > "2024-12-31")
+
+#
+
+
+# ## Selecting the appropriate variables , and data cleaning 
+# observational_tbl <- observational_data |> 
+#   mutate(date = ymd(MESS_DATUM)) |> 
+#   rename(prec = RSK, vapour_press = VPM, mean_press = PM,
+#          rel_hum = UPM, Tavg = TMK, Tmax = TXK, Tmin = TNK) |> 
+#   mutate( prec = ifelse(prec == -999, NA, prec)) |> 
+#   select(date,prec,vapour_press,mean_press,rel_hum,Tavg,Tmax,Tmin)
+
+
+  
+
 ```
 ```{r}
-observational_tbl <- observational_data |> 
-  rename(date= MESS_DATUM) |> 
-  mutate(date=ymd(date)) |>
-  dplyr::select(date,RSK,TMK,TNK,TXK,TGK)
-observational_tbl <- observational_tbl |> 
-    mutate(RSK = ifelse(RSK == -999, NA, RSK)) 
-    
 
-observation_tbl <- observational_tbl |> 
-  rename(PREC = RSK)
-```
-```{r}
+ 
 observation_annual_tbl <- observation_tbl %>%
         mutate(year = year(date)) %>%
         group_by(year) %>%
