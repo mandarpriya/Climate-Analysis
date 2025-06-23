@@ -1,0 +1,1054 @@
+---
+title: "Temperature_Analysis"
+author: "Mandar"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
+                      message = FALSE,echo = TRUE, dpi = 300, 
+                      fig.width = 15, fig.height = 10)
+```
+```{r}
+rm(list = ls())
+```
+
+
+# Reading the data from the directory
+```{r}
+data <- readRDS(file = "/Users/mandarphatak/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
+data <- data |> filter(date < "2025-01-01")
+data 
+```
+```{r}
+library(tidyverse)
+library(SPEI)
+library(drought)
+library(extRemes)
+library(heatwaveR)
+```
+
+# data tranformation :- We select the te
+```{r echo=FALSE}
+# selection of temperature data :- Tavg:Tmin
+data_tbl <- data |> 
+  dplyr::select(date,Tavg:Tmin,rel_hum,prec) 
+```
+
+
+```{r echo=FALSE}
+# conversion to monthly data
+monthly_tbl <-data_tbl |> 
+  mutate(year = year(date),
+         month = month(date) ) |> 
+  group_by(year, month) |> 
+  summarize(
+    Tavg = mean(Tavg, na.rm =TRUE),
+    Tmax = mean(Tmax, na.rm =TRUE),
+    Tmin = mean(Tmin, na.rm =TRUE),
+    prec = sum(prec,na.rm =  TRUE),
+    rel_hum = mean(rel_hum, na.rm = TRUE),
+    
+    .groups = "drop"
+    
+  ) |> drop_na()
+
+# # conversion to annual data
+annual_tbl <- monthly_tbl |> 
+  group_by(year) |> 
+  summarize(
+     Tavg = mean(Tavg, na.rm =TRUE),
+    Tmax = mean(Tmax, na.rm =TRUE),
+    Tmin = mean(Tmin, na.rm =TRUE),
+    prec = sum(prec,na.rm =  TRUE),
+    rel_hum = mean(rel_hum, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+annual_tbl |> dplyr:: select(-year) |> summary()
+```
+### Focusing on  Temperature data
+
+
+## Data Over View :- We perform the following data manipulation for desired data overview 
+
+```{r echo=FALSE}
+annual_temperature_tbl_long <- annual_tbl |> 
+  pivot_longer(
+    cols = c(Tavg,Tmax,Tmin),
+    names_to = "Temperature_Type",
+    values_to = "Temperature"
+  ) |> 
+  filter(year < 2025)
+```
+
+
+
+
+```{r fig.width=15,fig.height=10}
+annual_temperature_tbl_long$Temperature_Type <- factor(
+  annual_temperature_tbl_long$Temperature_Type,
+  levels = c("Tmax", "Tavg", "Tmin"))
+
+
+trends_tbl <- annual_temperature_tbl_long %>%
+  group_by(Temperature_Type) %>%
+  summarize(trend = coef(lm(Temperature ~ year))[2]) %>%
+  ungroup()
+
+
+trends_tbl <- trends_tbl %>%
+  mutate(
+    label = case_when(
+      Temperature_Type == "Tmax" ~ paste0("Maximum Temperature (Trend: +", round(trend, 4), "°C/year)"),
+      Temperature_Type == "Tavg" ~ paste0("Average Temperature (Trend: +", round(trend, 4), "°C/year)"),
+      Temperature_Type == "Tmin" ~ paste0("Minimum Temperature (Trend: +", round(trend, 4), "°C/year)")
+    ),
+    color = case_when(
+      Temperature_Type == "Tmax" ~ "#ff1744",
+      Temperature_Type == "Tavg" ~ "#fc8d59",
+      Temperature_Type == "Tmin" ~ "#4575b4"
+    ),
+    y = case_when(  # adjust based on your plot’s Y-axis ranges
+      Temperature_Type == "Tmax" ~ 15,
+      Temperature_Type == "Tavg" ~ 10.55,
+      Temperature_Type == "Tmin" ~ 6.5
+    ),
+    x = 1938  # horizontal position of the labels
+  )
+
+```
+
+### Overview of Temperature Variation 1936-2024
+```{r fig.width=15,fig.height=10}
+ggplot(annual_temperature_tbl_long, aes(x = year, y = Temperature, colour = Temperature_Type)) + 
+  geom_line(linewidth = 1) +
+  geom_point(aes(fill = Temperature_Type), shape = 21, size = 4, stroke = 1, colour = "white") +
+  # Add separate trend lines for each temperature type
+  geom_smooth(aes(group = Temperature_Type), method = "lm", se = FALSE, linewidth = 1, 
+              show.legend = FALSE, color = "black") +
+  geom_text(
+    data = trends_tbl,
+    aes(x = x, y = y, label = label, color = Temperature_Type),
+    fontface = "bold", hjust = 0, size = 7, show.legend = FALSE
+  ) +
+  
+  # Fixed color scales with intuitive temperature colors
+  scale_color_manual(
+    values = c("Tmax" = "#ff1744",    # Hot red for maximum
+               "Tavg" = "#fc8d59",    # Orange for average  
+               "Tmin" = "#4575b4"),   # Cool blue for minimum
+    labels = c("Tmax" = "Maximum Temperature",
+               "Tavg" = "Average Temperature", 
+               "Tmin" = "Minimum Temperature"),
+    name = "Temperature Type"
+  ) +
+  scale_fill_manual(
+    values = c("Tmax" = "#ff1744",    # Same colors for consistency
+               "Tavg" = "#fc8d59",    
+               "Tmin" = "#4575b4"),
+    guide = "none"  # Hide fill legend since color legend shows the same info
+  ) +
+  
+  scale_x_continuous(breaks = c(seq(1936, 2024, 10), 2024), 
+                     expand = c(0.02, 0.02), 
+                     limits = c(1936, 2024)) +
+  scale_y_continuous(
+    limits = c(1, 16),
+    breaks = seq(1, 16, by = 2),
+    labels = function(x) paste0(format(x, nsmall = 0), "°C"),
+    expand = c(0, 0)
+  ) +
+  
+  labs(
+    title = "Temperature Variation (1936-2025)",
+    subtitle = "Hamburg Fuhlsbüttel",
+    x = "",
+    y = "Temperature (°C)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title.position = "plot",
+    plot.title = element_text(hjust = 0, face = "bold", colour = "black", size = 30, margin = margin(b = 20)),
+    plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black", size = 30, margin = margin(b = 10)),
+    axis.line = element_line(color = "black", linewidth = 1),
+    axis.title = element_text(face = "bold", color = "black", size = 22),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(linewidth = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black", size = 20),
+    axis.text.y = element_text(face = "bold", color = "black", size = 20),
+    legend.text = element_text(size = 18, face = "bold"),
+    legend.title = element_text(size = 18, face = "bold"),
+    legend.position = "bottom",  # Better positioning for temperature legend
+    panel.background = element_blank(),
+    plot.background = element_blank()
+  ) +
+   guides(color = "none", fill = "none")
+  
+```
+### Decadal Changes in Temperature 
+
+```{r}
+
+ annual_temperature_tbl_long <- annual_temperature_tbl_long |>
+  mutate(decade_group = case_when(
+    year >= 1936 & year <= 1939 ~ "1936–1939",
+    year >= 1940 & year <= 1949 ~ "1940–1949",
+    year >= 1950 & year <= 1959 ~ "1950–1959",
+    year >= 1960 & year <= 1969 ~ "1960–1969",
+    year >= 1970 & year <= 1979 ~ "1970–1979",
+    year >= 1980 & year <= 1989 ~ "1980–1989",
+    year >= 1990 & year <= 1999 ~ "1990–1999",
+    year >= 2000 & year <= 2009 ~ "2000–2009",
+    year >= 2010 & year <= 2019 ~ "2010–2019",
+    year >= 2020 & year <= 2024 ~ "2020–2024",
+    TRUE ~ NA_character_
+  ))
+
+  decadal_summary_tbl <- annual_temperature_tbl_long %>%
+  group_by(decade_group, Temperature_Type) %>%
+  summarise(decadal_mean = mean(Temperature, na.rm = TRUE), .groups = "drop")
+  
+library(ggplot2)
+
+ggplot(decadal_summary_tbl, aes(x = decade_group, y = decadal_mean, fill = Temperature_Type)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  scale_fill_manual(
+    values = c("Tmax" = "#ff1744", "Tavg" = "#fc8d59", "Tmin" = "#4575b4"),
+    name = "Temperature Type",
+    labels = c("Tmax" = "Maximum", "Tavg" = "Average", "Tmin" = "Minimum")
+  ) +
+  labs(
+    title = "Decadal Mean Temperature (1936–2024)",
+    subtitle = "Hamburg Fuhlsbüttel",
+    x = "Decade",
+    y = "Mean Temperature (°C)"
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    plot.title = element_text(face = "bold", size = 24),
+    plot.subtitle = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold"),
+    axis.text.y = element_text(face = "bold"),
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(face = "bold")
+  )
+
+```
+```{r}
+decadal_diff_tbl <- decadal_summary_tbl %>%
+  arrange(Temperature_Type, decade_group) %>%
+  group_by(Temperature_Type) %>%
+  mutate(
+    change_from_prev = decadal_mean - lag(decadal_mean),
+    percent_change = 100 * change_from_prev / lag(decadal_mean)
+  ) %>%
+  ungroup()
+
+ggplot(decadal_summary_tbl, aes(x = decade_group, y = decadal_mean, group = Temperature_Type, color = Temperature_Type)) +
+  geom_line(linewidth = 1.5) +
+  geom_point(size = 4) +
+  scale_color_manual(
+    values = c("Tmax" = "#ff1744", "Tavg" = "#fc8d59", "Tmin" = "#4575b4"),
+    name = "Temperature Type",
+    labels = c("Tmax" = "Maximum", "Tavg" = "Average", "Tmin" = "Minimum")
+  ) +
+  labs(
+    title = "Decadal Temperature Trends (1936–2024)",
+    subtitle = "Hamburg Fuhlsbüttel",
+    x = "",
+    y = "Mean Temperature (°C)"
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    plot.title = element_text(face = "bold", size = 24),
+    plot.subtitle = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold"),
+    axis.text.y = element_text(face = "bold"),
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(face = "bold")
+  )
+
+```
+## Decadal changes in Temperature 
+```{r}
+decadal_diff_tbl <- decadal_summary_tbl %>%
+  arrange(Temperature_Type, decade_group) %>%
+  group_by(Temperature_Type) %>%
+  mutate(decadal_diff = decadal_mean - lag(decadal_mean)) %>%
+  filter(!is.na(decadal_diff)) %>%
+  ungroup()
+
+ggplot(decadal_diff_tbl, aes(x = decade_group, y = decadal_diff, fill = Temperature_Type)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  geom_label(aes(label = round(decadal_diff, 2)),
+           position = position_dodge(width = 0.7),
+           size = 4.5, fontface = "bold",
+           show.legend = FALSE) +
+  # geom_text(aes(label = round(decadal_diff, 2)), 
+  #           position = position_dodge(width = 0.7), 
+  #           vjust = ifelse(decadal_diff_tbl$decadal_diff >= 0, -0.3, 1.3), 
+  #           size = 5, fontface = "bold") +
+  scale_fill_manual(
+    values = c("Tmax" = "#ff1744", "Tavg" = "#fc8d59", "Tmin" = "#4575b4"),
+    name = "Temperature Type",
+    labels = c("Tmax" = "Maximum", "Tavg" = "Average", "Tmin" = "Minimum")
+  ) +
+  labs(
+  title = "Decadal Changes in Temperature at Hamburg-Fuhlsbüttel",
+  subtitle = "Average, Minimum, and Maximum Temperatures – Change from Previous Decade (°C)"
+) +
+
+  theme_minimal(base_size = 16) +
+  theme(
+    plot.title = element_text(face = "bold", size = 24),
+    plot.subtitle = element_text(size = 20),
+    axis.text.x = element_text(angle = 30, hjust = 1),
+    axis.text.y = element_text(face = "bold"),
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(face = "bold")
+  )
+```
+#### Extreme Events :- We visualize the intensity and duration of heat events from 1936-2024.
+```{r}
+library(ggplot2)
+library(dplyr)
+library(scales)
+library(ggrepel)  # For repelling labels
+
+
+
+
+
+
+identify_heatwaves <- function(date, tmax, threshold, min_duration = 3) {
+  # Ensure inputs are valid
+  stopifnot(length(date) == length(tmax))
+  stopifnot(is.numeric(tmax))
+  stopifnot(inherits(date, "Date"))
+  
+  # Sort and prepare
+  data <- data.frame(date = date, tmax = tmax)
+  data <- data[order(data$date), ]
+  data$above_threshold <- data$tmax > threshold
+  
+  # Initialize output
+  heatwaves <- data.frame(
+    start_date = as.Date(character()),
+    end_date = as.Date(character()),
+    duration = integer(),
+    avg_intensity = numeric(),
+    total_intensity = numeric(),
+    max_intensity = numeric(),
+    mean_tmax = numeric(),
+    peak_tmax = numeric(),
+    stringsAsFactors = FALSE
+  )
+  
+  # Tracking flags
+  in_heatwave <- FALSE
+  heatwave_start <- NULL
+  heatwave_length <- 0
+  
+  # Loop through
+  for (i in seq_len(nrow(data))) {
+    if (data$above_threshold[i]) {
+      if (!in_heatwave) {
+        in_heatwave <- TRUE
+        heatwave_start <- data$date[i]
+        heatwave_length <- 1
+      } else {
+        heatwave_length <- heatwave_length + 1
+      }
+    } else {
+      if (in_heatwave && heatwave_length >= min_duration) {
+        end_date <- data$date[i - 1]
+        heatwave_days <- which(data$date >= heatwave_start & data$date <= end_date)
+        exceedance <- data$tmax[heatwave_days] - threshold
+        
+        heatwaves <- rbind(heatwaves, data.frame(
+          start_date = heatwave_start,
+          end_date = end_date,
+          duration = heatwave_length,
+          avg_intensity = mean(exceedance),
+          total_intensity = sum(exceedance),
+          max_intensity = max(exceedance),
+          mean_tmax = mean(data$tmax[heatwave_days]),
+          peak_tmax = max(data$tmax[heatwave_days])
+        ))
+      }
+      in_heatwave <- FALSE
+      heatwave_length <- 0
+    }
+  }
+  
+  # Final check at end
+  if (in_heatwave && heatwave_length >= min_duration) {
+    end_date <- data$date[nrow(data)]
+    heatwave_days <- which(data$date >= heatwave_start & data$date <= end_date)
+    exceedance <- data$tmax[heatwave_days] - threshold
+    
+    heatwaves <- rbind(heatwaves, data.frame(
+      start_date = heatwave_start,
+      end_date = end_date,
+      duration = heatwave_length,
+      avg_intensity = mean(exceedance),
+      total_intensity = sum(exceedance),
+      max_intensity = max(exceedance),
+      mean_tmax = mean(data$tmax[heatwave_days]),
+      peak_tmax = max(data$tmax[heatwave_days])
+    ))
+  }
+  
+  # Add year column
+  if (nrow(heatwaves) > 0) {
+    heatwaves$year <- as.numeric(format(heatwaves$start_date, "%Y"))
+  }
+  
+  return(heatwaves)
+}
+
+```
+
+
+```{r}
+heatwave_events_tbl <- identify_heatwaves(
+  date = data$date,
+  tmax = data$Tmax,
+  threshold = 28,
+  min_duration = 3
+)
+```
+
+
+
+
+
+```{r}
+heatwave_count_per_year <- heatwave_events_tbl %>%
+  count(year, name = "num_events")
+```
+
+
+```{r}
+heatwave_summary_tbl <- heatwave_events_tbl %>%
+  group_by(year) %>%
+  summarise(
+    num_events = n(),
+    total_duration = sum(duration, na.rm = TRUE),
+    avg_duration = mean(duration, na.rm = TRUE),
+    mean_avg_intensity = mean(avg_intensity, na.rm = TRUE),
+    mean_max_intensity = mean(max_intensity, na.rm = TRUE),
+    total_intensity = sum(total_intensity, na.rm = TRUE),
+    max_peak_tmax = max(peak_tmax, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+
+```{r}
+# Convert date columns
+ heatwave_events_tbl$start_date <- as.Date(heatwave_events_tbl$start_date)
+heatwave_events_tbl$end_date <- as.Date(heatwave_events_tbl$end_date)
+
+heatwave_events_tbl$year <- as.numeric(heatwave_events_tbl$year)
+```
+
+
+```{r}
+# Custom color palette
+# Custom color palette
+custom_colors <- c("#f8f800", "#fdc70c", "#f3903f", "#ff4d00", "#e60000", "#5e0000")
+
+# Identify recent events since 1990 with avg_intensity > 5
+recent_events <- heatwave_events_tbl %>% 
+  filter(year > 1990, avg_intensity > 5) %>%
+  summarize(count = n()) %>%
+  pull(count)
+
+# Total events and percentage
+total_events <- nrow(heatwave_events_tbl)
+percent_recent <- round((recent_events / total_events) * 100)
+
+# 95th percentile extreme threshold (for avg_intensity)
+threshold_95 <- quantile(heatwave_events_tbl$avg_intensity, 0.95, na.rm = TRUE)
+
+# Get max intensity (avg_intensity) and longest duration
+max_intensity_value <- max(heatwave_events_tbl$avg_intensity, na.rm = TRUE)
+longest_duration_value <- max(heatwave_events_tbl$duration, na.rm = TRUE)
+
+# Label max avg_intensity event
+max_intensity_event <- heatwave_events_tbl %>%
+  filter(avg_intensity == max_intensity_value) %>%
+  mutate(label = paste0("Max intensity: ", round(avg_intensity, 1), "\n", format(start_date, "%b %d, %Y")))
+
+# Label longest duration event
+longest_duration_event <- heatwave_events_tbl %>%
+  filter(duration == longest_duration_value) %>%
+  mutate(label = paste0("Longest: ", duration, " days\n", format(start_date, "%b %Y")))
+
+# Filter extreme events based on avg_intensity, exclude max to avoid duplicate label
+extreme_events <- heatwave_events_tbl %>%
+  filter(avg_intensity > threshold_95, avg_intensity < max_intensity_value) %>%
+  mutate(label = paste0("Extreme: ", round(avg_intensity, 1), "\n", format(start_date, "%Y")))
+
+```
+
+
+```{r}
+p <- ggplot(heatwave_events_tbl, aes(x = as.numeric(year), y = avg_intensity)) +
+  
+  geom_point(aes(size = duration, color = avg_intensity), alpha = 0.85) +
+  
+  geom_vline(xintercept = 1990, linetype = "dashed", color = "blue", linewidth = 0.6) +
+  annotate("text", x = 1990, y = 6.2, label = "1990", 
+           color = "blue", fontface = "bold", size = 3) +
+  
+  geom_smooth(method = "loess", formula = y ~ x, se = FALSE,
+              color = "darkblue", linetype = "solid", linewidth = 0.8, alpha = 0.6) +
+  
+  geom_text(data = max_intensity_event, aes(label = label),
+            hjust = 1, vjust = 1.2, size = 3, fontface = "bold", color = "#5e0000") +
+  
+  geom_hline(yintercept = threshold_95, linetype = "dotted", color = "darkred") +
+  annotate("text", x = 1940, y = threshold_95, label = "95th Percentile", 
+           color = "darkred", size = 3) +
+  
+  # Annotate longest duration using repel to avoid overlap
+  ggrepel::geom_text_repel(data = longest_duration_event, aes(label = label),
+                           size = 3, fontface = "bold", color = "#5e0000",
+                           max.overlaps = 5, box.padding = 0.4, point.padding = 0.4,
+                           hjust = 1) +
+  
+  # Annotate extreme events
+  ggrepel::geom_text_repel(data = extreme_events, aes(label = label),
+                           size = 2.8, fontface = "italic", color = "black",
+                           max.overlaps = 10, box.padding = 0.4, point.padding = 0.3) +
+  
+  # Axis scales
+  scale_y_continuous(limits = c(0, 6.25), breaks = seq(0, 6.25, 0.5),
+                     expand = c(0, 0.05)) +
+  
+  scale_x_continuous(limits = c(1936, 2024),
+                     breaks = c(seq(1936, 2024, by = 10), 2024)) +
+  
+  scale_color_gradientn(colors = custom_colors,
+                        name = "Avg. Intensity",
+                        guide = guide_colorbar(barwidth = 1, barheight = 10,
+                                               title.position = "top", title.hjust = 0.5)) +
+  
+  scale_size_continuous(range = c(2, 10),
+                        name = "Duration (days)",
+                        breaks = c(3, 6, 9, 12),
+                        guide = guide_legend(title.position = "top",
+                                             title.hjust = 0.5,
+                                             override.aes = list(color = "darkblue"))) +
+  
+  # Labels
+  labs(
+    title = "Heatwave Events in Hamburg Fuhlsbüttel (1936–2025)",
+    subtitle = paste0("Based on threshold of 28°C for minimum 3 consecutive days\n",
+                      percent_recent, "% of all events occurred since 1990"),
+    x = "",
+    y = "Avg. Intensity (°C above threshold)",
+    caption = "Source: Deutscher Wetterdienst (DWD)"
+  ) +
+  
+  # Theme
+  theme_minimal(base_size = 12) +
+  theme_minimal(base_size = 12) +
+theme(
+  plot.title.position = "plot",
+  plot.title = element_text(face = "bold", size = 18, margin = margin(b = 15)),
+  plot.subtitle = element_text(size = 15, color = "gray30", margin = margin(b = 15), face = "bold"),
+  axis.title.y = element_text(margin = margin(r = 10), face = "bold"),
+  axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray30", size = 12),
+  axis.text.y  = element_text(face = "bold", color = "gray30", size = 12),
+  legend.position = "right",  # ✅ Only once
+  legend.box = "vertical",
+  legend.margin = margin(l = 10),
+  legend.title = element_text(face = "bold"),
+  panel.grid.minor = element_blank(),
+  panel.grid.major.x = element_blank(),
+  panel.grid.major.y = element_line(color = "gray80", linetype = "dotted")
+)
+
+
+p
+
+```
+### Max Intensity
+```{r}
+# ===== MAX INTENSITY ANALYSIS =====
+recent_events_max <- heatwave_events_tbl %>%
+  filter(year > 1990, max_intensity > 5) %>%
+  summarize(count = n()) %>%
+  pull(count)
+
+percent_recent_max <- round((recent_events_max / total_events) * 100)
+
+threshold_95_max <- quantile(heatwave_events_tbl$max_intensity, 0.95, na.rm = TRUE)
+
+max_max_intensity <- max(heatwave_events_tbl$max_intensity, na.rm = TRUE)
+
+max_max_event <- heatwave_events_tbl %>%
+  filter(max_intensity == max_max_intensity) %>%
+  mutate(label = paste0("Max exceedance: ", round(max_intensity, 1), "\n", format(start_date, "%b %d, %Y")))
+
+extreme_events_max <- heatwave_events_tbl %>%
+  filter(max_intensity > threshold_95_max, max_intensity < max_max_intensity) %>%
+  mutate(label = paste0("Extreme: ", round(max_intensity, 1), "\n", format(start_date, "%Y")))
+
+```
+```{r}
+p_max <- ggplot(heatwave_events_tbl, aes(x = as.numeric(year), y = max_intensity)) +
+  
+  geom_point(aes(size = duration, color = max_intensity), alpha = 0.85) +
+  
+  geom_vline(xintercept = 1990, linetype = "dashed", color = "blue", linewidth = 0.6) +
+  annotate("text", x = 1990, y = 12, label = "1990", 
+           color = "blue", fontface = "bold", size = 3) +
+  
+  geom_smooth(method = "loess", formula = y ~ x, se = FALSE,
+              color = "darkblue", linetype = "solid", linewidth = 0.8, alpha = 0.6) +
+  
+  geom_text(data = max_max_event, aes(label = label),
+            hjust = 1, vjust = 1.2, size = 3, fontface = "bold", color = "#5e0000") +
+  
+  geom_hline(yintercept = threshold_95_max, linetype = "dotted", color = "darkred") +
+  annotate("text", x = 1940, y = threshold_95_max, label = "95th Percentile", 
+           color = "darkred", size = 3) +
+  
+  ggrepel::geom_text_repel(data = extreme_events_max, aes(label = label),
+                           size = 2.8, fontface = "italic", color = "black",
+                           max.overlaps = 10, box.padding = 0.4, point.padding = 0.3) +
+
+  scale_y_continuous(limits = c(0, 12), breaks = seq(0, 12, 0.5),
+                     expand = c(0, 0.05)) +
+  
+  scale_x_continuous(limits = c(1936, 2024),
+                     breaks = c(seq(1936, 2024, by = 10), 2024)) +
+  
+  scale_color_gradientn(colors = custom_colors,
+                        name = "Max Intensity",
+                        guide = guide_colorbar(barwidth = 1, barheight = 10,
+                                               title.position = "top", title.hjust = 0.5)) +
+  
+  scale_size_continuous(range = c(2, 10),
+                        name = "Duration (days)",
+                        breaks = c(3, 6, 9, 12),
+                        guide = guide_legend(title.position = "top",
+                                             title.hjust = 0.5,
+                                             override.aes = list(color = "darkblue"))) +
+  
+  labs(
+    title = "Max Daily Exceedance in Heatwave Events (1936–2025)",
+    subtitle = paste0("Based on max daily exceedance above 28°C threshold\n",
+                      percent_recent_max, "% of all events occurred since 1990"),
+    x = "",
+    y = "Max Intensity (°C above threshold)",
+    caption = "Source: Deutscher Wetterdienst (DWD)"
+  ) +
+  
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title.position = "plot",
+    plot.title = element_text(face = "bold", size = 18, margin = margin(b = 15)),
+    plot.subtitle = element_text(size = 15, color = "gray30", margin = margin(b = 15), face = "bold"),
+    axis.title.y = element_text(margin = margin(r = 10), face = "bold"),
+    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray30", size = 12),
+    axis.text.y  = element_text(face = "bold", color = "gray30", size = 12),
+    legend.position = "right",
+    legend.box = "vertical",
+    legend.margin = margin(l = 10),
+    legend.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(color = "gray80", linetype = "dotted")
+  )
+
+p_max
+
+```
+
+
+```{r}
+heatwave_events_tbl[heatwave_events_tbl$max_intensity > 5,]
+
+```
+
+##### heatwavR #### library
+```{r}
+library(dplyr)
+library(lubridate)
+library(extRemes)
+
+data <- data %>% filter(!is.na(Tmax))  # Clean NA
+
+start_year <- 1936
+end_year <- 2024
+window_length <- 32
+```
+
+
+```{r}
+results <- list()
+
+for (year_to_analyze in (start_year + window_length):end_year) {
+  
+  # Define reference period: 32 years before the year_to_analyze
+  ref_start <- year_to_analyze - window_length
+  ref_end <- year_to_analyze - 1
+  
+  # Extract reference Tmax
+  Tref <- data %>%
+    filter(year(date) >= ref_start, year(date) <= ref_end) %>%
+    pull(Tmax)
+  
+  # Extract analysis year Tmax
+  Temp <- data %>%
+    filter(year(date) == year_to_analyze) %>%
+    pull(Tmax)
+  
+  # Skip if data missing or incomplete
+  if(length(Tref) < 365 * window_length || length(Temp) < 365){
+    results[[as.character(year_to_analyze)]] <- NA
+    next
+  }
+  
+  # Run hwmid
+  results[[as.character(year_to_analyze)]] <- hwmid(
+    yTref = ref_start,
+    Tref = Tref,
+    yTemp = year_to_analyze,
+    Temp = Temp
+  )
+  
+  cat("Processed year:", year_to_analyze, "\n")
+}
+
+```
+```{r}
+results
+
+```
+```{r}
+data <- data |> mutate(year = year(date), month = month(date))
+```
+
+```{r}
+ #Define reference period (must be exactly 32 years)
+ref_start_year <- 1958
+ref_end_year <- 1989  # 1981 + 32 - 1 = 2012
+
+# Filter data for 32-year reference period
+ref_data <- data[data$year >= ref_start_year & data$year <= ref_end_year, ]
+Tref <- ref_data$Tmax
+
+# Define detection period 
+detect_start_year <- 1990  # or whatever year you want to start detection
+
+# Filter data for detection period
+detect_data <- data[data$year >= detect_start_year, ]
+Temp <- detect_data$Tmax
+
+# Run hwmid with single year values (not vectors)
+heatwaves <- hwmid(yTref = ref_start_year,    # Single value: 1981
+                   Tref = Tref,               # 32 years of daily Tmax
+                   yTemp = detect_start_year, # Single value: 1936  
+                   Temp = Temp)               # All years for detection
+#The key fix: yTref and yTemp should be single year values, not vectors of years. Try this corrected approach!
+```
+
+```{r}
+# Install required packages (uncomment if needed)
+# install.packages(c("plotly", "dplyr", "ggplot2", "htmlwidgets", "DT"))
+
+# Load libraries
+library(plotly)
+library(dplyr)
+library(ggplot2)
+library(htmlwidgets)
+library(DT)
+
+# ============================================================================
+# DATA PREPARATION
+# ============================================================================
+
+# Your heatwave data (from hwmid analysis)
+magnitude <- c(0.0000000, 0.2654867, 1.3451327, 0.0000000, 7.4513274, 1.9292035, 
+               2.0353982, 1.7699115, 0.0000000, 1.3274336, 4.3008850, 0.5132743,
+               0.9911504, 6.3362832, 0.5309735, 1.3274336, 3.5752212, 1.2566372,
+               2.4424779, 0.4424779, 5.2212389, 0.0000000, 1.6460177, 1.1327434,
+               1.2389381, 3.3628319, 0.9557522, 0.0000000, 11.2389381, 4.0176991,
+               8.3008850, 3.3805310, 4.9557522, 0.4247788, 0.7964602)
+
+days <- c(0, 3, 4, 0, 8, 7, 3, 5, 0, 7, 4, 4, 5, 13, 7, 3, 4, 3, 5, 3, 5, 0, 
+          3, 4, 3, 5, 3, 0, 12, 6, 13, 5, 3, 7, 3)
+
+peak_day <- c(0, 187, 179, 0, 202, 229, 158, 236, 0, 211, 170, 235, 209, 212, 
+              217, 146, 198, 195, 207, 182, 189, 0, 231, 202, 199, 182, 237, 0, 
+              205, 204, 218, 167, 199, 248, 177)
+
+# Create main dataset
+years <- 1990:2024
+heatwave_data <- data.frame(
+  year = years,
+  magnitude = magnitude,
+  days = days,
+  peak_day = ifelse(peak_day == 0, NA, peak_day),
+  has_heatwave = magnitude > 0,
+  decade = paste0(floor((years - 1990) / 10) * 10 + 1990, "s")
+)
+
+# ============================================================================
+# SUMMARY STATISTICS
+# ============================================================================
+
+# Calculate key statistics
+stats <- list(
+  total_years = nrow(heatwave_data),
+  years_with_heatwaves = sum(heatwave_data$has_heatwave),
+  frequency_pct = round(sum(heatwave_data$has_heatwave) / nrow(heatwave_data) * 100, 1),
+  max_magnitude = max(heatwave_data$magnitude),
+  max_magnitude_year = heatwave_data$year[which.max(heatwave_data$magnitude)],
+  max_days = max(heatwave_data$days),
+  avg_magnitude = round(mean(heatwave_data$magnitude[heatwave_data$magnitude > 0]), 2),
+  avg_days = round(mean(heatwave_data$days[heatwave_data$days > 0]), 1)
+)
+
+# Print summary
+cat("=== HEATWAVE ANALYSIS SUMMARY (1990-2024) ===\n")
+cat("Reference Period: 1958-1989\n")
+cat("Detection Period: 1990-2024\n\n")
+cat("Years with heatwaves:", stats$years_with_heatwaves, "/", stats$total_years, 
+    "(", stats$frequency_pct, "%)\n")
+cat("Maximum magnitude:", stats$max_magnitude, "in", stats$max_magnitude_year, "\n")
+cat("Maximum days:", stats$max_days, "\n")
+cat("Average magnitude (non-zero years):", stats$avg_magnitude, "\n")
+cat("Average days (non-zero years):", stats$avg_days, "\n\n")
+
+# ============================================================================
+# VISUALIZATION 1: MAGNITUDE TIME SERIES
+# ============================================================================
+
+p1 <- heatwave_data %>%
+  plot_ly(x = ~year, y = ~magnitude, type = 'scatter', mode = 'lines+markers',
+          line = list(color = '#dc2626', width = 2),
+          marker = list(color = '#dc2626', size = 6),
+          hovertemplate = '<b>Year:</b> %{x}<br><b>Magnitude:</b> %{y:.2f}<extra></extra>') %>%
+  add_trace(y = rep(stats$avg_magnitude, length(years)), 
+            type = 'scatter', mode = 'lines',
+            line = list(color = '#fbbf24', width = 2, dash = 'dash'),
+            name = paste('Average (', stats$avg_magnitude, ')'),
+            hovertemplate = '<b>Average Magnitude:</b> %{y:.2f}<extra></extra>') %>%
+  layout(title = list(text = '<b>Heatwave Magnitude Index Over Time</b>', 
+                      font = list(size = 16)),
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Magnitude Index'),
+         showlegend = TRUE,
+         hovermode = 'x unified')
+
+# Display plot
+p1
+
+# ============================================================================
+# VISUALIZATION 2: HEATWAVE DAYS BAR CHART
+# ============================================================================
+
+p2 <- heatwave_data %>%
+  plot_ly(x = ~year, y = ~days, type = 'bar',
+          marker = list(color = ~ifelse(days > 10, '#dc2626', '#ef4444')),
+          hovertemplate = '<b>Year:</b> %{x}<br><b>Days:</b> %{y}<extra></extra>') %>%
+  layout(title = list(text = '<b>Number of Heatwave Days per Year</b>', 
+                      font = list(size = 16)),
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Days'),
+         showlegend = FALSE)
+
+# Display plot
+p2
+
+# ============================================================================
+# VISUALIZATION 3: MAGNITUDE vs DAYS SCATTER
+# ============================================================================
+
+p3 <- heatwave_data %>%
+  filter(has_heatwave) %>%
+  plot_ly(x = ~magnitude, y = ~days, type = 'scatter', mode = 'markers',
+          marker = list(size = 10, color = '#dc2626', opacity = 0.7),
+          text = ~paste("Year:", year),
+          hovertemplate = '<b>Year:</b> %{text}<br><b>Magnitude:</b> %{x:.2f}<br><b>Days:</b> %{y}<extra></extra>') %>%
+  layout(title = list(text = '<b>Heatwave Magnitude vs Duration</b>', 
+                      font = list(size = 16)),
+         xaxis = list(title = 'Magnitude Index'),
+         yaxis = list(title = 'Number of Days'))
+
+# Display plot
+p3
+
+# ============================================================================
+# VISUALIZATION 4: DECADE COMPARISON
+# ============================================================================
+
+# Calculate decade statistics
+decade_stats <- heatwave_data %>%
+  mutate(decade = case_when(
+    year >= 1990 & year < 2000 ~ "1990s",
+    year >= 2000 & year < 2010 ~ "2000s", 
+    year >= 2010 & year < 2020 ~ "2010s",
+    year >= 2020 ~ "2020s"
+  )) %>%
+  group_by(decade) %>%
+  summarise(
+    frequency = round(sum(has_heatwave) / n() * 100, 1),
+    avg_magnitude = round(mean(magnitude[magnitude > 0]), 2),
+    total_days = sum(days),
+    max_magnitude = max(magnitude),
+    .groups = 'drop'
+  )
+
+# Create decade comparison plot
+p4 <- decade_stats %>%
+  plot_ly() %>%
+  add_trace(x = ~decade, y = ~frequency, type = 'bar', name = 'Frequency (%)',
+            marker = list(color = '#dc2626'),
+            yaxis = 'y', offsetgroup = 1) %>%
+  add_trace(x = ~decade, y = ~avg_magnitude, type = 'bar', name = 'Avg Magnitude',
+            marker = list(color = '#fbbf24'),
+            yaxis = 'y2', offsetgroup = 2) %>%
+  layout(title = list(text = '<b>Decade Comparison</b>', font = list(size = 16)),
+         xaxis = list(title = 'Decade'),
+         yaxis = list(side = 'left', title = 'Frequency (%)', color = '#dc2626'),
+         yaxis2 = list(side = 'right', overlaying = 'y', title = 'Average Magnitude', color = '#fbbf24'),
+         barmode = 'group')
+
+# Display plot  
+p4
+
+# ============================================================================
+# VISUALIZATION 5: SEASONAL TIMING (Peak Day Analysis)
+# ============================================================================
+
+# Convert peak day to month
+heatwave_data$peak_month <- ifelse(is.na(heatwave_data$peak_day), NA,
+                                   ceiling(heatwave_data$peak_day / 30.44))
+
+# Create month labels
+month_labels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+seasonal_data <- heatwave_data %>%
+  filter(!is.na(peak_month)) %>%
+  mutate(peak_month_label = month_labels[peak_month])
+
+p5 <- seasonal_data %>%
+  count(peak_month_label) %>%
+  plot_ly(x = ~peak_month_label, y = ~n, type = 'bar',
+          marker = list(color = '#dc2626'),
+          hovertemplate = '<b>Month:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>') %>%
+  layout(title = list(text = '<b>Peak Heatwave Timing by Month</b>', 
+                      font = list(size = 16)),
+         xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Number of Peak Events'))
+
+# Display plot
+p5
+
+# ============================================================================
+# TREND ANALYSIS
+# ============================================================================
+
+# Linear regression for trends
+magnitude_trend <- lm(magnitude ~ year, data = heatwave_data)
+days_trend <- lm(days ~ year, data = heatwave_data)
+
+cat("=== TREND ANALYSIS ===\n")
+cat("Magnitude trend: ", round(coef(magnitude_trend)[2], 4), " per year\n")
+cat("Days trend: ", round(coef(days_trend)[2], 4), " per year\n")
+cat("Magnitude R-squared: ", round(summary(magnitude_trend)$r.squared, 3), "\n")
+cat("Days R-squared: ", round(summary(days_trend)$r.squared, 3), "\n\n")
+
+# ============================================================================
+# DATA TABLE
+# ============================================================================
+
+# Create interactive data table
+heatwave_table <- heatwave_data %>%
+  select(year, magnitude, days, peak_day, has_heatwave) %>%
+  mutate(
+    magnitude = round(magnitude, 2),
+    peak_day = ifelse(is.na(peak_day), "-", as.character(peak_day)),
+    has_heatwave = ifelse(has_heatwave, "Yes", "No")
+  ) %>%
+  rename(
+    Year = year,
+    `Magnitude Index` = magnitude,
+    `Heatwave Days` = days,
+    `Peak Day` = peak_day,
+    `Has Heatwave` = has_heatwave
+  )
+
+# Display interactive table
+datatable(heatwave_table, 
+          options = list(pageLength = 15, scrollX = TRUE),
+          caption = "Complete Heatwave Dataset (1990-2024)")
+
+# ============================================================================
+# SAVE PLOTS
+# ============================================================================
+
+# Save individual plots as HTML files
+htmlwidgets::saveWidget(p1, "heatwave_magnitude_timeseries.html")
+htmlwidgets::saveWidget(p2, "heatwave_days_barchart.html") 
+htmlwidgets::saveWidget(p3, "magnitude_vs_days_scatter.html")
+htmlwidgets::saveWidget(p4, "decade_comparison.html")
+htmlwidgets::saveWidget(p5, "seasonal_timing.html")
+
+cat("=== ANALYSIS COMPLETE ===\n")
+cat("Interactive plots saved as HTML files in your working directory\n")
+cat("Files created:\n")
+cat("- heatwave_magnitude_timeseries.html\n")
+cat("- heatwave_days_barchart.html\n") 
+cat("- magnitude_vs_days_scatter.html\n")
+cat("- decade_comparison.html\n")
+cat("- seasonal_timing.html\n")
+```
+
+#### heatwaveR library
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Add a column to detect_data marking heatwave days
+detect_data$heatwave <- FALSE
+
+# Mark heatwave days using start index and duration
+for (i in 1:nrow(heatwaves$hwmid)) {
+  duration <- heatwaves$hwmid[i, 2]  # duration (column 2)
+  start_idx <- heatwaves$hwmid[i, 3] # start index (column 3)
+  
+  if (duration > 0 && start_idx > 0) {
+    indices <- start_idx:(start_idx + duration - 1)
+    # Ensure indices stay within bounds
+    indices <- indices[indices <= nrow(detect_data)]
+    detect_data$heatwave[indices] <- TRUE
+  }
+}
+
+# Plot
+ggplot(detect_data, aes(x = date, y = Tmax)) +
+  geom_line(color = "black") +
+  geom_point(data = detect_data %>% filter(heatwave), 
+             aes(x = date, y = Tmax), 
+             color = "red", size = 0.5) +
+  labs(title = "Daily Tmax with Heatwaves Highlighted",
+       x = "Date", y = "Tmax (°C)") +
+  theme_minimal()
+
+```
+
+
+
