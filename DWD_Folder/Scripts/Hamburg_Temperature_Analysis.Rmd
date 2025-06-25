@@ -2,7 +2,9 @@
 title: "Temperature_Analysis"
 author: "Mandar"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 
@@ -22,8 +24,8 @@ knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
 
 ## Daily data
 data <- readRDS(file = "/Users/mandarphatak/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
-data <- data |> filter(date < "2025-01-01")
-data 
+data <- data |> dplyr::filter(date < "2025-01-01")
+
 ```
 ```{r}
 library(tidyverse)
@@ -572,6 +574,8 @@ theme(
 
 
 p
+ggsave("/Users/mandarphatak/Climate-Analysis/heat_wave_event_plot/HamburgFuhlsbüttel_Heatwave_Events.png", plot = p, width = 15, height = 10, dpi = 360, bg = "white")
+
 ```
 ### Extreme Heatwave using Maximum Intensity 
 ```{r}
@@ -665,6 +669,9 @@ p_max <- ggplot(heatwave_events_tbl, aes(x = as.numeric(year), y = max_intensity
 
 p_max
 
+ggsave("/Users/mandarphatak/Climate-Analysis/heat_wave_event_plot/Max_Daily_Exceedance_HamburgFuhlsbüttel_Heatwave_Events.png", plot = p_max, width = 15, height = 10, dpi = 360, bg = "white")
+
+
 ```
 
 
@@ -696,270 +703,8 @@ heatwaves <- hwmid(yTref = ref_start_year,    # Single value: 1981
                    Temp = Temp)               # All years for detection
 #The key fix: yTref and yTemp should be single year values, not vectors of years. Try this corrected approach!
 
-heatwaves
+
 ```
-
-
-```{r}
-magnitude <- heatwaves$hwmid[,1]
-days <-  heatwaves$hwmid[,2]
-peak_day
-```
-
-```{r}
-
-
-# Load libraries
-library(plotly)
-library(dplyr)
-library(ggplot2)
-library(htmlwidgets)
-library(DT)
-
-# ============================================================================
-# DATA PREPARATION
-# ============================================================================
-
-# Your heatwave data (from hwmid analysis)
-magnitude <- c(0.0000000, 0.2654867, 1.3451327, 0.0000000, 7.4513274, 1.9292035, 
-               2.0353982, 1.7699115, 0.0000000, 1.3274336, 4.3008850, 0.5132743,
-               0.9911504, 6.3362832, 0.5309735, 1.3274336, 3.5752212, 1.2566372,
-               2.4424779, 0.4424779, 5.2212389, 0.0000000, 1.6460177, 1.1327434,
-               1.2389381, 3.3628319, 0.9557522, 0.0000000, 11.2389381, 4.0176991,
-               8.3008850, 3.3805310, 4.9557522, 0.4247788, 0.7964602)
-
-days <- c(0, 3, 4, 0, 8, 7, 3, 5, 0, 7, 4, 4, 5, 13, 7, 3, 4, 3, 5, 3, 5, 0, 
-          3, 4, 3, 5, 3, 0, 12, 6, 13, 5, 3, 7, 3)
-
-peak_day <- c(0, 187, 179, 0, 202, 229, 158, 236, 0, 211, 170, 235, 209, 212, 
-              217, 146, 198, 195, 207, 182, 189, 0, 231, 202, 199, 182, 237, 0, 
-              205, 204, 218, 167, 199, 248, 177)
-
-# Create main dataset
-years <- 1990:2024
-heatwave_data <- data.frame(
-  year = years,
-  magnitude = magnitude,
-  days = days,
-  peak_day = ifelse(peak_day == 0, NA, peak_day),
-  has_heatwave = magnitude > 0,
-  decade = paste0(floor((years - 1990) / 10) * 10 + 1990, "s")
-)
-
-# ============================================================================
-# SUMMARY STATISTICS
-# ============================================================================
-
-# Calculate key statistics
-stats <- list(
-  total_years = nrow(heatwave_data),
-  years_with_heatwaves = sum(heatwave_data$has_heatwave),
-  frequency_pct = round(sum(heatwave_data$has_heatwave) / nrow(heatwave_data) * 100, 1),
-  max_magnitude = max(heatwave_data$magnitude),
-  max_magnitude_year = heatwave_data$year[which.max(heatwave_data$magnitude)],
-  max_days = max(heatwave_data$days),
-  avg_magnitude = round(mean(heatwave_data$magnitude[heatwave_data$magnitude > 0]), 2),
-  avg_days = round(mean(heatwave_data$days[heatwave_data$days > 0]), 1)
-)
-
-# Print summary
-cat("=== HEATWAVE ANALYSIS SUMMARY (1990-2024) ===\n")
-cat("Reference Period: 1958-1989\n")
-cat("Detection Period: 1990-2024\n\n")
-cat("Years with heatwaves:", stats$years_with_heatwaves, "/", stats$total_years, 
-    "(", stats$frequency_pct, "%)\n")
-cat("Maximum magnitude:", stats$max_magnitude, "in", stats$max_magnitude_year, "\n")
-cat("Maximum days:", stats$max_days, "\n")
-cat("Average magnitude (non-zero years):", stats$avg_magnitude, "\n")
-cat("Average days (non-zero years):", stats$avg_days, "\n\n")
-
-# ============================================================================
-# VISUALIZATION 1: MAGNITUDE TIME SERIES
-# ============================================================================
-
-p1 <- heatwave_data %>%
-  plot_ly(x = ~year, y = ~magnitude, type = 'scatter', mode = 'lines+markers',
-          line = list(color = '#dc2626', width = 2),
-          marker = list(color = '#dc2626', size = 6),
-          hovertemplate = '<b>Year:</b> %{x}<br><b>Magnitude:</b> %{y:.2f}<extra></extra>') %>%
-  add_trace(y = rep(stats$avg_magnitude, length(years)), 
-            type = 'scatter', mode = 'lines',
-            line = list(color = '#fbbf24', width = 2, dash = 'dash'),
-            name = paste('Average (', stats$avg_magnitude, ')'),
-            hovertemplate = '<b>Average Magnitude:</b> %{y:.2f}<extra></extra>') %>%
-  layout(title = list(text = '<b>Heatwave Magnitude Index Over Time</b>', 
-                      font = list(size = 16)),
-         xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Magnitude Index'),
-         showlegend = TRUE,
-         hovermode = 'x unified')
-
-# Display plot
-p1
-
-# ============================================================================
-# VISUALIZATION 2: HEATWAVE DAYS BAR CHART
-# ============================================================================
-
-p2 <- heatwave_data %>%
-  plot_ly(x = ~year, y = ~days, type = 'bar',
-          marker = list(color = ~ifelse(days > 10, '#dc2626', '#ef4444')),
-          hovertemplate = '<b>Year:</b> %{x}<br><b>Days:</b> %{y}<extra></extra>') %>%
-  layout(title = list(text = '<b>Number of Heatwave Days per Year</b>', 
-                      font = list(size = 16)),
-         xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Number of Days'),
-         showlegend = FALSE)
-
-# Display plot
-p2
-
-# ============================================================================
-# VISUALIZATION 3: MAGNITUDE vs DAYS SCATTER
-# ============================================================================
-
-p3 <- heatwave_data %>%
-  filter(has_heatwave) %>%
-  plot_ly(x = ~magnitude, y = ~days, type = 'scatter', mode = 'markers',
-          marker = list(size = 10, color = '#dc2626', opacity = 0.7),
-          text = ~paste("Year:", year),
-          hovertemplate = '<b>Year:</b> %{text}<br><b>Magnitude:</b> %{x:.2f}<br><b>Days:</b> %{y}<extra></extra>') %>%
-  layout(title = list(text = '<b>Heatwave Magnitude vs Duration</b>', 
-                      font = list(size = 16)),
-         xaxis = list(title = 'Magnitude Index'),
-         yaxis = list(title = 'Number of Days'))
-
-# Display plot
-p3
-
-# ============================================================================
-# VISUALIZATION 4: DECADE COMPARISON
-# ============================================================================
-
-# Calculate decade statistics
-decade_stats <- heatwave_data %>%
-  mutate(decade = case_when(
-    year >= 1990 & year < 2000 ~ "1990s",
-    year >= 2000 & year < 2010 ~ "2000s", 
-    year >= 2010 & year < 2020 ~ "2010s",
-    year >= 2020 ~ "2020s"
-  )) %>%
-  group_by(decade) %>%
-  summarise(
-    frequency = round(sum(has_heatwave) / n() * 100, 1),
-    avg_magnitude = round(mean(magnitude[magnitude > 0]), 2),
-    total_days = sum(days),
-    max_magnitude = max(magnitude),
-    .groups = 'drop'
-  )
-
-# Create decade comparison plot
-p4 <- decade_stats %>%
-  plot_ly() %>%
-  add_trace(x = ~decade, y = ~frequency, type = 'bar', name = 'Frequency (%)',
-            marker = list(color = '#dc2626'),
-            yaxis = 'y', offsetgroup = 1) %>%
-  add_trace(x = ~decade, y = ~avg_magnitude, type = 'bar', name = 'Avg Magnitude',
-            marker = list(color = '#fbbf24'),
-            yaxis = 'y2', offsetgroup = 2) %>%
-  layout(title = list(text = '<b>Decade Comparison</b>', font = list(size = 16)),
-         xaxis = list(title = 'Decade'),
-         yaxis = list(side = 'left', title = 'Frequency (%)', color = '#dc2626'),
-         yaxis2 = list(side = 'right', overlaying = 'y', title = 'Average Magnitude', color = '#fbbf24'),
-         barmode = 'group')
-
-# Display plot  
-p4
-
-# ============================================================================
-# VISUALIZATION 5: SEASONAL TIMING (Peak Day Analysis)
-# ============================================================================
-
-# Convert peak day to month
-heatwave_data$peak_month <- ifelse(is.na(heatwave_data$peak_day), NA,
-                                   ceiling(heatwave_data$peak_day / 30.44))
-
-# Create month labels
-month_labels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-
-seasonal_data <- heatwave_data %>%
-  filter(!is.na(peak_month)) %>%
-  mutate(peak_month_label = month_labels[peak_month])
-
-p5 <- seasonal_data %>%
-  count(peak_month_label) %>%
-  plot_ly(x = ~peak_month_label, y = ~n, type = 'bar',
-          marker = list(color = '#dc2626'),
-          hovertemplate = '<b>Month:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>') %>%
-  layout(title = list(text = '<b>Peak Heatwave Timing by Month</b>', 
-                      font = list(size = 16)),
-         xaxis = list(title = 'Month'),
-         yaxis = list(title = 'Number of Peak Events'))
-
-# Display plot
-p5
-
-# ============================================================================
-# TREND ANALYSIS
-# ============================================================================
-
-# Linear regression for trends
-magnitude_trend <- lm(magnitude ~ year, data = heatwave_data)
-days_trend <- lm(days ~ year, data = heatwave_data)
-
-cat("=== TREND ANALYSIS ===\n")
-cat("Magnitude trend: ", round(coef(magnitude_trend)[2], 4), " per year\n")
-cat("Days trend: ", round(coef(days_trend)[2], 4), " per year\n")
-cat("Magnitude R-squared: ", round(summary(magnitude_trend)$r.squared, 3), "\n")
-cat("Days R-squared: ", round(summary(days_trend)$r.squared, 3), "\n\n")
-
-# ============================================================================
-# DATA TABLE
-# ============================================================================
-
-# Create interactive data table
-heatwave_table <- heatwave_data %>%
-  select(year, magnitude, days, peak_day, has_heatwave) %>%
-  mutate(
-    magnitude = round(magnitude, 2),
-    peak_day = ifelse(is.na(peak_day), "-", as.character(peak_day)),
-    has_heatwave = ifelse(has_heatwave, "Yes", "No")
-  ) %>%
-  rename(
-    Year = year,
-    `Magnitude Index` = magnitude,
-    `Heatwave Days` = days,
-    `Peak Day` = peak_day,
-    `Has Heatwave` = has_heatwave
-  )
-
-# Display interactive table
-datatable(heatwave_table, 
-          options = list(pageLength = 15, scrollX = TRUE),
-          caption = "Complete Heatwave Dataset (1990-2024)")
-
-# ============================================================================
-# SAVE PLOTS
-# ============================================================================
-
-# Save individual plots as HTML files
-htmlwidgets::saveWidget(p1, "heatwave_magnitude_timeseries.html")
-htmlwidgets::saveWidget(p2, "heatwave_days_barchart.html") 
-htmlwidgets::saveWidget(p3, "magnitude_vs_days_scatter.html")
-htmlwidgets::saveWidget(p4, "decade_comparison.html")
-htmlwidgets::saveWidget(p5, "seasonal_timing.html")
-
-cat("=== ANALYSIS COMPLETE ===\n")
-cat("Interactive plots saved as HTML files in your working directory\n")
-cat("Files created:\n")
-cat("- heatwave_magnitude_timeseries.html\n")
-cat("- heatwave_days_barchart.html\n") 
-cat("- magnitude_vs_days_scatter.html\n")
-cat("- decade_comparison.html\n")
-cat("- seasonal_timing.html\n")
-```
-
 
 
 
@@ -1043,19 +788,18 @@ p1 <- heatwave_data %>%
   plot_ly(x = ~year, y = ~magnitude, type = 'scatter', mode = 'lines+markers',
           line = list(color = '#dc2626', width = 2),
           marker = list(color = '#dc2626', size = 8),
+          name = 'Heatwave Magnitude',
           hovertemplate = '<b>Year:</b> %{x}<br><b>Magnitude:</b> %{y:.2f}<extra></extra>') %>%
-  add_trace(y = rep(stats$avg_magnitude, length(years)), 
-            type = 'scatter', mode = 'lines',
-            line = list(color = '#fbbf24', width = 2, dash = 'dash'),
-            name = paste('Average (', stats$avg_magnitude, ')'),
-            hovertemplate = '<b>Average Magnitude:</b> %{y:.2f}<extra></extra>') %>%
-  layout(         title = list(text = '<b>Heatwave Magnitude Index Over Time (1990-2024)</b>', 
-                      font = list(size = 16)),
-         xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Magnitude Index'),
-         showlegend = TRUE,
-         hovermode = 'x unified')
-
+  add_lines(x = years, y = rep(stats$avg_magnitude, length(years)),  # ← Use add_lines instead
+           line = list(color = '#fbbf24', width = 2, dash = 'dash'),
+           name = paste('Average (', stats$avg_magnitude, ')'),
+           hovertemplate = '<b>Average Magnitude:</b> %{y:.2f}<extra></extra>') %>%
+  layout(title = list(text = '<b>Heatwave Magnitude Index Over Time (1990-2024)</b>', 
+                     font = list(size = 16)),
+        xaxis = list(title = 'Year'),
+        yaxis = list(title = 'Magnitude Index'),
+        showlegend = TRUE,
+        hovermode = 'x unified')
 print(p1)
 
 # ============================================================================
@@ -1163,7 +907,6 @@ p5 <- seasonal_data %>%
          yaxis = list(title = 'Number of Peak Events'))
 
 print(p5)
-
 # ============================================================================
 # ENHANCED TREND ANALYSIS
 # ============================================================================
@@ -1234,7 +977,13 @@ Shows when intense heatwaves occurred (peaks)
 2018 stands out as extreme outlier (magnitude 11.24)
 Recent years (2018-2022) show increased activity
 Dashed line = average magnitude for reference
-
+This time series chart provides a much more detailed view of heatwave intensity patterns from 1990 to 2025. Several key patterns emerge:
+Extreme events: The chart shows several dramatic spikes in heatwave magnitude, with the most severe occurring around 2018 (reaching nearly 12 on the index) and 2020 (over 8). These represent exceptionally intense heatwave events that far exceed the average.
+Baseline vs. extremes: Most years hover around the average of 2.82 (shown by the orange dotted line), but the periodic extreme spikes create a highly variable pattern. This suggests that while "normal" heatwave years remain relatively consistent, the extreme events are becoming more severe.
+Temporal clustering: There appears to be some clustering of more intense events in recent years, particularly from 2015 onwards, with multiple years showing magnitudes significantly above average.
+Volatility: The chart shows high year-to-year variability, with magnitude dropping to near zero in some years (indicating minimal heatwave activity) followed by dramatic spikes. This volatility itself may be a concerning climate pattern.
+Recent trends: The period from 2018-2022 shows particularly volatile and intense heatwave activity, which aligns with recent global temperature records and extreme weather events.
+This detailed view reveals that while average heatwave intensity may seem moderate, the extreme events are becoming dramatically more severe, which has major implications for emergency preparedness and climate adaptation strategies.
 
 
 Plot p2: Heatwave Days Bar Chart
@@ -1246,6 +995,17 @@ Red bars highlight years with >10 days (2003, 2018, 2020)
 Shows persistence/duration patterns
 Zero bars = no heatwave years
 2020 had longest duration (13 days)
+This chart showing the annual number of heatwave days provides excellent detail on the temporal distribution of heat stress in Fuhlsbüttel. Several key patterns emerge:
+Extreme years: 2003 and 2022 stand out dramatically with around 13-14 heatwave days each, representing the most severe annual heat exposure on record. These align with well-documented European heat events - the deadly 2003 heatwave and the recent 2022 summer that broke numerous temperature records.
+Decadal patterns: The data shows distinct periods of activity:
+
+1990s: Moderate activity with some notable years (1994 with 8 days)
+2000s: High variability, including the extreme 2003 event
+2010s: Generally lower activity with occasional spikes
+2020s: Return to high activity levels, with both 2021 (12 days) and 2022 (14 days) showing exceptional values
+Recent intensification: The clustering of high values in 2021-2022 suggests a potential shift toward more frequent heatwave conditions, which would be consistent with accelerating climate change impacts in northern Europe.
+Baseline variability: Most years show 3-7 heatwave days, indicating that some level of heat stress is normal, but the extreme years represent significant departures from this baseline.
+For drought analysis, the years with high heatwave day counts (2003, 2021, 2022) would be prime candidates for examining compound drought-heat events. The extended exposure shown in these peak years would significantly amplify evapotranspiration and soil moisture depletion.
 
 
 
@@ -1259,6 +1019,20 @@ Tests if stronger heatwaves last longer
 2020 = moderate magnitude, long duration
 Shows different heatwave "types"
 
+This scatter plot reveals the relationship between heatwave intensity (magnitude) and duration, showing some important patterns:
+Distinct clustering patterns: The data shows several clear groupings:
+
+Low-intensity, short-duration events (magnitude 0-2, duration 3-7 days) - the most common type
+Moderate-intensity events (magnitude 3-5) with variable durations (3-6 days)
+High-intensity, long-duration extreme events (magnitude 6-10, duration 8-13 days)
+Extreme events: The most concerning data points are in the upper right, showing heatwaves with both high magnitude (6-10) and extended duration (8-13 days). These represent the most dangerous combinations from a public health and infrastructure perspective.
+Duration trends: Most heatwaves last between 3-7 days regardless of intensity, but the most severe events (magnitude 6+) tend to persist much longer - up to 13 days. This extended duration amplifies the health and economic impacts significantly.
+Severity spectrum: There's a clear gap in the middle range - few events show moderate-high intensity (magnitude 4-6) with long duration, suggesting heatwaves tend to be either relatively brief regardless of intensity, or both intense and persistent.
+Risk implications: The clustering pattern suggests that when heatwaves reach high intensity, they're more likely to become prolonged events, creating compound risks. The combination of high temperature and extended duration is particularly dangerous for vulnerable populations and can overwhelm cooling infrastructure and emergency services.
+This relationship between magnitude and duration is crucial for emergency planning and early warning systems.
+
+
+
 
 
 Plot p4: Decade Comparison
@@ -1271,9 +1045,24 @@ Shows if heatwaves are becoming more frequent/intense
 Dual y-axis: left = frequency, right = magnitude
 Reveals long-term climate trends
 
+Frequency patterns: Heatwave frequency was relatively moderate in the 1990s (~70%), spiked dramatically in the 2000s (100%), dropped somewhat in the 2010s (~80%), then returned to very high levels in the 2020s (100%).
+Intensity trends: The average magnitude (intensity) of heatwaves shows a clear escalation over time. The 1990s and 2000s had lower average intensities (around 2.2-2.3), while both the 2010s and 2020s show significantly higher intensities (both around 3.5).
+Key climate observations:
+
+The 2000s marked a peak in heatwave frequency but with still-moderate intensity
+The 2010s showed fewer heatwave events but they were much more intense on average
+The 2020s combine the worst of both: very high frequency AND high intensity
+
+This pattern aligns with climate change projections, showing not just more frequent extreme heat events but also more severe ones. The 2020s data is particularly notable as it suggests we're experiencing both more heatwaves and stronger ones compared to previous decades.
+
+
+
+
+
 
 
 Plot p5: Seasonal Timing
+
 
 What it shows: Which months have peak heatwave activity
 Key insights:
@@ -1282,9 +1071,20 @@ Most heatwaves peak in July-August (expected)
 Some in June/September (shoulder seasons)
 Shows seasonal vulnerability patterns
 Helps with preparedness planning
+This chart shows the seasonal distribution of peak heatwave events, revealing a clear concentration during the traditional summer months:
+Peak season dominance: July stands out dramatically with 14 peak events, making it by far the most dangerous month for extreme heat. This represents double the frequency of the next most active months.
+Core summer period: The three-month period of June-August accounts for the vast majority of peak heatwave events, with June and August each recording 7 peak events. Together, these three months represent the critical high-risk period.
+Shoulder months: May and September show much lower activity with only 1 peak event each, indicating that while heatwaves can occur in late spring and early fall, they rarely reach peak intensity during these transitional periods.
+Seasonal implications: The concentration in July aligns with when solar radiation is typically at its highest in the Northern Hemisphere, combined with accumulated heat buildup through the summer season. The drop-off in May and September suggests that seasonal weather patterns still largely constrain the most extreme events to mid-summer.
+Planning considerations: This distribution pattern is crucial for emergency preparedness, resource allocation, and public health planning. The data suggests that July requires maximum readiness for extreme heat events, while June and August need substantial preparation as well.
+The absence of peak events in other months (October-April) indicates these extreme heatwaves are distinctly tied to summer solar and atmospheric conditions rather than anomalous weather patterns occurring year-round.
 
 
 
+
+
+
+Final:-
 Each plot answers different questions about your heatwave climatology - temporal trends, intensity patterns, seasonality, and long-term changes!
 
 
