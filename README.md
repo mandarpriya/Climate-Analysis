@@ -3,7 +3,7 @@
 
 ## Data Source:-
 The source for this data is in the following link :- opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily
-The data collected  is from the time period  1936-2023 based on daily frequency. 
+The data collected  is from the time period  1936-2024 based on daily frequency. 
 Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881 
 Note:- The data has not been updated after 2023. In addition the data for other stations is not complete and time frame is small.
 So we decided to use another reliable data source NCEI data, which gets a regular update.
@@ -13,13 +13,13 @@ So we decided to use another reliable data source NCEI data, which gets a regula
 This research consists of two complementary analyses: first, an examination of climate variables to identify trends and changes; and second, an analysis of drought indices to determine whether they support the identified climate changes. 
 
 ##### Climate Variables
-  # Temperature  :-  The plot for the temperature variations 1936-2023 is given as below.  
+  # Temperature  :-  The plot for the temperature variations 1936-2024 is given as below.  
 
 ![Temperature Plot](./Temperature_Plots/Temperature_Variations.png)
 
 
 We can clearly see that the temperature is rising over last decade. 
-## Precipitation :-  The plot for precipitation from 1936-2023 is given as below
+## Precipitation :-  The plot for precipitation from 1936-2024 is given as below
   ![Precipitation Plot](./Precipitation_Plots/Precipitation.png)
 We can clearly see tha the precipitation over last decade is declining. Although the trend line (linear) is slopng upwards but the absolute value is decreasing over the decade.
 
