@@ -12,16 +12,6 @@ So we decided to use another reliable data source NCEI data, which gets a regula
 #### Analysis 
 This research consists of two complementary analyses: first, an examination of climate variables to identify trends and changes; and second, an analysis of drought indices to determine whether they support the identified climate changes. 
 
-##### Climate Variables
-  # Temperature  :-  The plot for the temperature variations 1936-2024 is given as below.  
-
-
-
-
-We can clearly see that the temperature is rising over last decade. 
-## Precipitation :-  The plot for precipitation from 1936-2024 is given as below
-
-We can clearly see tha the precipitation over last decade is declining. Although the trend line (linear) is slopng upwards but the absolute value is decreasing over the decade.
 
 ## Heat Wave Events:- The plot for heat wave event from 1936-2024 is given as 
 
@@ -31,7 +21,29 @@ We can clearly see tha the precipitation over last decade is declining. Although
 
 ![Max Daily Exceedance](heat_wave_event_plot/Max_Daily_Exceedance_HamburgFuhlsbüttel_Heatwave_Events.png)
 
+# Climate Analysis for Hamburg
 
+## Heatwave Plots
+
+### 1. Heatwave Events
+![Heatwave Events](heat_wave_event_plot/HamburgFuhlsbüttel_Heatwave_Events.png)
+
+### 2. Max Daily Exceedance
+![Max Daily Exceedance](heat_wave_event_plot/Max_Daily_Exceedance_HamburgFuhlsbüttel_Heatwave_Events.png)
+
+### 3. Heatwaves 1936–2025
+![Heatwaves 1936–2025](heat_wave_event_plot/heatwaves_hamburg_fuhlsbüttel_1936_2025.png)
+
+
+## Interactive HTML Reports
+
+- [Hamburg Temperature Analysis](DWD_Folder/Hamburg_Temperature_Analysis.html)
+- [Climate Overview for Hamburg](DWD_Folder/climate_hamburg.html)
+- [Decade Comparison](DWD_Folder/decade_comparison.html)
+- [Heatwave Days Barchart](DWD_Folder/heatwave_days_barchart.html)
+- [Heatwave Magnitude Timeseries](DWD_Folder/heatwave_magnitude_timeseries.html)
+- [Magnitude vs Days Scatter](DWD_Folder/magnitude_vs_days_scatter.html)
+- [Seasonal Timing Analysis](DWD_Folder/seasonal_timing.html)
 
 ### Drought Analysis:- 
 
