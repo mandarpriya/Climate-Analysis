@@ -15,16 +15,16 @@ This research consists of two complementary analyses: first, an examination of c
 ##### Climate Variables
   # Temperature  :-  The plot for the temperature variations 1936-2024 is given as below.  
 
-![Temperature Plot](./Temperature_Plots/Temperature_Variations.png)
+
 
 
 We can clearly see that the temperature is rising over last decade. 
 ## Precipitation :-  The plot for precipitation from 1936-2024 is given as below
-  ![Precipitation Plot](./Precipitation_Plots/Precipitation.png)
+
 We can clearly see tha the precipitation over last decade is declining. Although the trend line (linear) is slopng upwards but the absolute value is decreasing over the decade.
 
-## Heat Wave Events:- The plot for heat wave event from 1936-2025 is given as 
-![Heat Wave Plot](./heat_wave_event_plot/heatwaves_germany_1936_2025.png)
+## Heat Wave Events:- The plot for heat wave event from 1936-2024 is given as 
+
 
 
 
