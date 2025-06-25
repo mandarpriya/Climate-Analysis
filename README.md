@@ -31,10 +31,6 @@ We can clearly see tha the precipitation over last decade is declining. Although
 
 ![Max Daily Exceedance](heat_wave_event_plot/Max_Daily_Exceedance_HamburgFuhlsbüttel_Heatwave_Events.png)
 
-### 3. Heatwaves 1936–2025
-
-![Heatwaves 1936–2025](heat_wave_event_plot/heatwaves_hamburg_fuhlsbüttel_1936_2025.png)
-
 
 
 ### Drought Analysis:- 
