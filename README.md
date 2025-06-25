@@ -1,5 +1,5 @@
  # Climate Analysis :- 
- The  project is on analysing the Climate data for Hamburg. 
+ The  project is on analysing the Climate data for Hamburg Fuhlsbüttel. 
 
 ## Data Source:-
 The source for this data is in the following link :- opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily
@@ -25,7 +25,7 @@ We can clearly see tha the precipitation over last decade is declining. Although
 
 ## Heat Wave Events:- The plot for heat wave event from 1936-2024 is given as 
 
-
+![Heatwave Events](heat_wave_event_plot/HamburgFuhlsbüttel_Heatwave_Events.png)
 
 
 
