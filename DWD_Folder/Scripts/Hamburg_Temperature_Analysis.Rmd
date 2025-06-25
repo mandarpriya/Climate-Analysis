@@ -638,7 +638,7 @@ p_max <- ggplot(heatwave_events_tbl, aes(x = as.numeric(year), y = max_intensity
                                              override.aes = list(color = "darkblue"))) +
   
   labs(
-    title = "Max Daily Exceedance in Heatwave Events (1936–2024)",
+    title = "Max Daily Exceedance in Hamburg Fuhlsbüttel Heatwave Events (1936–2024)",
     subtitle = paste0("Based on max daily exceedance above 28°C threshold\n",
                       percent_recent_max, "% of all events occurred since 1990"),
     x = "",
@@ -651,9 +651,9 @@ p_max <- ggplot(heatwave_events_tbl, aes(x = as.numeric(year), y = max_intensity
     plot.title.position = "plot",
     plot.title = element_text(face = "bold", size = 22, margin = margin(b = 15)),
     plot.subtitle = element_text(size = 15, color = "gray30", margin = margin(b = 15), face = "bold"),
-    axis.title.y = element_text(margin = margin(r = 10), face = "bold", size = 12),
-    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray30", size = 12),
-    axis.text.y  = element_text(face = "bold", color = "gray30", size = 12),
+    axis.title.y = element_text(margin = margin(r = 10), face = "bold", size = 16),
+    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray30", size = 14),
+    axis.text.y  = element_text(face = "bold", color = "gray30", size = 14),
     legend.position = "right",
     legend.box = "vertical",
     legend.margin = margin(l = 10),
@@ -666,9 +666,6 @@ p_max <- ggplot(heatwave_events_tbl, aes(x = as.numeric(year), y = max_intensity
 p_max
 
 ```
-
-
-
 
 
 
@@ -963,38 +960,11 @@ cat("- decade_comparison.html\n")
 cat("- seasonal_timing.html\n")
 ```
 
-#### heatwaveR library
-```{r}
-library(ggplot2)
-library(dplyr)
 
-# Add a column to detect_data marking heatwave days
-detect_data$heatwave <- FALSE
 
-# Mark heatwave days using start index and duration
-for (i in 1:nrow(heatwaves$hwmid)) {
-  duration <- heatwaves$hwmid[i, 2]  # duration (column 2)
-  start_idx <- heatwaves$hwmid[i, 3] # start index (column 3)
-  
-  if (duration > 0 && start_idx > 0) {
-    indices <- start_idx:(start_idx + duration - 1)
-    # Ensure indices stay within bounds
-    indices <- indices[indices <= nrow(detect_data)]
-    detect_data$heatwave[indices] <- TRUE
-  }
-}
 
-# Plot
-ggplot(detect_data, aes(x = date, y = Tmax)) +
-  geom_line(color = "black") +
-  geom_point(data = detect_data %>% filter(heatwave), 
-             aes(x = date, y = Tmax), 
-             color = "red", size = 0.5) +
-  labs(title = "Daily Tmax with Heatwaves Highlighted",
-       x = "Date", y = "Tmax (°C)") +
-  theme_minimal()
 
-```
+
 ```{r}
 # Load libraries
 library(plotly)
@@ -1252,6 +1222,8 @@ htmlwidgets::saveWidget(p5, "seasonal_timing.html")
 cat("=== ANALYSIS COMPLETE ===\n")
 cat("Interactive plots saved as HTML files in your working directory\n")
 ```
+
+
 : Final Analysis:- 
 Plot p1: Magnitude Time Series
 
