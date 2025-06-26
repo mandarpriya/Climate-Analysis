@@ -36,16 +36,12 @@ library(heatwaveR)
 ```
 
 # data tranformation :- We select the te
-```{r echo=FALSE}
-# selection of temperature data :- Tavg:Tmin
-data_tbl <- data |> 
-  dplyr::select(date,Tavg:Tmin,rel_hum,prec) 
-```
+
 
 
 ```{r echo=FALSE}
 # conversion to monthly data ( makes it easier for analysis)
-monthly_tbl <-data_tbl |> 
+monthly_tbl <-data |> 
   mutate(year = year(date),
          month = month(date) ) |> 
   group_by(year, month) |> 
@@ -171,6 +167,7 @@ ggplot(annual_temperature_tbl_long, aes(x = year, y = Temperature, colour = Temp
   labs(
     title = "Temperature Variation (1936-2025)",
     subtitle = "Hamburg Fuhlsbüttel",
+    caption = "Source:- DWD",
     x = "",
     y = "Temperature (°C)"
   ) +
@@ -179,6 +176,7 @@ ggplot(annual_temperature_tbl_long, aes(x = year, y = Temperature, colour = Temp
     plot.title.position = "plot",
     plot.title = element_text(hjust = 0, face = "bold", colour = "black", size = 30, margin = margin(b = 20)),
     plot.subtitle = element_text(hjust = 0, face = "bold", colour = "black", size = 30, margin = margin(b = 10)),
+    plot.caption = element_text(size = 18, face = "bold", color = "gray50", hjust = 1),  #
     axis.line = element_line(color = "black", linewidth = 1),
     axis.title = element_text(face = "bold", color = "black", size = 22),
     axis.ticks = element_blank(),
@@ -194,6 +192,7 @@ ggplot(annual_temperature_tbl_long, aes(x = year, y = Temperature, colour = Temp
   ) +
    guides(color = "none", fill = "none")
   
+
 ```
 ### Decadal Changes in Temperature 
 
@@ -230,14 +229,14 @@ ggplot(decadal_summary_tbl, aes(x = decade_group, y = decadal_mean, fill = Tempe
   labs(
     title = "Decadal Mean Temperature (1936–2024)",
     subtitle = "Hamburg Fuhlsbüttel",
-    x = "Decade",
-    y = "Mean Temperature (°C)"
+    x = "",
+    y = "Temperature (°C)"
   ) +
   theme_minimal(base_size = 16) +
   theme(
     plot.title = element_text(face = "bold", size = 24),
     plot.subtitle = element_text(size = 20),
-    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold",size = 15),
     axis.text.y = element_text(face = "bold"),
     legend.title = element_text(face = "bold"),
     legend.text = element_text(face = "bold")
@@ -246,14 +245,7 @@ ggplot(decadal_summary_tbl, aes(x = decade_group, y = decadal_mean, fill = Tempe
 ```
 ## Variation in Temperature across decade
 ```{r fig.width=15,fig.height=10}
-decadal_diff_tbl <- decadal_summary_tbl %>%
-  arrange(Temperature_Type, decade_group) %>%
-  group_by(Temperature_Type) %>%
-  mutate(
-    change_from_prev = decadal_mean - lag(decadal_mean),
-    percent_change = 100 * change_from_prev / lag(decadal_mean)
-  ) %>%
-  ungroup()
+
 
 ggplot(decadal_summary_tbl, aes(x = decade_group, y = decadal_mean, group = Temperature_Type, color = Temperature_Type)) +
   geom_line(linewidth = 1.5) +
@@ -267,17 +259,30 @@ ggplot(decadal_summary_tbl, aes(x = decade_group, y = decadal_mean, group = Temp
     title = "Decadal Temperature Trends (1936–2024)",
     subtitle = "Hamburg Fuhlsbüttel",
     x = "",
-    y = "Mean Temperature (°C)"
+    y = "Temperature (°C)"
   ) +
   theme_minimal(base_size = 16) +
   theme(
     plot.title = element_text(face = "bold", size = 24),
     plot.subtitle = element_text(size = 20),
-    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black", size = 20),
     axis.text.y = element_text(face = "bold"),
     legend.title = element_text(face = "bold"),
-    legend.text = element_text(face = "bold")
-  )
+    legend.text = element_text(face = "bold"),
+    legend.position = "none"
+    
+  ) +
+  
+# Add custom legend inside the plot
+annotate("point", x = 2.5, y = 13.5, size = 5, shape = 21, fill = "#ff1744") +
+annotate("text", x = 2.6, y = 13.5, label = "Maximum Temperature", hjust = 0, size = 6, fontface = "bold") +
+
+annotate("point", x = 2.5, y = 9.5, size = 5, shape = 21, fill = "#fc8d59") +
+annotate("text", x = 2.6, y = 9.5, label = "Average Temperature", hjust = 0, size = 6, fontface = "bold") +
+
+annotate("point", x = 2.5, y = 6, size = 5, shape = 21, fill = "#4575b4") +
+annotate("text", x = 2.6, y = 6, label = "Minimum Temperature", hjust = 0, size = 6, fontface = "bold")
+
 
 ```
 
@@ -322,6 +327,58 @@ ggplot(decadal_diff_tbl, aes(x = decade_group, y = decadal_diff, fill = Temperat
     legend.text = element_text(face = "bold")
   )
 ```
+```{r fig.width=15,fig.height=10}
+ggplot(decadal_diff_tbl, aes(x = decade_group, y = decadal_diff, fill = Temperature_Type)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.5) +
+  geom_label(aes(label = round(decadal_diff, 2)),
+             position = position_dodge(width = 0.8),
+             size = 4.5, fontface = "bold",
+             show.legend = FALSE) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 1, linetype = "dashed") +
+
+  # Manual fill colors
+  scale_fill_manual(
+    values = c("Tmax" = "#ff1744", "Tavg" = "#fc8d59", "Tmin" = "#4575b4")
+  ) +
+ scale_y_continuous(
+  limits = c(-1, 2),
+  breaks = seq(-2, 2, by = 0.25),
+  labels = function(x) sprintf("%.2f", x)
+) +
+  # Titles
+  labs(
+    title = "Decadal Changes in Temperature at Hamburg-Fuhlsbüttel",
+    subtitle = "Average, Minimum, and Maximum Temperatures – Change from Previous Decade (°C)",
+    x = "", y = "Temperature Change (°C)"
+  ) +
+
+  # Theme & custom key
+  theme_minimal(base_size = 16) +
+  theme(
+    plot.title = element_text(face = "bold", size = 24),
+    plot.subtitle = element_text(size = 20),
+    axis.text.x = element_text(angle = 30, hjust = 1, size = 16, face = "bold"),
+    axis.text.y = element_text(face = "bold", size = 14),
+    legend.position = "none"
+  ) +
+
+  # Custom legend inside plot
+
+  # Custom legend inside plot for y-axis from -1 to 2
+annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 1.2, ymax = 2, fill = "white", alpha = 0.7) +  # background box
+annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 1.1, ymax = 2, colour = "black", fill = NA) +  # border
+
+annotate("rect", xmin = 7.6, xmax = 7.8, ymin = 1.55, ymax = 1.75, fill = "#ff1744") +
+annotate("text", x = 7.85, y = 1.6, label = "Maximum", hjust = 0, size = 5, fontface = "bold") +
+
+annotate("rect", xmin = 7.6, xmax = 7.8, ymin = 1.35, ymax = 1.55, fill = "#fc8d59") +
+annotate("text", x = 7.85, y = 1.4, label = "Average", hjust = 0, size = 5, fontface = "bold") +
+
+annotate("rect", xmin = 7.6, xmax = 7.8, ymin = 1.15, ymax = 1.35, fill = "#4575b4") +
+annotate("text", x = 7.85, y = 1.2, label = "Minimum", hjust = 0, size = 5, fontface = "bold")
+
+```
+
 
 
 #### Heatwave Events  :- We visualize the intensity and duration of heat events from 1936-2024.
