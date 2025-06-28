@@ -27,8 +27,8 @@ This research consists of two complementary analyses: first, an examination of c
 
 ## Interactive HTML Reports
 
-- [Hamburg Temperature Analysis](DWD_Folder/Scripts/Hamburg_Temperature_Analysis.html)
-- [Climate Overview for Hamburg](DWD_Folder/Scripts/climate_hamburg.html)
+- [Hamburg Temperature Analysis](DWD_Folder/Scripts/Hamburg Heatwave Analysis (1990-2024) _ Claude _ Claude.html)
+- [Climate Overview for Hamburg](DWD_Folder/Scripts/index.html)
 - [Decade Comparison](DWD_Folder/Scripts/decade_comparison.html)
 - [Heatwave Days Barchart](DWD_Folder/Scripts/heatwave_days_barchart.html)
 - [Heatwave Magnitude Timeseries](DWD_Folder/Scripts/heatwave_magnitude_timeseries.html)
