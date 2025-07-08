@@ -24,8 +24,9 @@ knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
 ```{r}
 
 ## Daily data
-data <- readRDS(file = "/Users/mandarphatak/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
-data <- data |> dplyr::filter(date < "2025-01-01")
+data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
+
+data <- data %>% filter(date < "2025-01-01")
 
 ```
 ```{r}
@@ -40,7 +41,7 @@ library(heatwaveR)
 
 
 
-```{r echo=FALSE}
+```{r}
 # conversion to monthly data ( makes it easier for analysis)
 monthly_tbl <-data |> 
   mutate(year = year(date),
@@ -71,26 +72,19 @@ annual_tbl <- monthly_tbl |>
 
 annual_tbl |> dplyr:: select(-year) |> summary()
 ```
-### Focusing on  Temperature data
 
 
-## Data Over View :- We perform the following data manipulation for desired data overview 
+# Temperature Variation (1936-2025)
 
-```{r echo=FALSE}
+```{r fig.width=15,fig.height=10}
+
 ## Only Temperature 
 annual_temperature_tbl_long <- annual_tbl |> 
   pivot_longer(
     cols = c(Tavg,Tmax,Tmin),
     names_to = "Temperature_Type",
     values_to = "Temperature"
-  ) |> 
-  filter(year < 2025)
-```
-
-
-#### Temperature Variation 
-
-```{r fig.width=15,fig.height=10}
+  ) 
 annual_temperature_tbl_long$Temperature_Type <- factor(
   annual_temperature_tbl_long$Temperature_Type,
   levels = c("Tmax", "Tavg", "Tmin"))
@@ -122,10 +116,7 @@ trends_tbl <- trends_tbl %>%
     x = 1938  # horizontal position of the labels
   )
 
-```
 
-### Overview of Temperature Variation 1936-2024
-```{r fig.width=15,fig.height=10}
 ggplot(annual_temperature_tbl_long, aes(x = year, y = Temperature, colour = Temperature_Type)) + 
   geom_line(linewidth = 1) +
   geom_point(aes(fill = Temperature_Type), shape = 21, size = 4, stroke = 1, colour = "white") +
@@ -155,9 +146,9 @@ ggplot(annual_temperature_tbl_long, aes(x = year, y = Temperature, colour = Temp
     guide = "none"  # Hide fill legend since color legend shows the same info
   ) +
   
-  scale_x_continuous(breaks = c(seq(1936, 2024, 10), 2024), 
+  scale_x_continuous(breaks = c(seq(1936, 2025, 10), 2025), 
                      expand = c(0.02, 0.02), 
-                     limits = c(1936, 2024)) +
+                     limits = c(1936, 2025)) +
   scale_y_continuous(
     limits = c(1, 16),
     breaks = seq(1, 16, by = 2),
@@ -168,7 +159,7 @@ ggplot(annual_temperature_tbl_long, aes(x = year, y = Temperature, colour = Temp
   labs(
     title = "Temperature Variation (1936-2025)",
     subtitle = "Hamburg Fuhlsbüttel",
-    caption = "Source:- DWD",
+    caption = "Source:- Deutscher Wetterdienst (DWD)",
     x = "",
     y = "Temperature (°C)"
   ) +
@@ -195,7 +186,7 @@ ggplot(annual_temperature_tbl_long, aes(x = year, y = Temperature, colour = Temp
   
 
 ```
-### Decadal Changes in Temperature 
+## Decadal Changes in Temperature 
 
 ```{r fig.width=15,fig.height=10}
 
@@ -250,24 +241,31 @@ ggplot(decadal_summary_tbl, aes(x = decade_group, y = decadal_mean, fill = Tempe
 
 ggplot(decadal_summary_tbl, aes(x = decade_group, y = decadal_mean, group = Temperature_Type, color = Temperature_Type)) +
   geom_line(linewidth = 1.5) +
-  geom_point(size = 4) +
-  scale_color_manual(
-    values = c("Tmax" = "#ff1744", "Tavg" = "#fc8d59", "Tmin" = "#4575b4"),
-    name = "Temperature Type",
-    labels = c("Tmax" = "Maximum", "Tavg" = "Average", "Tmin" = "Minimum")
-  ) +
+  geom_point(aes(fill = Temperature_Type), size = 8, shape = 21, color = "black", stroke = 1.2) +
+scale_color_manual(
+  values = c("Tmax" = "#ff1744", "Tavg" = "#fc8d59", "Tmin" = "#4575b4"),
+  name = "Temperature Type",
+  labels = c("Tmax" = "Maximum", "Tavg" = "Average", "Tmin" = "Minimum")
+) +
+scale_fill_manual(
+  values = c("Tmax" = "#ff1744", "Tavg" = "#fc8d59", "Tmin" = "#4575b4")
+) +
   labs(
     title = "Decadal Temperature Trends (1936–2024)",
     subtitle = "Hamburg Fuhlsbüttel",
+    caption = "Source:- Deutscher Wetterdienst (DWD)",
     x = "",
     y = "Temperature (°C)"
   ) +
   theme_minimal(base_size = 16) +
   theme(
-    plot.title = element_text(face = "bold", size = 24),
-    plot.subtitle = element_text(size = 20),
+    plot.title.position = "plot",
+    plot.title = element_text(face = "bold", size = 24, margin = margin(b=14)),
+    plot.subtitle = element_text(size = 20, margin = margin(b=10)),
     axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black", size = 20),
-    axis.text.y = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold", size = 20, color = "gray"),
+    axis.title.y = element_text(face = "bold", size = 22, color = "gray50"),
+    plot.caption = element_text(face = "bold",size = 18, color = "grey"),
     legend.title = element_text(face = "bold"),
     legend.text = element_text(face = "bold"),
     legend.position = "none"
@@ -290,6 +288,7 @@ annotate("text", x = 2.6, y = 6, label = "Minimum Temperature", hjust = 0, size 
 
 
 ## Incremental  changes in Temperature across Decades
+
 ```{r fig.width=15,fig.height=10}
 decadal_diff_tbl <- decadal_summary_tbl %>%
   arrange(Temperature_Type, decade_group) %>%
@@ -297,38 +296,6 @@ decadal_diff_tbl <- decadal_summary_tbl %>%
   mutate(decadal_diff = decadal_mean - lag(decadal_mean)) %>%
   filter(!is.na(decadal_diff)) %>%
   ungroup()
-
-ggplot(decadal_diff_tbl, aes(x = decade_group, y = decadal_diff, fill = Temperature_Type)) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  geom_label(aes(label = round(decadal_diff, 2)),
-           position = position_dodge(width = 0.7),
-           size = 4.5, fontface = "bold",
-           show.legend = FALSE) +
-  # geom_text(aes(label = round(decadal_diff, 2)), 
-  #           position = position_dodge(width = 0.7), 
-  #           vjust = ifelse(decadal_diff_tbl$decadal_diff >= 0, -0.3, 1.3), 
-  #           size = 5, fontface = "bold") +
-  scale_fill_manual(
-    values = c("Tmax" = "#ff1744", "Tavg" = "#fc8d59", "Tmin" = "#4575b4"),
-    name = "Temperature Type",
-    labels = c("Tmax" = "Maximum", "Tavg" = "Average", "Tmin" = "Minimum")
-  ) +
-  labs(
-  title = "Decadal Changes in Temperature at Hamburg-Fuhlsbüttel",
-  subtitle = "Average, Minimum, and Maximum Temperatures – Change from Previous Decade (°C)"
-) +
-
-  theme_minimal(base_size = 16) +
-  theme(
-    plot.title = element_text(face = "bold", size = 24),
-    plot.subtitle = element_text(size = 20),
-    axis.text.x = element_text(angle = 30, hjust = 1),
-    axis.text.y = element_text(face = "bold"),
-    legend.title = element_text(face = "bold"),
-    legend.text = element_text(face = "bold")
-  )
-```
-```{r fig.width=15,fig.height=10}
 ggplot(decadal_diff_tbl, aes(x = decade_group, y = decadal_diff, fill = Temperature_Type)) +
   geom_col(position = position_dodge(width = 0.8), width = 0.5) +
   geom_label(aes(label = round(decadal_diff, 2)),
@@ -382,7 +349,7 @@ annotate("text", x = 7.85, y = 1.2, label = "Minimum", hjust = 0, size = 5, font
 
 
 
-#### Heatwave Events  :- We visualize the intensity and duration of heat events from 1936-2024.
+# Heatwave Events  :- We visualize the intensity and duration of heat events from 1936-2024.
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -513,7 +480,7 @@ heatwave_events_tbl$year <- as.numeric(heatwave_events_tbl$year)
 ```
 
 
-```{r fig.width=15,fig.height=10}
+```{r fig.width=18,fig.height=12}
 # Custom color palette
 custom_colors <- c("#f8f800", "#fdc70c", "#f3903f", "#ff4d00", "#e60000", "#5e0000")
 
@@ -573,12 +540,13 @@ ggplot(heatwave_recent_tbl, aes(x = as.numeric(year), y = avg_intensity)) +
     nudge_y = 0.3) +
 
   scale_y_continuous(limits = c(0, 6.25), breaks = seq(0, 6.25, 0.5), expand = c(0, 0.05)) +
-  scale_x_continuous(limits = c(1990, 2025), breaks = c(seq(1990, 2024, 5),2024) ) +
+  scale_x_continuous(limits = c(1990, 2024), breaks = c(seq(1990, 2024, 5),2024) ) +
 
   scale_color_gradientn(colors = custom_colors,
                         name = "Avg. Intensity",
                         guide = guide_colorbar(barwidth = 1, barheight = 10,
-                                               title.position = "top", title.hjust = 0.5)) +
+                                               title.position = "top", title.hjust = 0.5,
+                                               label.theme = element_text(size = 18))) +
 
   scale_size_continuous(
   range = c(6, 24),  # or any range that suits your plot size
@@ -591,15 +559,15 @@ guides(
   size = guide_legend(
     title.position = "top",
     title.hjust = 0.5,
-    override.aes = list(color = "gray40", fill = "gray40")  # Makes legend dots visible
+    override.aes = list(color = "gray40", fill = "gray40"),  # Makes legend dots visible
+    label.theme = element_text(size = 18)
   )
 ) +
 
   labs(
     title = "Extreme Heatwave Events in Hamburg Fuhlsbüttel (1990–2024)",
    subtitle = paste0(
-  percent_recent, "% of all heatwaves occurred since 1990 (up to ",
-  format(Sys.Date(), "%b %Y"), "); highlighting the most intense and longest events"
+  percent_recent, "% of all heatwaves occurred since 1990"
 ),
 
 
@@ -608,22 +576,23 @@ guides(
     caption = "Source: Deutscher Wetterdienst (DWD)"
   ) +
 
-  theme_minimal(base_size = 12) +
+  theme_minimal(base_size = 15) +
   theme(
     plot.title.position = "plot",
     plot.title = element_text(face = "bold", size = 20, margin = margin(b = 15)),
     plot.subtitle = element_text(size = 15, color = "gray30", margin = margin(b = 15), face = "bold"),
     plot.caption = element_text(size = 15, color = "gray50",  face = "bold",hjust = 1),
-    axis.title.y = element_text(margin = margin(r = 10), face = "bold", size = 12),
-    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray30", size = 12),
-    axis.text.y  = element_text(face = "bold", color = "gray30", size = 12),
+    axis.title.y = element_text(margin = margin(r = 10), face = "bold", size = 18),
+    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray30", size = 15),
+    axis.text.y  = element_text(face = "bold", color = "gray30", size = 15),
     legend.position = "right",
     legend.box = "vertical",
-    legend.margin = margin(l = 10),
+    legend.margin = margin(l = 10,r=10),
     legend.title = element_text(face = "bold"),
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank(),
-    panel.grid.major.y = element_line(color = "gray80", linetype = "dotted")
+    panel.grid.major.y = element_line(color = "gray80", linetype = "dotted"),
+    plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
   )
 
 ```
@@ -735,6 +704,125 @@ guides(
 ```
 
 
+```{r fig.width=18, fig.height=12}
+# Custom color palette
+custom_colors <- c("#f8f800", "#fdc70c", "#f3903f", "#ff4d00", "#e60000", "#5e0000")
+
+# Filter events after 1990
+heatwave_recent_tbl <- heatwave_events_tbl %>% filter(year >= 1990)
+```
+
+
+```{r fig.width=18, fig.height=12}
+# Count and percentage
+recent_events <- nrow(heatwave_recent_tbl)
+total_events <- nrow(heatwave_events_tbl)
+percent_recent <- round((recent_events / total_events) * 100)
+
+# 95th percentile of avg_intensity in recent events
+threshold_95 <- quantile(heatwave_events_tbl$avg_intensity, 0.95, na.rm = TRUE)
+
+# Max intensity among recent events
+max_intensity_value <- max(heatwave_events_tbl$avg_intensity, na.rm = TRUE)
+longest_duration_value <- max(heatwave_events_tbl$duration, na.rm = TRUE)
+
+# Label most intense event(s)
+max_intensity_event <- heatwave_events_tbl %>%
+  filter(avg_intensity == max_intensity_value) %>%
+  mutate(label = paste0("Max intensity: ", round(avg_intensity, 1), "\n", format(start_date, "%b %d, %Y")))
+
+# Label longest duration (among recent)
+longest_duration_event <- heatwave_events_tbl %>%
+  filter(duration == longest_duration_value) %>%
+  mutate(label = paste0("Longest: ", duration, " days\n", format(start_date, "%b %Y")))
+
+# Extreme events = above 95th percentile (excluding the max to avoid duplicate label)
+extreme_events <- heatwave_events_tbl %>%
+  filter(avg_intensity > threshold_95, avg_intensity < max_intensity_value) %>%
+  mutate(label = paste0("Extreme: ", round(avg_intensity, 1), "\n", format(start_date, "%Y")))
+
+# Plot
+ggplot(heatwave_events_tbl, aes(x = as.numeric(year), y = avg_intensity)) +
+  geom_point(aes(size = duration, color = avg_intensity), alpha = 0.85) +
+
+  geom_smooth(method = "loess", formula = y ~ x, se = FALSE,
+              color = "darkblue", linetype = "solid", linewidth = 0.8, alpha = 0.6) +
+
+  geom_hline(yintercept = threshold_95, linetype = "dotted", color = "darkred") +
+  annotate("text", x = 1991, y = threshold_95 + 0.15, 
+         label = "95th Percentile", 
+         vjust = -0.5, color = "darkred", size = 3) +
+
+  geom_text(data = max_intensity_event, aes(label = label),
+            hjust = 1, vjust = 1.2, size = 3.3, fontface = "bold", color = "#5e0000") +
+
+  ggrepel::geom_text_repel(data = longest_duration_event, aes(label = label),
+                           size = 3, fontface = "bold", color = "#5e0000",
+                           max.overlaps = 5, box.padding = 0.4, point.padding = 0.4,
+                           hjust = 1) +
+
+  ggrepel::geom_text_repel(data = extreme_events, aes(label = label),
+    size = 2.8, fontface = "italic", color = "black",
+    max.overlaps = 10, box.padding = 0.4, point.padding = 0.3,
+    nudge_y = 0.3) +
+
+  scale_y_continuous(limits = c(0, 6.25), breaks = seq(0, 6.25, 0.5), expand = c(0, 0.05)) +
+  scale_x_continuous(limits = c(1990, 2024), breaks = c(seq(1990, 2024, 5),2024) ) +
+
+  scale_color_gradientn(colors = custom_colors,
+                        name = "Avg. Intensity",
+                        guide = guide_colorbar(barwidth = 1, barheight = 10,
+                                               title.position = "top", title.hjust = 0.5,
+                                               label.theme = element_text(size = 18))) +
+
+  scale_size_continuous(
+  range = c(6, 24),  # or any range that suits your plot size
+  limits = c(3, 12), # ensures 3–12 maps to this range exactly
+  breaks = c(3, 6, 9, 12),
+  name = "Duration (days)"
+) +
+
+guides(
+  size = guide_legend(
+    title.position = "top",
+    title.hjust = 0.5,
+    override.aes = list(color = "gray40", fill = "gray40"),  # Makes legend dots visible
+    label.theme = element_text(size = 18)
+  )
+) +
+
+  labs(
+    title = "Extreme Heatwave Events in Hamburg Fuhlsbüttel (1990–2024)",
+   subtitle = paste0(
+  percent_recent, "% of all heatwaves occurred since 1990"
+),
+
+
+    x = "",
+    y = "Intensity (°C above threshold)",
+    caption = "Source: Deutscher Wetterdienst (DWD)"
+  ) +
+
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title.position = "plot",
+    plot.title = element_text(face = "bold", size = 20, margin = margin(b = 15)),
+    plot.subtitle = element_text(size = 15, color = "gray30", margin = margin(b = 15), face = "bold"),
+    plot.caption = element_text(size = 15, color = "gray50",  face = "bold",hjust = 1),
+    axis.title.y = element_text(margin = margin(r = 10), face = "bold", size = 18),
+    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray30", size = 15),
+    axis.text.y  = element_text(face = "bold", color = "gray30", size = 15),
+    legend.position = "right",
+    legend.box = "vertical",
+    legend.margin = margin(l = 10,r=10),
+    legend.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(color = "gray80", linetype = "dotted"),
+    plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
+  )
+
+```
 
 
 
