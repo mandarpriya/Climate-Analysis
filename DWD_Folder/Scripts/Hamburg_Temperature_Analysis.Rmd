@@ -34,6 +34,7 @@ library(heatwaveR)
 data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
 
 
+data
 
 ```
 
@@ -576,7 +577,12 @@ max_max_event <- heatwave_recent_tbl %>%
 # Extreme events (excluding absolute max)
 extreme_events_max <- heatwave_recent_tbl %>%
   filter(max_intensity > threshold_95_max, max_intensity < max_max_intensity) %>%
-  mutate(label = paste0("Extreme: ", round(max_intensity, 1), "\n", format(start_date, "%b,%d,%Y")))
+  mutate(label = paste0("Extreme: ", round(max_intensity, 1), "\n", format(start_date, "%b %d,%Y")))
+# Label longest duration (among recent)
+longest_duration_event <- heatwave_recent_tbl %>%
+  filter(duration == longest_duration_value) %>%
+  mutate(label = paste0("Longest: ", duration, " days\n", format(start_date, "%b %d %Y")))
+
 
 
 # Plot for Max Intensity (Post-1990)
@@ -588,11 +594,11 @@ ggplot(heatwave_recent_tbl, aes(x = as.numeric(year), y = max_intensity)) +
               color = "darkblue", linetype = "solid", linewidth = 0.8, alpha = 0.6) +
   
   geom_hline(yintercept = threshold_95_max, linetype = "dotted", color = "darkred") +
-  annotate("text", x = 1990.5, y = threshold_95_max + 0.4, label = "95th Percentile", 
+  annotate("text", x = 1995.5, y = threshold_95_max + 0.4, label = "95th Percentile", 
            color = "darkred", size = 6) +
   
   geom_text(data = max_max_event, aes(label = label),
-            hjust = 1, vjust = 1.2, size = 3.3, fontface = "bold", color = "#5e0000") +
+            hjust = 1, vjust = 1.2, size = 6, fontface = "bold", color = "#5e0000") +
   
   ggrepel::geom_text_repel(data = extreme_events_max, aes(label = label),
                            size = 6, fontface = "italic", color = "black",
@@ -619,26 +625,24 @@ guides(
     title.hjust = 0.5,
     override.aes = list(color = "gray40", fill = "gray40")  # Makes legend dots visible
   )
+) +labs(
+  title = "Maximum Daily Temperature Exceedance in Hamburg-Fuhlsbüttel Heatwaves (1990–2024)",
+  subtitle = paste0("Events exceeding 28°C threshold\n",
+                    percent_recent_max, "% occurred since 1990"),
+  x = "",
+  y = "Maximum Intensity (°C above threshold)",
+  caption = "Source: Deutscher Wetterdienst (DWD)"
 ) +
-  labs(
-    title = "Max Daily Exceedance in Hamburg Fuhlsbüttel Heatwave Events (1990–2024)",
-    subtitle = paste0("Based on max daily exceedance above 28°C threshold\n",
-                      percent_recent_max, "% of all events occurred since 1990"),
-    x = "",
-    y = "Max Intensity (°C above threshold)",
-    caption = "Source: Deutscher Wetterdienst (DWD)"
-  ) +
-  
   theme_minimal(base_size = 12) +
   theme(
     plot.title.position = "plot",
     plot.title = element_text(face = "bold", size = 22, margin = margin(b = 15)),
     plot.subtitle = element_text(size = 15, color = "gray30", margin = margin(b = 15), face = "bold"),
-    plot.caption = element_text(size = 12, color = "gray50",  face = "bold", hjust = 1),
+    plot.caption = element_text(size = 15, color = "gray50",  face = "bold", hjust = 1),
     
     axis.title.y = element_text(margin = margin(r = 10), face = "bold", size = 16),
-    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray30", size = 14),
-    axis.text.y  = element_text(face = "bold", color = "gray30", size = 14),
+    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray50", size = 20),
+    axis.text.y  = element_text(face = "bold", color = "gray50", size = 20),
     legend.position = "right",
     legend.box = "vertical",
     legend.margin = margin(l = 10),
@@ -653,10 +657,91 @@ guides(
 
 
 ```
+### ExtRemes library is used in the following for heatwave magnitude index.
+
+
+```{r}
+### starting from the data (daily data)
+## Daily data
+data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
+# chnaging the data variables as in the documentation of of extRemes library, we only focus on Maximum Temperature (Tmax)
+data <- data |> 
+  rename(t = date, Temp = Tmax) |> 
+  select(t,Temp) 
+```
+
+## Now after we have made the necessary adjustments, so we compute the hwmid as hwmi takes only 32 years for refrence which we think will not be justifying the research.
+
+```{r}
+
+# Reference period: 1936-1989 (54 years)
+ref_start_year <- 1936
+ref_data <- data %>%
+  filter(year(t) >= 1936 & year(t) <= 1989)
+Tref <- ref_data$Temp
+
+
+# Analysis period: 1990-2025 
+analysis_start_year <- 1990  
+analysis_data <- data %>%
+  filter(year(t) >= analysis_start_year)
+Temp <- analysis_data$Temp
+
+
+ hwmid(yTref = 1936,
+                   Tref = Tref,
+                   yTemp = 1990, 
+                   Temp = Temp)
+```
+
+```{r}
+years <- 1990:2024
+hwmid_tbl <- tibble(
+  year = years,
+  HWMId = hwmid_result$hwmid[, 1],
+  events = hwmid_result$hwmid[, 2],
+  peak_day = hwmid_result$hwmid[, 3]
+)
+ggplot(hwmid_tbl, aes(x = year, y = HWMId)) +
+  geom_col(fill = "#e60000") +
+  geom_hline(yintercept = hwmid_result$T30y75p, linetype = "dashed", color = "darkred") +
+  geom_hline(yintercept = hwmid_result$T30y25p, linetype = "dotted", color = "blue") +
+  annotate("text", x = 1991, y = hwmid_result$T30y75p + 0.5, label = "75th percentile", hjust = 0, color = "darkred") +
+  annotate("text", x = 1991, y = hwmid_result$T30y25p + 0.5, label = "25th percentile", hjust = 0, color = "blue") +
+  labs(
+    title = "Annual Heatwave Magnitude Index (HWMId) in Hamburg-Fuhlsbüttel (1990–2024)",
+    subtitle = "Based on 90th percentile threshold from 1936–1989 reference period",
+    x = "Year",
+    y = "HWMId",
+    caption = "Source: Computed using `hwmid()` function"
+  ) +
+  theme_minimal(base_size = 14)
+
+```
 
 
 
+```{r}
+hwmid_tbl <- tibble(
+  year = 1990:2024,
+  HWMId = hwmid_result$hwmid[,1]
+)
 
+ggplot(hwmid_tbl, aes(x = year, y = HWMId)) +
+  geom_col(fill = "#e60000") +
+  geom_hline(yintercept = hwmid_result$T30y75p, linetype = "dashed", color = "darkred") +
+  geom_hline(yintercept = hwmid_result$T30y25p, linetype = "dotted", color = "blue") +
+  annotate("text", x = 1991, y = hwmid_result$T30y75p + 0.3, label = "75th percentile", color = "darkred", hjust = 0) +
+  annotate("text", x = 1991, y = hwmid_result$T30y25p + 0.3, label = "25th percentile", color = "blue", hjust = 0) +
+  labs(
+    title = "Annual HWMId in Hamburg-Fuhlsbüttel (1990–2024)",
+    y = "HWMId",
+    x = "Year",
+    caption = "Thresholds based on 1936–1989 reference period"
+  ) +
+  theme_minimal(base_size = 14)
+
+```
 
 
 
