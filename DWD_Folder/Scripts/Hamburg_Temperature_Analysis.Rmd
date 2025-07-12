@@ -722,26 +722,86 @@ ggplot(hwmid_tbl, aes(x = year, y = HWMId)) +
 
 
 ```{r}
-hwmid_tbl <- tibble(
-  year = 1990:2024,
-  HWMId = hwmid_result$hwmid[,1]
-)
+hwmid_tbl$events <- hwmid_result$hwmid[,2]
 
-ggplot(hwmid_tbl, aes(x = year, y = HWMId)) +
-  geom_col(fill = "#e60000") +
-  geom_hline(yintercept = hwmid_result$T30y75p, linetype = "dashed", color = "darkred") +
-  geom_hline(yintercept = hwmid_result$T30y25p, linetype = "dotted", color = "blue") +
-  annotate("text", x = 1991, y = hwmid_result$T30y75p + 0.3, label = "75th percentile", color = "darkred", hjust = 0) +
-  annotate("text", x = 1991, y = hwmid_result$T30y25p + 0.3, label = "25th percentile", color = "blue", hjust = 0) +
+ggplot(hwmid_tbl, aes(x = year, y = events)) +
+  geom_col(fill = "#f97316") +
+  #scale_x_continuous(breaks = seq(1990,2024,10), limits = c(1990,2025)) +
   labs(
-    title = "Annual HWMId in Hamburg-Fuhlsbüttel (1990–2024)",
-    y = "HWMId",
+    title = "Annual Number of Heatwave Events (1990–2024)",
     x = "Year",
-    caption = "Thresholds based on 1936–1989 reference period"
+    y = "Number of Events"
   ) +
   theme_minimal(base_size = 14)
 
 ```
+```{r}
+hwmid_tbl <- tibble(
+  year = 1990:2024,
+  HWMId = hwmid_result$hwmid[,1],
+  events = hwmid_result$hwmid[,2],
+  peak_day = hwmid_result$hwmid[,3]
+)
+
+# Filter only years with actual heatwave events
+peak_day_tbl <- hwmid_tbl %>% filter(peak_day > 0)
+
+ggplot(peak_day_tbl, aes(x = year, y = peak_day)) +
+  geom_line(color = "#6366f1", linewidth = 1) +
+  geom_point(color = "#1e3a8a", size = 3) +
+  labs(
+    title = "Julian Day of Peak Heatwave Intensity (1990–2024)",
+    subtitle = "Only years with heatwave events shown",
+    x = "Year",
+    y = "Peak Day of Year"
+  ) +
+  scale_y_continuous(breaks = seq(150, 250, 10)) +
+  theme_minimal(base_size = 14)
+
+```
+
+```{r}
+# Filter valid peak days (non-zero)
+peak_day_tbl <- hwmid_tbl %>%
+  filter(peak_day > 0) %>%
+  mutate(
+    peak_date = as.Date(peak_day - 1, origin = paste0(year, "-01-01")),
+    peak_month = format(peak_date, "%B"),  # Full month name
+    peak_day_of_month = format(peak_date, "%d")  # Day of the month (01–31)
+  )
+peak_day_tbl %>%
+  count(peak_month) %>%
+  arrange(desc(n))
+```
+```{r}
+peak_day_tbl %>%
+  count(peak_month) %>%
+  ggplot(aes(x = reorder(peak_month, -n), y = n)) +
+  geom_col(fill = "#ef4444") +
+  geom_text(aes(label = n), vjust = -0.5, fontface = "bold", size = 5) +
+  labs(
+    title = "Frequency of Heatwave Peak Months (1990–2024)",
+    x = "Month",
+    y = "Number of Peak Years"
+  ) +
+  theme_minimal(base_size = 14)
+```
+```{r}
+peak_day_tbl %>%
+  mutate(decade = floor(year / 10) * 10) %>%
+  count(decade, peak_month) %>%
+  ggplot(aes(x = factor(decade), y = n, fill = peak_month)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Decade-wise Distribution of Peak Heatwave Months",
+    x = "Decade",
+    y = "Count",
+    fill = "Peak Month"
+  ) +
+  theme_minimal(base_size = 14)
+
+```
+
 
 
 
