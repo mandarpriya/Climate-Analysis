@@ -74,6 +74,9 @@ annual_tbl <- monthly_tbl |>
 
 annual_tbl |> dplyr:: select(-year) |> summary()
 ```
+```{r}
+plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots"
+```
 
 
 # Temperature Variation (1936-2025)
@@ -185,7 +188,14 @@ ggplot(annual_temperature_tbl_long, aes(x = year, y = Temperature, colour = Temp
     plot.background = element_blank()
   ) +
    guides(color = "none", fill = "none")
-  
+
+ggsave(
+  filename = file.path(plot_dir, "Annual_Temperature_Trend.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 ## Decadal Changes in Temperature 
@@ -240,6 +250,14 @@ ggplot(decadal_summary_tbl, aes(x = decade_group, y = decadal_mean, fill = Tempe
     legend.title = element_text(face = "bold"),
     legend.text = element_text(face = "bold", size = 20)
   )
+
+ggsave(
+  filename = file.path(plot_dir, "Decadal_Temperature_Bar.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 
 
@@ -295,6 +313,13 @@ annotate("text", x = 2.6, y = 9.5, label = "Average Temperature", hjust = 0, siz
 annotate("point", x = 2.5, y = 6, size = 5, shape = 21, fill = "#4575b4") +
 annotate("text", x = 2.6, y = 6, label = "Minimum Temperature", hjust = 0, size = 6, fontface = "bold")
 
+ggsave(
+  filename = file.path(plot_dir, "Decadal_Temperature_Line.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 
@@ -544,6 +569,14 @@ guides(
     panel.grid.major.y = element_line(color = "gray80", linetype = "dotted"),
     plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
   )
+ggsave(
+  filename = file.path(plot_dir, "Heatwave_Intensity_Trend_1990_2024.png"),
+  plot = last_plot(),
+  width = 18,
+  height = 12,
+  dpi = 450
+)
+
 
 ```
 
@@ -652,6 +685,13 @@ guides(
   )
 
 
+ggsave(
+  filename = file.path(plot_dir, "Heatwave_Max_Exceedance_1990_2024.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 
 ```
@@ -710,7 +750,13 @@ ggplot(hwmid_tbl, aes(x = year, y = events)) +
     y = "Number of Events"
   ) +
   theme_minimal(base_size = 14)
-
+ggsave(
+  filename = file.path(plot_dir, "HWMId_Annual_Events_1990_2024.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 ```{r}
 hwmid_tbl <- tibble(
@@ -734,7 +780,13 @@ ggplot(peak_day_tbl, aes(x = year, y = peak_day)) +
   ) +
   scale_y_continuous(breaks = seq(150, 250, 10)) +
   theme_minimal(base_size = 14)
-
+ggsave(
+  filename = file.path(plot_dir, "HWMId_Peak_Julian_Day_Line.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 
 ```{r}
@@ -762,6 +814,14 @@ peak_day_tbl %>%
     y = "Number of Peak Years"
   ) +
   theme_minimal(base_size = 14)
+
+ggsave(
+  filename = file.path(plot_dir, "Heatwave_Peak_Month_Count.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 ```{r}
 peak_day_tbl %>%
@@ -776,11 +836,18 @@ peak_day_tbl %>%
     fill = "Peak Month"
   ) +
   theme_minimal(base_size = 14)
+ggsave(
+  filename = file.path(plot_dir, "Peak_Months_by_Decade.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 
 # Heat Wave Magnitude Index 
-```{r}
+```{r fig.width=15, fig.height=10}
 library(heatwaveR)
 
 ## Daily data
@@ -830,6 +897,15 @@ combined_events %>%
     subtitle = "Hamburg Fuhlsbüttel",
     y = "Number of Events", x = "Decade"
   )
+
+ggsave(
+  filename = file.path(plot_dir, "Heatwave_Frequency_Climatology_Period.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
+
 ```
 # Exceedance
 ```{r}
@@ -872,6 +948,13 @@ exceed_28c_events %>%
     x = "Year", y = "Number of Events"
   ) +
   theme_minimal(base_size = 14)
+ggsave(
+  filename = file.path(plot_dir, "Exceedance_28C_Frequency_Annual.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 
@@ -888,6 +971,13 @@ ggplot(exceed_28c_events, aes(x = date_peak, y = rate_decline)) +
     subtitle = "How quickly temperatures fell after heatwave peaks"
   ) +
   theme_minimal(base_size = 14)
+ggsave(
+  filename = file.path(plot_dir, "Exceedance_Rate_Decline.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 
@@ -942,6 +1032,14 @@ ggplot(top10_decline, aes(x = rate_decline, y = reorder(as.character(date_peak),
   ) +
   coord_cartesian(xlim = c(0, max(top10_decline$rate_decline) + 0.3))
 
+ggsave(
+  filename = file.path(plot_dir, "Top10_Slowest_Decline_Rate.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
+
 ```
 ```{r fig.height=10, fig.width=15}
 # Filter top 10 by duration
@@ -977,6 +1075,13 @@ ggplot(top10_duration, aes(x = duration, y = reorder(as.character(date_peak), du
   ) +
   coord_cartesian(xlim = c(0, max(top10_duration$duration) + 2))
 
+ggsave(
+  filename = file.path(plot_dir, "Top10_Longest_Heatwaves.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 “Among the top 10 longest-duration heatwave events from 1936–2024, those with the longest persistence (e.g., 2020 and 2018) exhibited low rates of decline, suggesting prolonged high-temperature stress with slow recovery. In contrast, shorter events such as in 1982, despite lasting only 7 days, showed much steeper decline rates, indicating a more abrupt end to extreme heat conditions. This distinction has implications for understanding not only intensity but also post-heatwave cooling dynamics, relevant for public health and infrastructure recovery.”
@@ -1026,6 +1131,13 @@ ggplot(top_max_intensity, aes(x = reorder(format(date_peak, "%Y-%m-%d"), intensi
     plot.caption = element_text(size = 18, face = "italic", colour = "gray50")
   )
 
+ggsave(
+  filename = file.path(plot_dir, "Top10_Max_Intensity_Events.png"),
+  plot = last_plot(),
+  width = 20,
+  height = 10,
+  dpi = 450
+)
 
 ```
 
