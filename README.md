@@ -20,6 +20,45 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 
 ![Annual Temperature Trend](DWD_Folder/Plots/Annual_Temperature_Trend.png)
 
+### 📊 Decadal Temperature (Bar Plot)
+![Decadal Temperature Bar](DWD_Folder/Plots/Decadal_Temperature_Bar.png)
+
+### 📉 Decadal Temperature Trends (Line Plot)
+![Decadal Temperature Line](DWD_Folder/Plots/Decadal_Temperature_Line.png)
+
+### 🔥 Heatwave Intensity Trend (1990–2024)
+![Max Exceedance](DWD_Folder/Plots/Heatwave_Max_Exceedance_1990_2024.png)
+
+### 🔁 Annual Number of Heatwave Events (HWMId, 1990–2024)
+![HWMId Annual Events](DWD_Folder/Plots/HWMId_Annual_Events_1990_2024.png)
+
+### 🗓️ Julian Day of Peak Heatwave Intensity
+![Peak Julian Day](DWD_Folder/Plots/HWMId_Peak_Julian_Day_Line.png)
+
+### 📅 Frequency of Heatwave Peak Months (1990–2024)
+![Peak Month Count](DWD_Folder/Plots/Heatwave_Peak_Month_Count.png)
+
+### 📆 Peak Months by Decade
+![Peak Month by Decade](DWD_Folder/Plots/Peak_Months_by_Decade.png)
+
+### 🧮 Heatwave Frequency per Climatology Period
+![Heatwave Frequency by Climatology](DWD_Folder/Plots/Heatwave_Frequency_Climatology_Period.png)
+
+### 📊 Frequency of Heatwave Events (Tmax ≥ 28°C, ≥3 Days)
+![Exceedance Frequency](DWD_Folder/Plots/Exceedance_28C_Frequency_Annual.png)
+
+### ↘️ Rate of Decline After Heatwave Peak
+![Rate of Decline](DWD_Folder/Plots/Exceedance_Rate_Decline.png)
+
+### 🐢 Top 10 Slowest Heatwave Declines
+![Slowest Decline](DWD_Folder/Plots/Top10_Slowest_Decline_Rate.png)
+
+### ⏳ Top 10 Longest Duration Heatwave Events
+![Longest Duration](DWD_Folder/Plots/Top10_Longest_Heatwaves.png)
+
+### 📌 Top 10 Heatwaves by Maximum Intensity
+![Max Intensity Events](DWD_Folder/Plots/Top10_Max_Intensity_Events.png)
+
 
 
 
