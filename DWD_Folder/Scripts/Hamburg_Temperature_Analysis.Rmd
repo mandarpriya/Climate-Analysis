@@ -928,6 +928,7 @@ ggplot(top10_decline, aes(x = rate_decline, y = reorder(as.character(date_peak),
   scale_fill_gradient(low = "#ffcccc", high = "#660000", name = "Duration") +
   labs(
     title = "Top 10 Heatwaves with Slowest Decline in Tmax (1936–2024)",
+    subtitle = "Hamburg Fuhlsbüttel",
     caption = "Source:- Deutscher Wetterdienst (DWD)",
     x = "Rate of Decline (°C/day)",
     y = "Date of Peak"
@@ -942,7 +943,7 @@ ggplot(top10_decline, aes(x = rate_decline, y = reorder(as.character(date_peak),
   coord_cartesian(xlim = c(0, max(top10_decline$rate_decline) + 0.3))
 
 ```
-```{r}
+```{r fig.height=10, fig.width=15}
 # Filter top 10 by duration
 top10_duration <- exceed_28c$exceedance %>%
   arrange(desc(duration)) %>%
@@ -961,14 +962,18 @@ ggplot(top10_duration, aes(x = duration, y = reorder(as.character(date_peak), du
   ) +
   labs(
     title = "Top 10 Longest Duration Heatwave Events (1936–2024)",
+    subtitle = "Hamburg Fuhlsbüttel",
+    caption = "Source:- Deutscher Wetterdienst (DWD)",
     x = "Duration (days)",
     y = "Date of Peak"
   ) +
   theme_minimal(base_size = 14) +
   theme(
-    plot.title = element_text(face = "bold"),
+    plot.title.position = "plot",
+    plot.title = element_text(face = "bold", size = 22, margin = margin(b=15)),
+    plot.subtitle  = element_text(face = "bold", size = 18, margin = margin(b=10)),
     axis.text.y = element_text(face = "bold"),
-    legend.position = "bottom"
+    legend.position = "right"
   ) +
   coord_cartesian(xlim = c(0, max(top10_duration$duration) + 2))
 
