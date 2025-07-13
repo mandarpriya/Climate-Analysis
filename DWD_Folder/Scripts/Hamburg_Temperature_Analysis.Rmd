@@ -300,11 +300,9 @@ annotate("text", x = 2.6, y = 6, label = "Minimum Temperature", hjust = 0, size 
 
 
 
-# Heatwave Events  :- We visualize the intensity and duration of heat events from 1936-2024.
+# Heatwave Events  :- Identification of the heatwave events from 1936-2024
 ```{r}
-library(ggplot2)
-library(dplyr)
-library(scales)
+
 library(ggrepel)  # For repelling labels
 
 
@@ -429,6 +427,7 @@ heatwave_events_tbl$year <- as.numeric(heatwave_events_tbl$year)
 
 ```
 
+## Heatwave events visualization from 1990-2024 
 
 ```{r fig.width=18,fig.height=12}
 # Custom color palette
@@ -533,7 +532,7 @@ guides(
     plot.subtitle = element_text(size = 15, color = "gray30", margin = margin(b = 15), face = "bold"),
     plot.caption = element_text(size = 15, color = "gray50",  face = "bold",hjust = 1),
     axis.title.y = element_text(margin = margin(r = 10), face = "bold", size = 22),
-    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray30", size = 15),
+    axis.text.x  = element_text(angle = 45, hjust = 1, face = "bold", color = "gray50", size = 20),
     axis.text.y  = element_text(face = "bold", color = "gray", size = 20),
     legend.position = "right",
     legend.box = "vertical",
@@ -548,8 +547,7 @@ guides(
 
 ```
 
-### Extreme Heatwave using Maximum Intensity 
-
+## Extreme Heatwave events visualization based on max intensity (1990-2024)
 ```{r fig.width= 15, fig.height= 10}
 # Filter post-1990 events
 heatwave_recent_tbl <- heatwave_events_tbl %>%
@@ -657,7 +655,7 @@ guides(
 
 
 ```
-### ExtRemes library is used in the following for heatwave magnitude index.
+# Heat wave maginitude index (hwmid)
 
 
 ```{r}
@@ -793,14 +791,28 @@ peak_day_tbl %>%
   ggplot(aes(x = factor(decade), y = n, fill = peak_month)) +
   geom_col(position = "dodge") +
   labs(
-    title = "Decade-wise Distribution of Peak Heatwave Months",
-    x = "Decade",
+    title = "Decade-wise Distribution of Peak Heatwave Months\n Hamburg Fuhlsbüttel",
+    x = "",
     y = "Count",
     fill = "Peak Month"
   ) +
   theme_minimal(base_size = 14)
 
 ```
+
+#HeatwaveR library
+```{r}
+library(heatwaveR)
+?heatwaveR::detect_event
+## Daily data
+data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
+data |> head()
+
+data_tbl <- data |> 
+  rename(t = date) |> 
+  select(t,temp =Tmax)
+```
+
 
 
 
