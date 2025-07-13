@@ -13,7 +13,13 @@ So we decided to use another reliable data source NCEI data, which gets a regula
 This research consists of two complementary analyses: first, an examination of climate variables to identify trends and changes; and second, an analysis of drought indices to determine whether they support the identified climate changes. 
 
 
-# Climate Analysis for Hamburg
+# Climate Analysis for Hamburg Fuhlsbüttel:
+I first perform Temperature analysis for  Hamburg Fuhlsbüttel
+
+### Annual Temperature Trend (1936–2024)
+
+![Annual Temperature Trend](DWD_Folder/Plots/Annual_Temperature_Trend.png)
+
 
 
 
