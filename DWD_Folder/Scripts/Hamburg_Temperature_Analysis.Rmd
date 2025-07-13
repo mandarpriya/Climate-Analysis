@@ -3,7 +3,9 @@ title: "Temperature_Analysis"
 author: "Mandar"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
+  
+  pdf_document:
+    latex_engine: xelatex
   html_document: default
   word_document: default
 ---
@@ -12,17 +14,22 @@ output:
 ```{r}
 rm(list = ls())
 ```
+
+
+
 ```{r}
 knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
                       message = FALSE,echo = TRUE, dpi = 300, 
                       fig.width = 15, fig.height = 10)
 ```
 ```{r}
+library(DT)
 library(tidyverse)
 library(SPEI)
 library(drought)
 library(extRemes)
 library(heatwaveR)
+
 ```
 
 
@@ -34,7 +41,7 @@ library(heatwaveR)
 data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
 
 
-data
+
 
 ```
 
@@ -707,7 +714,7 @@ data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DW
 data <- data |> 
   rename(t = date, Temp = Tmax) |> 
   select(t,Temp) 
-data
+
 ```
 
 ## Now after we have made the necessary adjustments, so we compute the hwmid as hwmi takes only 32 years for refrence which we think will not be justifying the research.
@@ -732,15 +739,24 @@ Temp <- analysis_data$Temp
                    Tref = Tref,
                    yTemp = 1990, 
                    Temp = Temp)
+  
+hwmid_tbl <- tibble(
+  year = 1990:2024,
+  HWMId = hwmid_result$hwmid[,1],
+  events = hwmid_result$hwmid[,2],
+  peak_day = hwmid_result$hwmid[,3]
+)
+
 ```
 
 
 
 
 
-```{r}
-hwmid_tbl$events <- hwmid_result$hwmid[,2]
 
+
+
+```{r}
 ggplot(hwmid_tbl, aes(x = year, y = events)) +
   geom_col(fill = "#f97316") +
   #scale_x_continuous(breaks = seq(1990,2024,10), limits = c(1990,2025)) +
@@ -798,9 +814,7 @@ peak_day_tbl <- hwmid_tbl %>%
     peak_month = format(peak_date, "%B"),  # Full month name
     peak_day_of_month = format(peak_date, "%d")  # Day of the month (01–31)
   )
-peak_day_tbl %>%
-  count(peak_month) %>%
-  arrange(desc(n))
+
 ```
 ```{r}
 peak_day_tbl %>%
@@ -852,7 +866,7 @@ library(heatwaveR)
 
 ## Daily data
 data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
-data |> head()
+
 
 # modifications as in the documentation
 data_tbl <- data |> 
@@ -995,7 +1009,7 @@ slow_decline_events <- exceed_28c_events %>%
   slice(1:10) %>%
   mutate(label = paste0("Slow Decline: ", round(rate_decline, 2), "°C/day\n", format(date_start, "%b %d, %Y")))
 
-slow_decline_events
+
 ```
 
 
