@@ -655,17 +655,19 @@ guides(
 
 
 ```
-# Heat wave maginitude index (hwmid)
+# Heat wave maginitude index (hwmid) computation 
 
 
 ```{r}
 ### starting from the data (daily data)
 ## Daily data
 data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
-# chnaging the data variables as in the documentation of of extRemes library, we only focus on Maximum Temperature (Tmax)
+# changing the data variables as in the documentation of of extRemes library, we only focus on Maximum Temperature (Tmax)
+
 data <- data |> 
   rename(t = date, Temp = Tmax) |> 
   select(t,Temp) 
+data
 ```
 
 ## Now after we have made the necessary adjustments, so we compute the hwmid as hwmi takes only 32 years for refrence which we think will not be justifying the research.
@@ -686,7 +688,7 @@ analysis_data <- data %>%
 Temp <- analysis_data$Temp
 
 
- hwmid(yTref = 1936,
+  hwmid_result <- hwmid(yTref = 1936,
                    Tref = Tref,
                    yTemp = 1990, 
                    Temp = Temp)
@@ -800,18 +802,78 @@ peak_day_tbl %>%
 
 ```
 
-#HeatwaveR library
+# Heat Wave Magnitude Index 
 ```{r}
 library(heatwaveR)
-?heatwaveR::detect_event
+
 ## Daily data
 data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
 data |> head()
 
+# modifications as in the documentation
 data_tbl <- data |> 
   rename(t = date) |> 
   select(t,temp =Tmax)
+
+# heat Wave Frequency per decade
+res_1936_1989 <- detect_event(ts2clm(data = data_tbl,
+                    climatologyPeriod = c("1936-01-01", "1989-12-31")))
+res_1990_2025 <- detect_event(ts2clm(data = data_tbl,
+                                     climatologyPeriod = c("1990-01-01", "2025-05-28")))
+
+res_1936_1989$event <- res_1936_1989$event |> 
+  select(date_start, date_peak, date_end, duration, intensity_mean, intensity_max) |> 
+  arrange(desc(intensity_max))
+
+res_1990_2025$event <- res_1990_2025$event |> 
+  select(date_start, date_peak, date_end, duration, intensity_mean, intensity_max) |> 
+  arrange(desc(intensity_max))
+
+events_1936_1989 <- res_1936_1989$event |> 
+  mutate(clim_period = "1936–1989")
+
+events_1990_2025 <- res_1990_2025$event |> 
+  mutate(clim_period = "1990–2025")
+combined_events <- bind_rows(events_1936_1989, events_1990_2025)
+
+## We can clearly see that using the refrence period has an impact on the heatwave events
+combined_events %>%
+  mutate(year = year(date_start), decade = floor(year / 10) * 10) %>%
+  group_by(decade, clim_period) %>%
+  summarise(
+    frequency = n(),
+    avg_intensity = mean(intensity_mean),
+    max_intensity = max(intensity_max),
+    .groups = "drop"
+  ) %>%
+  ggplot(aes(x = factor(decade), y = frequency, fill = clim_period)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Heatwave Frequency per Decade",
+    subtitle = "Hamburg Fuhlsbüttel",
+    y = "Number of Events", x = "Decade"
+  )
 ```
+# Exceedance
+```{r}
+
+# Use full period if analyzing long-term trends
+exceed_28c <- exceedance(
+  data = data_tbl,
+  x = t,
+  y = temp,
+  threshold = 28,
+  below = FALSE,
+  minDuration = 3,
+  joinAcrossGaps = TRUE,  # or FALSE if you don't want to link across any gaps
+  maxGap = 0,
+  roundRes = 4,
+  returnDF = TRUE
+)
+
+```
+
+
 
 
 
