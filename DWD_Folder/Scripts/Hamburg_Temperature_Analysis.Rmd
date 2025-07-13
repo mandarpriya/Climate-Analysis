@@ -694,30 +694,7 @@ Temp <- analysis_data$Temp
                    Temp = Temp)
 ```
 
-```{r}
-years <- 1990:2024
-hwmid_tbl <- tibble(
-  year = years,
-  HWMId = hwmid_result$hwmid[, 1],
-  events = hwmid_result$hwmid[, 2],
-  peak_day = hwmid_result$hwmid[, 3]
-)
-ggplot(hwmid_tbl, aes(x = year, y = HWMId)) +
-  geom_col(fill = "#e60000") +
-  geom_hline(yintercept = hwmid_result$T30y75p, linetype = "dashed", color = "darkred") +
-  geom_hline(yintercept = hwmid_result$T30y25p, linetype = "dotted", color = "blue") +
-  annotate("text", x = 1991, y = hwmid_result$T30y75p + 0.5, label = "75th percentile", hjust = 0, color = "darkred") +
-  annotate("text", x = 1991, y = hwmid_result$T30y25p + 0.5, label = "25th percentile", hjust = 0, color = "blue") +
-  labs(
-    title = "Annual Heatwave Magnitude Index (HWMId) in Hamburg-Fuhlsbüttel (1990–2024)",
-    subtitle = "Based on 90th percentile threshold from 1936–1989 reference period",
-    x = "Year",
-    y = "HWMId",
-    caption = "Source: Computed using `hwmid()` function"
-  ) +
-  theme_minimal(base_size = 14)
 
-```
 
 
 
@@ -872,12 +849,179 @@ exceed_28c <- exceedance(
 )
 
 ```
+```{r}
+exceed_28c_events <- exceed_28c$exceedance %>%
+  mutate(
+    year = year(date_start),
+    month = month(date_start, label = TRUE, abbr = TRUE)
+  )
+
+
+```
+```{r}
+library(ggplot2)
+
+exceed_28c_events %>%
+  count(year) %>%
+  ggplot(aes(x = year, y = n)) +
+  geom_col(fill = "#e63946") +
+  geom_smooth(method = "loess", se = FALSE, color = "black", linewidth = 0.8) +
+  labs(
+    title = "Frequency of Heatwave Events (Tmax ≥ 28°C, ≥3 Days)",
+    subtitle = "Based on exceedance analysis from 1936 to 2024",
+    x = "Year", y = "Number of Events"
+  ) +
+  theme_minimal(base_size = 14)
+
+```
 
 
 
+```{r}
+ggplot(exceed_28c_events, aes(x = date_peak, y = rate_decline)) +
+  geom_line(color = "#6a4c93") +
+  geom_point(size = 2) +
+  geom_smooth(method = "loess", se = FALSE, color = "black") +
+  labs(
+    title = "Rate of Decline After Heatwave Peak (°C/day)",
+    x = "Peak Date", y = "Rate of Decline",
+    subtitle = "How quickly temperatures fell after heatwave peaks"
+  ) +
+  theme_minimal(base_size = 14)
+
+```
+
+
+```{r}
+# Find top 5 slowest and fastest declines
+slow_decline <- exceed_28c_events %>% arrange(rate_decline)
+fast_decline <- exceed_28c_events %>% arrange(desc(rate_decline))
+
+```
+
+```{r , fig.width=15 ,fig.height=10}
+slow_decline_events <- exceed_28c_events %>%
+  arrange(rate_decline) %>%
+  slice(1:10) %>%
+  mutate(label = paste0("Slow Decline: ", round(rate_decline, 2), "°C/day\n", format(date_start, "%b %d, %Y")))
+
+slow_decline_events
+```
 
 
 
+```{r fig.width=15, fig.height=10}
+library(ggplot2)
+library(scales)
 
+# Filter top 10 slowest rate of decline
+top10_decline <- exceed_28c$exceedance %>%
+  arrange(rate_decline) %>%
+  slice(1:10) %>%
+  mutate(label = paste0(date_peak, "\n", sprintf("%.2f°C/day", rate_decline)))
+
+# Plot
+ggplot(top10_decline, aes(x = rate_decline, y = reorder(as.character(date_peak), rate_decline))) +
+  geom_col(aes(fill = duration), color = "black", width = 0.8) +
+  geom_text(aes(label = sprintf("%.2f°C/day", rate_decline)),
+            hjust = -0.1, size = 4, fontface = "bold") +
+  scale_fill_gradient(low = "#ffcccc", high = "#660000", name = "Duration") +
+  labs(
+    title = "Top 10 Heatwaves with Slowest Decline in Tmax (1936–2024)",
+    caption = "Source:- Deutscher Wetterdienst (DWD)",
+    x = "Rate of Decline (°C/day)",
+    y = "Date of Peak"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold"),
+    legend.position = "bottom",
+    plot.caption = element_text(size = 15, color = "gray50",  face = "bold", hjust = 1)
+  ) +
+  coord_cartesian(xlim = c(0, max(top10_decline$rate_decline) + 0.3))
+
+```
+```{r}
+# Filter top 10 by duration
+top10_duration <- exceed_28c$exceedance %>%
+  arrange(desc(duration)) %>%
+  slice(1:10) %>%
+  mutate(label = paste0(date_peak, "\n", duration, " days"))
+
+# Plot
+ggplot(top10_duration, aes(x = duration, y = reorder(as.character(date_peak), duration))) +
+  geom_col(aes(fill = rate_decline), color = "black", width = 0.8) +
+  geom_text(aes(label = paste0(duration, " days")), 
+            hjust = -0.1, size = 4, fontface = "bold") +
+  scale_fill_gradientn(
+    colours = c("#cce5ff", "#66a3cc", "#004c99", "#003366"),  # light to dark
+    values = scales::rescale(c(0.4, 1.5, 3.5, 9.3)),           # breakpoints
+    name = "Rate of Decline"
+  ) +
+  labs(
+    title = "Top 10 Longest Duration Heatwave Events (1936–2024)",
+    x = "Duration (days)",
+    y = "Date of Peak"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold"),
+    legend.position = "bottom"
+  ) +
+  coord_cartesian(xlim = c(0, max(top10_duration$duration) + 2))
+
+
+```
+“Among the top 10 longest-duration heatwave events from 1936–2024, those with the longest persistence (e.g., 2020 and 2018) exhibited low rates of decline, suggesting prolonged high-temperature stress with slow recovery. In contrast, shorter events such as in 1982, despite lasting only 7 days, showed much steeper decline rates, indicating a more abrupt end to extreme heat conditions. This distinction has implications for understanding not only intensity but also post-heatwave cooling dynamics, relevant for public health and infrastructure recovery.”
+
+```{r fig.width=20, fig.height=10}
+library(ggplot2)
+library(dplyr)
+
+# Select top 10 by intensity_max
+top_max_intensity <- exceed_28c$exceedance %>%
+  arrange(desc(intensity_max)) %>%
+  slice_head(n = 10) %>%
+  mutate(
+    actual_tmax = round(intensity_max + 28, 1),
+    label = paste0(actual_tmax, "°C (+",round(intensity_max, 1), ")"),
+    date_peak = as.Date(date_peak)
+  )
+
+# Plot
+# Plot
+ggplot(top_max_intensity, aes(x = reorder(format(date_peak, "%Y-%m-%d"), intensity_max),
+                              y = intensity_max,
+                              fill = intensity_cumulative)) +
+  geom_col(color = "black", width = 0.8) +
+  geom_text(aes(label = label), 
+            hjust = -0.1, color = "black", fontface = "bold", size = 6) +  # ← increased text size
+  scale_fill_gradient(low = "#fde0dd", high = "#c51b8a",
+                      name = "Cumulative\nIntensity (°C·days)") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
+  coord_flip() +
+  labs(
+    title = "Top 10 Heatwaves by Maximum Intensity (1936–2024)",
+    subtitle = "Based on exceedance events where Tmax ≥ 28°C for ≥3 days",
+    x = "Date of Peak",
+    y = "Maximum Intensity (°C above threshold)",
+    caption = "Source: Hamburg Fuhlsbuttel, Deutscher Wetterdienst (DWD)"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(face = "bold", size = 22,color = "black", margin = margin(b=10)),
+    plot.subtitle = element_text(size = 15, margin = margin(b=8)),
+    axis.text.y = element_text(size = 12),
+    axis.title.x = element_text(size = 15, face = "bold", color = "black"),
+    axis.title.y = element_text(size = 15, face = "bold", color = "black"),
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = 12),
+    plot.caption = element_text(size = 18, face = "italic", colour = "gray50")
+  )
+
+
+```
 
 
