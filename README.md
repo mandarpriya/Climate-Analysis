@@ -15,13 +15,7 @@ This research consists of two complementary analyses: first, an examination of c
 
 # Climate Analysis for Hamburg
 
-## Heatwave Plots
 
-### 1. Heatwave Events
-![Heatwave Events](heat_wave_event_plot/HamburgFuhlsbüttel_Heatwave_Events.png)
-
-### 2. Max Daily Exceedance
-![Max Daily Exceedance](heat_wave_event_plot/Max_Daily_Exceedance_HamburgFuhlsbüttel_Heatwave_Events.png)
 
 
 
