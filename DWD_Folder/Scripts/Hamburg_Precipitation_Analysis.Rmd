@@ -1,0 +1,28 @@
+---
+title: "Hamburg_Precipitation_Analysis"
+author: "MANDAR"
+date: "2025-07-14"
+output: 
+  
+  pdf_document:
+    latex_engine: xelatex
+  html_document: default
+  word_document: default
+---
+
+```{r }
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
+                      message = FALSE,echo = TRUE, dpi = 300, 
+                      fig.width = 15, fig.height = 10)
+```
+
+
+```{r}
+rm(list = ls())
+```
+
+
+```{r}
+
+```
+
