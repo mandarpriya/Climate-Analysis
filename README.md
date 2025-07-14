@@ -27,6 +27,9 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 ![Decadal Temperature Line](DWD_Folder/Plots/Decadal_Temperature_Line.png)
 
 ### 🔥 Heatwave Intensity Trend (1990–2024)
+![Heatwave_Intensity_Trend](DWD_Folder/Plots/Heatwave_Intensity_Trend_1990_2024.png)
+
+### 🌡️ Maximum Daily Exceedance in Heatwaves (1990–2024)
 ![Max Exceedance](DWD_Folder/Plots/Heatwave_Max_Exceedance_1990_2024.png)
 
 ### 🔁 Annual Number of Heatwave Events (HWMId, 1990–2024)
