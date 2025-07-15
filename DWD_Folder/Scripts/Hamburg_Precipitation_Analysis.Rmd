@@ -20,9 +20,100 @@ knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
 ```{r}
 rm(list = ls())
 ```
+```{r}
+library(DT)
+library(tidyverse)
+library(SPEI)
+library(drought)
+library(extRemes)
+library(heatwaveR)
+```
+
 
 
 ```{r}
+# Reading the data 
+data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
+
+precipitation_tbl <- data |> 
+  select(date,prec)
+## Monthly data
+monthly_prec_tbl <- precipitation_tbl |> 
+  mutate(year = year(date),
+         month = month(date)) |> 
+  group_by(year, month) |> 
+  summarize(
+    prec = sum(prec, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+annual_prec_tbl <- monthly_prec_tbl |>
+  group_by(year, ) |> 
+  summarize(
+    prec = sum(prec, na.rm = TRUE),
+    .groups = "drop"
+  )
+
 
 ```
+
+# Visualizing the Annual Precipitation (1936-2025)
+```{r fig.height=10, fig.width=15}
+# Annual Plot provides a good visualiaztion for over the period 
+mean_prec <- mean(annual_prec_tbl$prec, na.rm = TRUE)
+# Extreme years: max and min
+extreme_years <- annual_prec_tbl %>%
+  filter(prec == max(prec, na.rm = TRUE) | prec == min(prec, na.rm = TRUE))
+```
+
+
+```{r fig.height=10, fig.width=15}
+annual_prec_tbl |> 
+  ggplot(aes(x = year, y = prec)) +
+  geom_line(color = "#0e7b0e", linewidth = 1) +
+  geom_point(aes(fill = prec), color = "black", shape = 21, size = 5, stroke = 1.5) +
+  geom_hline(yintercept = mean_prec, linetype = "dotdash", color = "darkred", linewidth = 1) +
+  annotate("text", x = 1938, y = mean_prec + 30,
+           label = paste0("Mean = ", round(mean_prec, 1), " mm"),
+           color = "darkred", fontface = "bold", size = 6, hjust = 0) +
+scale_fill_viridis_c(option = "C", direction = -1, name = "Precip. (mm)") +
+ # geom_smooth(method = "loess", se = FALSE, color = "blue", linetype = "dashed", linewidth = 1.2) +
+  geom_text(data = extreme_years, aes(label = year), vjust = -1.5, fontface = "bold", size = 6) +
+  scale_y_continuous(
+    limits = c(100, 1200),
+    breaks = c(seq(100, 1200, by = 300), 1200),
+    expand = c(0, 0)
+  ) +
+  scale_x_continuous(
+    breaks = c(seq(1936, 2025, 10), 2025),
+    expand = c(0.05, 0.05),
+    limits = c(1936, 2025)
+  ) +
+  labs(
+    title = "Annual Precipitation in Hamburg (1936–2023)",
+    subtitle = "Based on daily aggregated data (January 1936 – June 2025)",
+    x = NULL,
+    y = "Precipitation (mm)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title.position = "plot",
+    plot.title = element_text(hjust = 0, face = "bold", colour = "black", size = 30, margin = margin(b = 10)),
+    plot.subtitle = element_text(hjust = 0, face = "italic", colour = "black", size = 20, margin = margin(b = 20)),
+    axis.line = element_line(color = "black", linewidth = 1),
+    axis.title = element_text(face = "bold", color = "black", size = 22),
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black", size = 20),
+    axis.text.y = element_text(face = "bold", color = "black", size = 20),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(linewidth = 0.5),
+    panel.background = element_blank(),
+    plot.background = element_blank(),
+    plot.margin = margin(20, 20, 20, 20),
+    legend.position = "none"
+  )
+  
+
+  
+```
+
 
