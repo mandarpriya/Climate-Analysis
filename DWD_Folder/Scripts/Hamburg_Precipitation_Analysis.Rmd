@@ -27,6 +27,7 @@ library(SPEI)
 library(drought)
 library(extRemes)
 library(heatwaveR)
+library(lubridate)
 ```
 
 
@@ -68,17 +69,33 @@ extreme_years <- annual_prec_tbl %>%
 
 
 ```{r fig.height=10, fig.width=15}
+annual_prec_tbl <- annual_prec_tbl |>
+ dplyr::mutate(
+    is_2025 = if_else(year == 2025, TRUE, FALSE)
+  )
+
 annual_prec_tbl |> 
   ggplot(aes(x = year, y = prec)) +
-  geom_line(color = "#0e7b0e", linewidth = 1) +
-  geom_point(aes(fill = prec), color = "black", shape = 21, size = 5, stroke = 1.5) +
-  geom_hline(yintercept = mean_prec, linetype = "dotdash", color = "darkred", linewidth = 1) +
-  annotate("text", x = 1938, y = mean_prec + 30,
+  geom_line(color = "#0e7b0e") +
+
+  # First: draw all years except 2025 with viridis fill
+  geom_point(data = subset(annual_prec_tbl, !is_2025),
+             aes(fill = prec),
+             color = "black", shape = 21, size  = 5, stroke = 1.5) +
+
+# Then: draw 2025 with a different fill (e.g., grey) and red outline
+  geom_point(data = subset(annual_prec_tbl, is_2025),
+             fill = "grey60", color = "red", shape = 21, size  = 5, stroke = 2) +
+
+geom_hline(yintercept = mean_prec, linetype = "dotdash", color = "darkred", linewidth = 1) +
+  annotate("text", x = 1938, y = mean_prec + 150,
            label = paste0("Mean = ", round(mean_prec, 1), " mm"),
            color = "darkred", fontface = "bold", size = 6, hjust = 0) +
-scale_fill_viridis_c(option = "C", direction = -1, name = "Precip. (mm)") +
- # geom_smooth(method = "loess", se = FALSE, color = "blue", linetype = "dashed", linewidth = 1.2) +
-  geom_text(data = extreme_years, aes(label = year), vjust = -1.5, fontface = "bold", size = 6) +
+
+  scale_fill_viridis_c(option = "C", direction = -1, name = "Precip. (mm)") +
+
+  geom_text(data = extreme_years, aes(label = year), vjust = -1.5, fontface = "bold", size  = 6) +
+
   scale_y_continuous(
     limits = c(100, 1200),
     breaks = c(seq(100, 1200, by = 300), 1200),
@@ -89,31 +106,577 @@ scale_fill_viridis_c(option = "C", direction = -1, name = "Precip. (mm)") +
     expand = c(0.05, 0.05),
     limits = c(1936, 2025)
   ) +
+
   labs(
-    title = "Annual Precipitation in Hamburg (1936–2023)",
+    title = "Annual Precipitation in Hamburg (1936–2025)",
     subtitle = "Based on daily aggregated data (January 1936 – June 2025)",
+    caption = "Source:- Hamburg Fuhlsbüttel Deutscher Wetterdienst (DWD)",
     x = NULL,
     y = "Precipitation (mm)"
   ) +
   theme_minimal() +
-  theme(
+theme(
     plot.title.position = "plot",
-    plot.title = element_text(hjust = 0, face = "bold", colour = "black", size = 30, margin = margin(b = 10)),
+    plot.title = element_text(hjust = 0, face = "bold", colour = "black", size  = 30, margin = margin(b = 20)),
     plot.subtitle = element_text(hjust = 0, face = "italic", colour = "black", size = 20, margin = margin(b = 20)),
+    plot.caption = element_text(hjust = 1, face = "italic", colour = "gray50", size  = 20),
     axis.line = element_line(color = "black", linewidth = 1),
     axis.title = element_text(face = "bold", color = "black", size = 22),
-    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black", size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black", size  = 20),
     axis.text.y = element_text(face = "bold", color = "black", size = 20),
     panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(linewidth = 0.5),
+    panel.grid.major = element_line(size = 0.5),
     panel.background = element_blank(),
     plot.background = element_blank(),
-    plot.margin = margin(20, 20, 20, 20),
     legend.position = "none"
   )
+
   
 
   
 ```
 
+### 
+
+
+
+```{r}
+pci_annual <- monthly_prec_tbl%>%
+  group_by(year) |> 
+  summarise(
+    pci = (sum(prec^2) / (sum(prec))^2) * 100,
+    .groups = 'drop'
+  )
+pci_annual
+
+```
+```{r}
+pci_annual <- monthly_prec_tbl %>%
+  group_by(year) %>%
+  summarise(
+    pci = (sum(prec^2) / (sum(prec))^2) * 100,
+    .groups = 'drop'
+  ) |> filter(year < 2025 & year > 1989)
+
+```
+```{r fig.height=10, fig.width=15}
+
+ggplot(pci_annual, aes(x = year, y = pci)) +
+  geom_line(col = "darkblue", linewidth  = 1.2) +
+  scale_x_continuous(
+    breaks = seq(1990, 2024, by = 2), 
+    limits = c(1990, 2024)
+  ) +
+  scale_y_continuous(
+    breaks = seq(9, 13.5, by = 0.5),
+    limits = c(9, 13.5)
+  ) +
+  geom_smooth(method = "loess", se = FALSE, col = "black", span = 0.2, linewidth  = 1.5) +
+  labs(
+    title = "PCI Trend in Hamburg  Fuhlsbüttel (1990-2024)",
+    subtitle = "Precipitation Concentration Index with LOESS smoothing",
+    caption ="Source: DWD ",
+    y = "", 
+    x = ""
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 22, face = "bold", hjust = 0.5, margin = margin(b=10)),
+    plot.subtitle = element_text(size   = 20, hjust = 0.5, color = "gray40"),
+    plot.caption = element_text(size   = 20, hjust = 1, color = "gray50"),
+    axis.title.x = element_text(size   = 14, face = "bold"),
+    axis.title.y = element_text(size =  14, face = "bold"),
+    axis.text.x = element_text(size = 20, angle = 45, hjust = 1, colour = "gray50"),
+    axis.text.y = element_text(size  = 20, colour = "grey10"),
+    panel.grid.major = element_line(color = "gray90", linewidth  = 0.5),
+    panel.grid.minor = element_line(color = "gray95", linewidth  = 0.3),
+    plot.margin = margin(20, 20, 20, 20)
+  )
+```
+### What we can infere
+Key Findings:
+1. Overall Stability:
+
+PCI values consistently range between ~9.0-13.5 over 89 years
+Mean appears stable around 10.5-10.6 (moderate concentration)
+No significant long-term trend (black LOESS line is relatively flat)
+
+2. Temporal Patterns:
+
+1940s-1950s: Higher variability and more frequent spikes above 13
+1960s-1980s: More stable period with fewer extreme values
+1990s-2020s: Return to higher variability, similar to 1940s-1950s
+
+3. Climate Implications:
+
+Hamburg maintains moderate seasonal precipitation concentration throughout the record
+No evidence of increasing concentration due to climate change
+The variability suggests natural climate oscillations rather than systematic change
+
+4. Extreme Years:
+
+Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, and 2000s-2010s
+These likely represent years with particularly wet or dry seasons
+### Other intepretations
+German Climate Context Analysis:
+
+Regional Climate Influences: Hamburg, being in northern Germany near the North Sea, is particularly influenced by Atlantic weather systems and the North Atlantic Oscillation (NAO). The cyclical peaks you see (1999, 2011, 2018) likely correspond to periods when these Atlantic systems created more concentrated precipitation patterns.
+Seasonal Concentration: In Germany's temperate oceanic climate, high PCI values often indicate:
+
+Wet winters followed by dry summers (or vice versa)
+Clustering of precipitation into fewer, more intense events
+Potential impacts from blocking high-pressure systems over Central Europe
+
+
+Climate Change Signals: The increasing volatility after 2010 aligns with observed climate change impacts in Germany, including:
+
+More frequent extreme weather events
+Shifts in seasonal precipitation patterns
+Increased likelihood of both drought periods and heavy rainfall events
+
+
+Recent Trends (2020-2024): The declining trend toward 2024 might reflect:
+
+Changes in storm track patterns affecting northern Germany
+Potential shifts in the timing or intensity of Atlantic low-pressure systems
+Regional impacts of broader European climate variability
+
+
+Agricultural/Hydrological Implications: For Hamburg and northern Germany, these PCI fluctuations have significant implications for water management, agriculture, and flood risk - particularly given the region's importance for German agriculture and its proximity to major river systems.
+
+The data suggests Hamburg has experienced increasingly variable precipitation concentration patterns, which is consistent with climate projections for Northern European regions.
+```{r}
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+
+# Add year column
+precipitation_tbl <- precipitation_tbl %>%
+  mutate(year = year(date))
+
+# Create dry/wet flag
+precip_flags <- precipitation_tbl %>%
+  mutate(wet = prec >= 1) %>%
+  pull(wet)
+
+# Run Length Encoding
+rle_spells <- rle(precip_flags)
+
+# Convert RLE to dataframe
+spell_tbl <- tibble(
+  length = rle_spells$lengths,
+  type = ifelse(rle_spells$values, "wet", "dry")
+)
+
+# Assign dates to each spell (approximate using cumsum)
+spell_tbl <- spell_tbl %>%
+  mutate(end_index = cumsum(length),
+         start_index = lag(end_index, default = 1),
+         year = precipitation_tbl$date[end_index] |> year())
+
+# Calculate average duration by year and spell type
+spell_summary <- spell_tbl %>%
+  group_by(year, type) %>%
+  summarise(avg_duration = mean(length), .groups = "drop")
+
+# Plot
+ggplot(spell_summary, aes(x = year, y = avg_duration, color = type)) +
+  geom_line(linewidth = 1) +
+  labs(title = "Average Duration of Wet and Dry Spells",
+       y = "Average Spell Length (days)", color = "Spell Type")
+
+```
+```{r}
+library(ggplot2)
+
+# Calculate monthly climatology (mean for each month)
+monthly_anomalies <- monthly_prec_tbl %>%
+  group_by(month) %>%
+  mutate(monthly_mean = mean(prec, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(anomaly = prec - monthly_mean)
+
+# Plot heatmap
+ggplot(monthly_anomalies, aes(x = factor(month), y = factor(year), fill = anomaly)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "brown", mid = "white", high = "blue", midpoint = 0) +
+  labs(title = "Monthly Precipitation Anomalies",
+       x = "Month", y = "Year", fill = "Anomaly (mm)")
+
+```
+```{r}
+library(changepoint)
+
+# Convert to time series
+annual_tbl <- annual_tbl |> filter(year > 1989)
+
+annual_ts <- ts(annual_tbl$prec, start = min(annual_tbl$year))
+
+# Detect change point in mean
+cpt_mean <- cpt.mean(annual_ts, method = "PELT", penalty  = "SIC")
+# Plot
+plot(cpt_mean, main = "Change Point in Annual Precipitation Mean")
+
+```
+```{r}
+library(changepoint)
+
+cpt_mean_binseg <- cpt.mean(annual_ts, method = "BinSeg", Q = 1)
+
+# Extract changepoint index and year
+cpts(cpt_mean_binseg)
+time(annual_ts)[cpts(cpt_mean_binseg)]
+
+# Plot
+plot(cpt_mean_binseg, main = "Change Point in Annual Precipitation (BinSeg, Q=1)")
+
+```
+
+
+```{r}
+ # Compute percentiles
+quantiles <- quantile(annual_tbl$prec, probs = c(0.1, 0.25, 0.75, 0.9), na.rm = TRUE)
+
+# Classify each year
+annual_tbl <- annual_tbl %>%
+  mutate(class = case_when(
+    prec < quantiles[1] ~ "Very Dry",
+    prec < quantiles[2] ~ "Dry",
+    prec <= quantiles[3] ~ "Normal",
+    prec <= quantiles[4] ~ "Wet",
+    TRUE ~ "Very Wet"
+  ))
+
+# Plot
+ggplot(annual_tbl, aes(x = year, y = prec, fill = class)) +
+  geom_col(color = "black") +
+  scale_fill_manual(values = c("Very Dry" = "#d73027", "Dry" = "#fc8d59",
+                               "Normal" = "gray80", "Wet" = "#91bfdb",
+                               "Very Wet" = "#4575b4")) +
+  labs(title = "Annual Precipitation Classification",
+       y = "Precipitation (mm)", fill = "Category")
+
+```
+
+```{r}
+# Split data
+before_1994 <- annual_prec_tbl |> filter(year <= 1994)
+after_1994  <- annual_prec_tbl |> filter(year > 1994)
+
+# Calculate means
+mean_before <- mean(before_1994$prec)
+mean_after  <- mean(after_1994$prec)
+
+cat("Mean Precipitation Before 1994:", round(mean_before, 1), "mm\n")
+cat("Mean Precipitation After 1994:", round(mean_after, 1), "mm\n")
+
+```
+## Seasonal Precipitation
+```{r}
+seasonal_prec <- monthly_prec_tbl |> 
+  mutate(
+    season = case_when(
+      month == 12 | month == 1 | month == 2 ~ "Winter",
+      month >= 3 & month <= 5 ~ "Spring",
+      month >= 6 & month <= 8 ~ "Summer",
+      month == 9 | month == 10 | month == 11 ~ "Fall",
+      TRUE ~ NA_character_
+    ),
+    # Handle winter year grouping
+    season_year = case_when(
+      month == 12 ~ year + 1,
+      TRUE ~ year
+    )
+  ) |> 
+  group_by(season_year, season) |> 
+  summarise(
+    total_prec = sum(prec, na.rm = TRUE),
+    mean_prec = mean(prec, na.rm = TRUE),
+    n_months = n(),
+    .groups = "drop"
+  ) |> 
+  filter(n_months == 3)
+```
+
+
+```{r}
+seasonal_prec_1990_2025 <- seasonal_prec |> filter(season_year > 1994)
+```
+```{r}
+# Calculate trends for each season
+seasonal_trends <- seasonal_prec |> 
+  group_by(season) |> 
+  summarise(
+    trend_slope = cor.test(season_year, total_prec)$estimate,
+    p_value = cor.test(season_year, total_prec)$p.value,
+    mann_kendall_p = trend::mk.test(total_prec)$p.value,
+    # Changed this line
+    .groups = "drop"
+  )
+seasonal_trends
+```
+
+
+
+
+
+```{r}
+# Create individual plots for each season
+library(ggplot2)
+
+seasonal_plots <- seasonal_prec |> 
+  group_by(season) |> 
+  group_map(~ {
+    ggplot(.x, aes(x = season_year, y = total_prec)) +
+      geom_line(color = "steelblue", alpha = 0.7) +
+      geom_point(color = "steelblue", size = 0.8) +
+      geom_smooth(method = "lm", se = TRUE, color = "red", size = 0.8) +
+      labs(
+        title = paste(.y$season, "Precipitation - Hamburg Fuhlsbüttel"),
+        x = "Year",
+        y = "Total Precipitation (mm)",
+        subtitle = paste("1936-2025 | Trend:", 
+                        ifelse(seasonal_trends$p_value[seasonal_trends$season == .y$season] < 0.05, 
+                               "Significant", "Not significant"))
+      ) +
+      theme_minimal() +
+      theme(
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.title = element_text(size = 10)
+      )
+  })
+
+# Print all plots
+seasonal_plots
+
+# Or create a faceted plot
+ggplot(seasonal_prec, aes(x = season_year, y = total_prec)) +
+  geom_line(color = "steelblue", alpha = 0.7) +
+  geom_point(color = "steelblue", size = 0.5) +
+  geom_smooth(method = "lm", se = TRUE, color = "red", size = 0.6) +
+  facet_wrap(~season, scales = "free_y", ncol = 2) +
+  labs(
+    title = "Seasonal Precipitation Trends - Hamburg Fuhlsbüttel (1936-2025)",
+    x = "Year",
+    y = "Total Precipitation (mm)"
+  ) +
+  theme_minimal()
+```
+### Test´s for Trend for Winter Season:- Using 2 diffrent time frames 1936-1979 & 1980-2025
+
+```{r}
+# Filter winter data
+winter_prec <- seasonal_prec |> 
+  filter(season == "Winter")
+
+# Detailed winter trend analysis
+winter_analysis <- winter_prec |> 
+  summarise(
+    n_years = n(),
+    mean_prec = mean(total_prec, na.rm = TRUE),
+    median_prec = median(total_prec, na.rm = TRUE),
+    sd_prec = sd(total_prec, na.rm = TRUE),
+    min_prec = min(total_prec, na.rm = TRUE),
+    max_prec = max(total_prec, na.rm = TRUE),
+    trend_slope = cor.test(season_year, total_prec)$estimate,
+    trend_p_value = cor.test(season_year, total_prec)$p.value,
+    mann_kendall_p = trend::mk.test(total_prec)$p.value,
+    # Calculate actual slope in mm/year
+    lm_slope = lm(total_prec ~ season_year, data = winter_prec)$coefficients[2]
+  )
+
+print(winter_analysis)
+
+# Create detailed winter plot
+library(ggplot2)
+
+winter_plot <- ggplot(winter_prec, aes(x = season_year, y = total_prec)) +
+  geom_line(color = "steelblue", alpha = 0.7, size = 0.8) +
+  geom_point(color = "steelblue", size = 1.2, alpha = 0.8) +
+  geom_smooth(method = "lm", se = TRUE, color = "red", size = 1, alpha = 0.7) +
+  labs(
+    title = "Winter Precipitation Trend - Hamburg Fuhlsbüttel",
+    subtitle = paste("1936-2025 | Slope:", round(winter_analysis$lm_slope, 2), "mm/year | p =", round(winter_analysis$trend_p_value, 3)),
+    x = "Year",
+    y = "Total Winter Precipitation (mm)",
+    caption = "Winter = December-January-February | Trend line with 95% confidence interval"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.title = element_text(size = 11),
+    panel.grid.minor = element_blank()
+  ) +
+  scale_x_continuous(breaks = seq(1940, 2020, 20))
+
+print(winter_plot)
+
+# Additional analysis: Before/after comparison
+winter_change <- winter_prec |> 
+  mutate(
+    period = case_when(
+      season_year < 1980 ~ "1936-1979",
+      season_year >= 1980 ~ "1980-2025"
+    )
+  ) |> 
+  group_by(period) |> 
+  summarise(
+    mean_prec = mean(total_prec, na.rm = TRUE),
+    median_prec = median(total_prec, na.rm = TRUE),
+    sd_prec = sd(total_prec, na.rm = TRUE),
+    n_years = n(),
+    .groups = "drop"
+  ) |> 
+  mutate(
+    change_mean = mean_prec - lag(mean_prec),
+    change_percent = (change_mean / lag(mean_prec)) * 100
+  )
+
+print(winter_change)
+
+# Boxplot comparison
+period_plot <- winter_prec |> 
+  mutate(
+    period = case_when(
+      season_year < 1980 ~ "1936-1979",
+      season_year >= 1980 ~ "1980-2025"
+    )
+  ) |> 
+  ggplot(aes(x = period, y = total_prec, fill = period)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_jitter(width = 0.2, alpha = 0.5) +
+  labs(
+    title = "Winter Precipitation: Before vs After 1980",
+    x = "Period",
+    y = "Total Winter Precipitation (mm)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+print(period_plot)
+```
+### Test´s for Trend for Winter Season:- Using 2 diffrent time frames 1936-1989 & 1990-2025
+```{r}
+# Filter winter data
+winter_prec <- seasonal_prec |> 
+  filter(season == "Winter")
+
+# Detailed winter trend analysis
+winter_analysis <- winter_prec |> 
+  summarise(
+    n_years = n(),
+    mean_prec = mean(total_prec, na.rm = TRUE),
+    median_prec = median(total_prec, na.rm = TRUE),
+    sd_prec = sd(total_prec, na.rm = TRUE),
+    min_prec = min(total_prec, na.rm = TRUE),
+    max_prec = max(total_prec, na.rm = TRUE),
+    trend_slope = cor.test(season_year, total_prec)$estimate,
+    trend_p_value = cor.test(season_year, total_prec)$p.value,
+    mann_kendall_p = trend::mk.test(total_prec)$p.value,
+    # Calculate actual slope in mm/year
+    lm_slope = lm(total_prec ~ season_year, data = winter_prec)$coefficients[2]
+  )
+
+print(winter_analysis)
+
+# Create detailed winter plot
+library(ggplot2)
+
+winter_plot <- ggplot(winter_prec, aes(x = season_year, y = total_prec)) +
+  geom_line(color = "steelblue", alpha = 0.7, size = 0.8) +
+  geom_point(color = "steelblue", size = 1.2, alpha = 0.8) +
+  geom_smooth(method = "lm", se = TRUE, color = "red", size = 1, alpha = 0.7) +
+  labs(
+    title = "Winter Precipitation Trend - Hamburg Fuhlsbüttel",
+    subtitle = paste("1936-2025 | Slope:", round(winter_analysis$lm_slope, 2), "mm/year | p =", round(winter_analysis$trend_p_value, 3)),
+    x = "Year",
+    y = "Total Winter Precipitation (mm)",
+    caption = "Winter = December-January-February | Trend line with 95% confidence interval"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.title = element_text(size = 11),
+    panel.grid.minor = element_blank()
+  ) +
+  scale_x_continuous(breaks = seq(1940, 2020, 20))
+
+print(winter_plot)
+
+# Additional analysis: Before/after comparison
+winter_change <- winter_prec |> 
+  mutate(
+    period = case_when(
+      season_year < 1990 ~ "1936-1989",
+      season_year >= 1990 ~ "1990-2025"
+    )
+  ) |> 
+  group_by(period) |> 
+  summarise(
+    mean_prec = mean(total_prec, na.rm = TRUE),
+    median_prec = median(total_prec, na.rm = TRUE),
+    sd_prec = sd(total_prec, na.rm = TRUE),
+    n_years = n(),
+    .groups = "drop"
+  ) |> 
+  mutate(
+    change_mean = mean_prec - lag(mean_prec),
+    change_percent = (change_mean / lag(mean_prec)) * 100
+  )
+
+print(winter_change)
+
+# Boxplot comparison
+period_plot <- winter_prec |> 
+  mutate(
+    period = case_when(
+      season_year < 1990 ~ "1936-1989",
+      season_year >= 1990 ~ "1990-2025"
+    )
+  ) |> 
+  ggplot(aes(x = period, y = total_prec, fill = period)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_jitter(width = 0.2, alpha = 0.5) +
+  labs(
+    title = "Winter Precipitation: Before vs After 1990",
+    x = "Period",
+    y = "Total Winter Precipitation (mm)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+print(period_plot)
+```
+### Analysis:
+1980 Breakpoint Analysis:
+
+Mean increase: 30.8mm (166mm → 197mm)
+Percentage increase: 18.6%
+Median increase: 38mm (164mm → 202mm)
+Variability: Standard deviation increased from 60.3mm to 67.2mm
+
+1990 Breakpoint Analysis:
+
+Mean increase: 27.3mm (171mm → 198mm)
+Percentage increase: 16.0%
+Median increase: 23mm (175mm → 198mm)
+Variability: Standard deviation increased from 59.5mm to 71.2mm
+
+Key observations:
+
+Both breakpoints show substantial increases (~16-19%), confirming the trend is robust
+The 1980 breakpoint shows a slightly larger absolute increase (30.8mm vs 27.3mm), suggesting the trend started earlier but was more gradual
+The 1990 breakpoint shows the trend is more concentrated in the recent period (36 years vs 46 years)
+Increased variability in both cases - winters are not only getting wetter on average, but also more variable (higher standard deviation)
+The medians follow similar patterns to the means, indicating this isn't driven by a few extreme years
+
+Climate implications:
+
+An 18% increase in winter precipitation over ~45 years is climatologically significant
+The increased variability suggests more extreme wet and dry winters
+This aligns with climate projections for Northern Europe showing wetter winters
+
+This is a clear signal of changing winter precipitation patterns at Hamburg Fuhlsbüttel!
 

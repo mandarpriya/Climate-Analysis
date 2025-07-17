@@ -42,6 +42,7 @@ data <- readRDS(file = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DW
 
 
 
+prec_tbl <- data |> select(date,prec) |> drop_na()
 
 ```
 
@@ -80,6 +81,8 @@ annual_tbl <- monthly_tbl |>
   )
 
 annual_tbl |> dplyr:: select(-year) |> summary()
+annual_tbl <- annual_tbl |> 
+  select(year, prec)
 ```
 ```{r}
 plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots"
