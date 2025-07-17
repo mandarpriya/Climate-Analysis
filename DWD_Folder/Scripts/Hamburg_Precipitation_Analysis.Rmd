@@ -4,9 +4,9 @@ author: "MANDAR"
 date: "2025-07-14"
 output: 
   
+  html_document: default
   pdf_document:
     latex_engine: xelatex
-  html_document: default
   word_document: default
 ---
 
@@ -308,7 +308,7 @@ ggplot(monthly_anomalies, aes(x = factor(month), y = factor(year), fill = anomal
 library(changepoint)
 
 # Convert to time series
-annual_tbl <- annual_tbl |> filter(year > 1989)
+annual_tbl <- annual_prec_tbl |> filter(year > 1989)
 
 annual_ts <- ts(annual_tbl$prec, start = min(annual_tbl$year))
 
@@ -398,11 +398,10 @@ seasonal_prec <- monthly_prec_tbl |>
   filter(n_months == 3)
 ```
 
+## 
+```{r}
+seasonal_prec_1990_2025 <- seasonal_prec |> filter(season_year > 1989)
 
-```{r}
-seasonal_prec_1990_2025 <- seasonal_prec |> filter(season_year > 1994)
-```
-```{r}
 # Calculate trends for each season
 seasonal_trends <- seasonal_prec |> 
   group_by(season) |> 
@@ -448,7 +447,10 @@ seasonal_plots <- seasonal_prec |>
 
 # Print all plots
 seasonal_plots
+```
 
+
+```{r}
 # Or create a faceted plot
 ggplot(seasonal_prec, aes(x = season_year, y = total_prec)) +
   geom_line(color = "steelblue", alpha = 0.7) +
@@ -679,4 +681,6 @@ The increased variability suggests more extreme wet and dry winters
 This aligns with climate projections for Northern Europe showing wetter winters
 
 This is a clear signal of changing winter precipitation patterns at Hamburg Fuhlsbüttel!
+
+#######
 
