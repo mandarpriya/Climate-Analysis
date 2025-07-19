@@ -1,0 +1,269 @@
+---
+title: "Hamburg_Drought_Indices_Analysis"
+author: "MANDAR PRIYA PHATAK"
+date: "2025-07-18"
+output:
+   html_document: default
+   pdf_document:
+    latex_engine: xelatex
+   word_document: default
+  
+---
+
+```{r}
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
+                      message = FALSE,echo = TRUE, dpi = 300, 
+                      fig.width = 15, fig.height = 10)
+
+```
+
+
+
+```{r}
+rm(list = ls())
+```
+
+
+
+```{r}
+library(DT)
+library(tidyverse)
+library(SPEI)
+library(drought)
+library(extRemes)
+library(heatwaveR)
+library(lubridate)
+library(fitdistrplus)
+```
+### Data upload from the folder
+```{r}
+data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
+
+```
+```{r}
+monthly_tbl <- data |> 
+  dplyr::mutate(year = year(date),
+         month = month(date)) |> 
+  group_by(year, month) |> 
+  summarize(
+    prec = sum(prec, na.rm = TRUE),
+    Tavg = mean(Tavg, na.rm = TRUE),
+    Tmin = mean(Tmin, na.rm = TRUE),
+    Tmax = mean(Tmax, na.rm = TRUE),
+    .groups = "drop"
+  ) |> 
+ dplyr:: mutate(date = make_date(year, month)) |> 
+  dplyr::select(year, month, date, prec:Tmax)
+
+monthly_tbl <- monthly_tbl |> drop_na()
+```
+## Beofore we compute RDI & SPEI Index, we want to confirm selection for method for computing PET
+```{r}
+
+## PET computation 
+PET_hargreaves <- hargreaves(Tmin = monthly_tbl$Tmin,Tmax = monthly_tbl$Tmax,Pre = monthly_tbl$prec,lat = 53.6332)
+
+PET_thornthwaite <- thornthwaite(Tave = monthly_tbl$Tavg,lat = 53.6332)
+
+PET_hargreaves |> as_tibble()
+PET_thornthwaite |> as_tibble()
+
+cbind(PET_hargreaves |> as_tibble() , PET_thornthwaite |> as_tibble())
+```
+### We select Hargreaves 
+Key Observations from Your Data:
+
+Thornthwaite shows many zero values - This is problematic as it indicates the method fails during winter months when temperatures are low
+Hargreaves provides continuous values - More realistic for year-round analysis
+Hargreaves generally shows higher PET values - This is typical for coastal areas
+
+Recommendation for Hamburg Fühlsbuttel:
+Use Hargreaves method for the following reasons:
+Climate-Specific Advantages:
+
+Coastal location: Hargreaves performs better in maritime climates like Hamburg
+Temperature range: Better suited for the moderate temperature variations in northern Germany
+Humidity considerations: While it doesn't directly use humidity, it's calibrated for regions with moderate humidity
+
+Technical Advantages:
+
+No zero values: Ensures continuous drought index calculation
+Widely validated: Extensively tested in European climates
+Robust performance: Less sensitive to extreme temperature variations
+
+For Your Location Specifically:
+
+Hamburg's maritime climate (Köppen Cfb) is well-suited for Hargreaves
+The method works well for locations with moderate temperature ranges (like northern Germany)
+Less prone to computational issues in winter 
+
+## Computing PET
+```{r}
+monthly_tbl <- monthly_tbl |> 
+  mutate(PET = hargreaves(Tmin = monthly_tbl$Tmin,Tmax = monthly_tbl$Tmax,Pre = monthly_tbl$prec,lat = 53.6332)) |> 
+  rename(PREC = prec)
+```
+
+### Reconaissance Drought Index
+```{r}
+calculate_monthly_rdi <- function(data, scale) {
+  require(dplyr)
+  require(zoo)
+  
+  data <- data %>%
+    arrange(date) %>%
+    filter(PET > 0, PREC >= 0) %>%
+    mutate(
+      PREC_sum = rollsum(PREC, k = scale, fill = NA, align = "right"),
+      PET_sum = rollsum(PET, k = scale, fill = NA, align = "right"),
+      alpha = ifelse(PET_sum > 0, PREC_sum / PET_sum, NA_real_)
+    )
+  
+  valid_alphas <- data$alpha[!is.na(data$alpha) & is.finite(data$alpha) & data$alpha > 0]
+  
+  if (length(valid_alphas) > 30) {
+    log_alphas <- log(valid_alphas)
+    y_bar <- mean(log_alphas, na.rm = TRUE)
+    sigma_y <- sd(log_alphas, na.rm = TRUE)
+    
+    data <- data %>%
+      mutate(
+        RDIst = ifelse(alpha > 0, (log(alpha) - y_bar) / sigma_y, NA_real_)
+      )
+  } else {
+    data$RDIst <- NA_real_
+  }
+  
+  # Only return date and RDIst
+  return(data |>  dplyr::select(date, RDIst))
+}
+
+```
+
+
+```{r}
+calculate_rdist_for_scales <- function(data, scales = c(3,6,9,12,24,36,48)) {
+  require(dplyr)
+  
+  result <- data |> dplyr:: select(date)  # Start with date column
+  
+  for (k in scales) {
+    rdi_k <- calculate_monthly_rdi(data, scale = k) %>%
+      rename(!!paste0("RDI_", k) := RDIst)
+    
+    result <- left_join(result, rdi_k, by = "date")
+  }
+  
+  return(result)
+}
+
+```
+```{r}
+monthly_rdist_tbl <- calculate_rdist_for_scales(data = monthly_tbl)
+monthly_rdist_tbl |> head()
+```
+
+
+
+
+
+
+
+```{r}
+# Corrected SPEI calculation (remains the same)
+monthly_tbl$BAL = monthly_tbl$PREC - monthly_tbl$PET
+monthly_ts <- ts(monthly_tbl[,-c(1,2,3,5,6,7)],start = c(1936,01), end = c(2025,05), frequency = 12)
+
+### SPEI Series
+spei3 <- spei(monthly_ts[,"BAL"],3)
+spei6 <- spei(monthly_ts[,"BAL"],6)
+spei9 <- spei(monthly_ts[,"BAL"],9)
+spei12 <- spei(monthly_ts[,"BAL"],12)
+spei24 <- spei(monthly_ts[,"BAL"],24)
+spei36 <- spei(monthly_ts[,"BAL"],36)
+spei48 <- spei(monthly_ts[,"BAL"],48)
+```
+
+
+```{r}
+date_seq <- seq.Date(from = as.Date("1936-01-01"), 
+                     to = as.Date("2025-05-01"), 
+                     by = "month")
+spei3_tbl <- spei3$fitted |> as_tibble() |> 
+  rename(spei_3 = x) 
+spei6_tbl <- spei6$fitted |> as_tibble() |> 
+  rename(spei_6 = x) 
+spei9_tbl <- spei9$fitted |> as_tibble() |> 
+  rename(spei_9 = x) 
+spei12_tbl <- spei12$fitted |> as_tibble() |> 
+  rename(spei_12 = x) 
+spei24_tbl <- spei24$fitted |> as_tibble() |> 
+  rename(spei_24 = x) 
+spei36_tbl <- spei36$fitted |> as_tibble() |> 
+  rename(spei_36 = x) 
+spei48_tbl <- spei48$fitted |> as_tibble() |> 
+  rename(spei_48 = x)
+
+spei3 <- data.frame(date = date_seq,Value = spei3_tbl)
+spei6 <- data.frame(date = date_seq,Value = spei6_tbl)
+spei9 <- data.frame(date = date_seq,Value = spei9_tbl)
+spei12 <- data.frame(date = date_seq,Value = spei12_tbl)
+spei24 <- data.frame(date = date_seq,Value = spei24_tbl)
+spei36 <- data.frame(date = date_seq,Value = spei36_tbl)
+spei48 <- data.frame(date = date_seq,Value = spei48_tbl)
+
+```
+```{r}
+spei_df <- spei3 |> 
+  left_join(spei6, by ="date") |> 
+  left_join(spei9, by ="date") |> 
+  left_join(spei12, by ="date") |> 
+  left_join(spei24, by ="date") |> 
+  left_join(spei36, by ="date") |> 
+  left_join(spei48, by ="date")
+
+```
+```{r}
+library(tidyverse)
+combined_drought_tbl <- monthly_rdist_tbl |> 
+  left_join(spei_df, by ="date")
+```
+
+
+```{r}
+plot_tbl <- combined_drought_tbl %>%
+  pivot_longer(cols = -date,
+               names_to = "Index_Scale",
+               values_to = "Value") |> 
+mutate(
+    Index = case_when(
+      grepl("RDI", Index_Scale) ~ "RDIst",
+      grepl("spei", Index_Scale) ~ "SPEI"
+    ),
+    Scale = gsub("[^0-9]", "", Index_Scale) |> as.numeric()
+  )
+```
+
+```{r fig.height=10, fig.width=15}
+ggplot(plot_tbl, aes(x = date, y = Value, color = Index)) +
+  geom_line() +
+  facet_wrap(~ Scale, scales = "free_y", ncol = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +
+  labs(title = "Comparison of RDIst and SPEI over Time",
+       x = "Year", y = "Index Value") +
+  theme_minimal(base_size = 14) +
+  scale_color_manual(values = c("SPEI" = "#1b9e77", "RDIst" = "#d95f02"))
+```
+```{r}
+ggplot(plot_tbl %>% filter(Scale == 6), aes(x = date, y = Value, color = Index)) +
+  geom_line(size = 1) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +
+  labs(title = "6-Month Drought Indices: RDIst vs SPEI",
+       x = "Year", y = "Index Value") +
+  theme_minimal(base_size = 14) +
+  scale_color_manual(values = c("SPEI" = "#1b9e77", "RDIst" = "#d95f02"))
+```
+
+
+
+
