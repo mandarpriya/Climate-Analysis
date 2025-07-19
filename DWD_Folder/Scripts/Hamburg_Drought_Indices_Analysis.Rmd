@@ -213,56 +213,34 @@ spei36 <- data.frame(date = date_seq,Value = spei36_tbl)
 spei48 <- data.frame(date = date_seq,Value = spei48_tbl)
 
 ```
-```{r}
-spei_df <- spei3 |> 
-  left_join(spei6, by ="date") |> 
-  left_join(spei9, by ="date") |> 
-  left_join(spei12, by ="date") |> 
-  left_join(spei24, by ="date") |> 
-  left_join(spei36, by ="date") |> 
-  left_join(spei48, by ="date")
-
-```
-```{r}
-library(tidyverse)
-combined_drought_tbl <- monthly_rdist_tbl |> 
-  left_join(spei_df, by ="date")
-```
-
 
 ```{r}
-plot_tbl <- combined_drought_tbl %>%
-  pivot_longer(cols = -date,
-               names_to = "Index_Scale",
-               values_to = "Value") |> 
-mutate(
-    Index = case_when(
-      grepl("RDI", Index_Scale) ~ "RDIst",
-      grepl("spei", Index_Scale) ~ "SPEI"
-    ),
-    Scale = gsub("[^0-9]", "", Index_Scale) |> as.numeric()
+rdi_plot_tbl <- rdi_plot_tbl %>%
+  mutate(Scale = factor(Scale, levels = c("3-month", "6-month", "9-month", "12-month", "24-month", "36-month", "48-month")))
+rdi_plot_tbl <- rdi_plot_tbl %>%
+  mutate(
+    date = as.Date(date),
+    Scale = factor(Scale, levels = c("3-month", "6-month", "9-month", "12-month", "24-month", "36-month", "48-month"))
   )
-```
 
-```{r fig.height=10, fig.width=15}
-ggplot(plot_tbl, aes(x = date, y = Value, color = Index)) +
-  geom_line() +
-  facet_wrap(~ Scale, scales = "free_y", ncol = 2) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +
-  labs(title = "Comparison of RDIst and SPEI over Time",
-       x = "Year", y = "Index Value") +
-  theme_minimal(base_size = 14) +
-  scale_color_manual(values = c("SPEI" = "#1b9e77", "RDIst" = "#d95f02"))
+rdi_plot_tbl |> glimpse()
+
 ```
 ```{r}
-ggplot(plot_tbl %>% filter(Scale == 6), aes(x = date, y = Value, color = Index)) +
-  geom_line(size = 1) +
+ggplot(rdi_plot_tbl, aes(x = date, y = RDIst)) +
+  annotate("rect", xmin = min(rdi_plot_tbl$date), xmax = max(rdi_plot_tbl$date),
+           ymin = -2, ymax = -1, fill = "orange", alpha = 0.1) +
+  annotate("rect", xmin = min(rdi_plot_tbl$date), xmax = max(rdi_plot_tbl$date),
+           ymin = -Inf, ymax = -2, fill = "red", alpha = 0.1) +
+  geom_line(color = "#d95f02") +
   geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +
-  labs(title = "6-Month Drought Indices: RDIst vs SPEI",
-       x = "Year", y = "Index Value") +
-  theme_minimal(base_size = 14) +
-  scale_color_manual(values = c("SPEI" = "#1b9e77", "RDIst" = "#d95f02"))
+  facet_wrap(~ Scale, ncol = 2) +
+  labs(title = "Monthly Standardized RDI (RDIst) for Different Scales",
+       x = "Date", y = "RDIst") +
+  theme_minimal(base_size = 14)
 ```
+
+
 
 
 
