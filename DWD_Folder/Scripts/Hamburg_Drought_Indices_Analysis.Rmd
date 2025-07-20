@@ -252,7 +252,7 @@ stats_text
 ###  RDI 12 monthly
 ```{r fig.align='center',fig.height=10, fig.width=15,dpi=450}
 
-ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
+p0 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
 
@@ -361,14 +361,12 @@ The 12-month RDI analysis for Hamburg Fuhlsbüttel from 1990 to 2025 reveals a s
 
 
 # Print the final plot
-print(p1)
 
-#ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_24_Hamburg.png", plot = p1, width = 15, height = 10, dpi = 450)
+print(p0)
+ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_12_Hamburg.png", plot = p0, width = 15, height = 10, dpi = 450)
 ```
  
  
-
-
 
 
 
@@ -462,14 +460,14 @@ p1 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
 
   # Highlight driest and wettest periods
   geom_vline(xintercept = drought_stats$min_date, color = "#8B0000", linetype = "dotdash", linewidth = 0.8) +
-  geom_text(aes(x = drought_stats$min_date, y = drought_stats$min_rdi - 0.3), 
-            label = paste0("Driest: ", format(drought_stats$min_date, "%b %Y")), 
-            angle = 90, hjust = 1.1, size = 3.3, color = "#8B0000") +
+  # geom_text(aes(x = drought_stats$min_date, y = drought_stats$min_rdi - 0.3), 
+  #           label = paste0("Driest: ", format(drought_stats$min_date, "%b %Y")), 
+  #           angle = 90, hjust = 1.1, size = 3.3, color = "#8B0000") +
 
   geom_vline(xintercept = drought_stats$max_date, color = "#00008B", linetype = "dotdash", linewidth = 0.8) +
-  geom_text(aes(x = drought_stats$max_date, y = drought_stats$max_rdi + 0.3), 
-            label = paste0("Wettest: ", format(drought_stats$max_date, "%b %Y")), 
-            angle = 90, hjust = -0.1, size = 3.3, color = "#00008B") +
+  # geom_text(aes(x = drought_stats$max_date, y = drought_stats$max_rdi + 0.3), 
+  #           label = paste0("Wettest: ", format(drought_stats$max_date, "%b %Y")), 
+  #           angle = 90, hjust = -0.1, size = 3.3, color = "#00008B") +
 
   # KEY INSIGHTS annotation box
   annotate("rect", 
@@ -512,6 +510,7 @@ annotate("text", x = drought_stats$max_date, y = drought_stats$max_rdi + 0.2,
   ) +
 
   scale_y_continuous(
+    limits = c(-3,3.5),
     breaks = seq(-2.5, 3.5, 0.5),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
@@ -530,7 +529,7 @@ annotate("text", x = drought_stats$max_date, y = drought_stats$max_rdi + 0.2,
   # Labels and theme
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel (1990–2025*)",
-    subtitle = stats_text,
+     subtitle = paste0("RDI (24-Month Scale) | ", stats_text),
     caption = "Source: DWD ",
     x = "", 
     y = ""
@@ -553,7 +552,7 @@ annotate("text", x = drought_stats$max_date, y = drought_stats$max_rdi + 0.2,
     legend.title = element_text(size = 12, face = "bold"),
     legend.text = element_text(size = 9),
     legend.key.size = unit(1, "cm"),
-    plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
+    #plot.margin = margin(t = 10, r = 20, b = 10, l = 20)
   )
 
 # Print the final plot
@@ -592,6 +591,43 @@ cat("• Wet conditions (RDI > 0.5):", drought_stats$wet_pct, "% of the period\n
 ```
 #### Interpretation
 The 24-month RDI trend for Hamburg Fuhlsbüttel from 1990 to 2024 reveals significant interannual variability in drought and wet conditions. While early decades (especially the 1990s) showed frequent and intense wet periods, the most recent decade has been characterized by prolonged dry conditions, culminating in the driest month observed in January 2020 (RDI = -2.4). Overall, drought conditions were present during 37.6% of the study period, with 4.7% classified as severe. This indicates increasing susceptibility to long-term water stress, especially post-2010.
+
+
+
+###### Comparison of RDI 12 & RDI 24
+
+
+Metric	RDI 12-Month	RDI 24-Month	Interpretation
+Period	1990–2025*	1990–2025*	Same base period
+Drought Conditions (< -0.5)	28.2%	37.6%	24-month shows more persistent dryness
+Severe Drought (< -1.5)	7.8%	4.7%	12-month captures sharper, shorter extremes
+Wet Conditions (> 0.5)	27.1%	28.9%	Fairly similar in wet distribution
+Driest Event	Jan 2019 (RDI = -3.0)	Jan 2020 (RDI = -2.4)	12-month shows sharper negative anomaly
+Wettest Event	May 1994 (RDI = 2.6)	May 1995 (RDI = 3.0)	Similar, offset by 1 year
+
+✍️ Interpretation Summary:
+While the 24-month RDI highlights more persistent drought conditions across multi-year scales, the 12-month RDI is more sensitive to year-to-year variability, capturing sharper extremes like the 2019 drought. The higher frequency of severe drought in the 12-month scale (7.8% vs 4.7%) suggests greater short-term hydroclimatic variability, even though total wet conditions are fairly consistent across both indices.
+
+✅ Part 2: Trend Analysis – Mann-Kendall Test
+```{r}
+library(Kendall)
+
+# Ensure the data is in time order and remove NAs
+rdi_12_values <- rdi_12tbl |> arrange(date) |> pull(RDI_12) |> na.omit()
+
+# Run Mann-Kendall test
+mk_test_12 <- MannKendall(rdi_12_values)
+print(mk_test_12)
+#Do the same for RDI 24-month:
+
+
+rdi_24_values <- rdi_24tbl |> arrange(date) |> pull(RDI_24) |> na.omit()
+mk_test_24 <- MannKendall(rdi_24_values)
+print(mk_test_24)
+
+
+```
+The Mann-Kendall trend analysis reveals significant negative trends in both the 12-month and 24-month RDI series for Hamburg Fuhlsbüttel (1990–2025). The 12-month RDI exhibits a moderate downward trend (τ = -0.163, p < 0.001), indicating increasing frequency of dry years. More notably, the 24-month RDI shows a strong and highly significant downward trend (τ = -0.282, p < 0.0001), suggesting an intensification of long-term drought conditions. These results support the evidence of a drying trend in the region, particularly after 2000.
 
 
 # ```{r fig.align='center',fig.height=10,fig.width=15}
