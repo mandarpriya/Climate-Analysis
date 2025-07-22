@@ -26,8 +26,6 @@ rm(list = ls())
 
 ```{r}
 library(DT)
-
-
 library(tidyverse)
 library(SPEI)
 library(drought)
@@ -571,44 +569,8 @@ ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/R
 The 24-month RDI trend for Hamburg Fuhlsbüttel from 1990 to 2024 reveals significant interannual variability in drought and wet conditions. While early decades (especially the 1990s) showed frequent and intense wet periods, the most recent decade has been characterized by prolonged dry conditions, culminating in the driest month observed in January 2020 (RDI = -2.4). Overall, drought conditions were present during 37.6% of the study period, with 4.7% classified as severe. This indicates increasing susceptibility to long-term water stress, especially post-2010.
 
 
-
-###### Comparison of RDI 12 & RDI 24
-
-
-Metric	RDI 12-Month	RDI 24-Month	Interpretation
-Period	1990–2025*	1990–2025*	Same base period
-Drought Conditions (< -0.5)	28.2%	37.6%	24-month shows more persistent dryness
-Severe Drought (< -1.5)	7.8%	4.7%	12-month captures sharper, shorter extremes
-Wet Conditions (> 0.5)	27.1%	28.9%	Fairly similar in wet distribution
-Driest Event	Jan 2019 (RDI = -3.0)	Jan 2020 (RDI = -2.4)	12-month shows sharper negative anomaly
-Wettest Event	May 1994 (RDI = 2.6)	May 1995 (RDI = 3.0)	Similar, offset by 1 year
-
-✍️ Interpretation Summary:
-While the 24-month RDI highlights more persistent drought conditions across multi-year scales, the 12-month RDI is more sensitive to year-to-year variability, capturing sharper extremes like the 2019 drought. The higher frequency of severe drought in the 12-month scale (7.8% vs 4.7%) suggests greater short-term hydroclimatic variability, even though total wet conditions are fairly consistent across both indices.
-
-✅ Part 2: Trend Analysis – Mann-Kendall Test
-```{r}
-library(Kendall)
-
-# Ensure the data is in time order and remove NAs
-rdi_12_values <- rdi_12tbl |> arrange(date) |> pull(RDI_12) |> na.omit()
-
-# Run Mann-Kendall test
-mk_test_12 <- MannKendall(rdi_12_values)
-print(mk_test_12)
-#Do the same for RDI 24-month:
-
-
-rdi_24_values <- rdi_24tbl |> arrange(date) |> pull(RDI_24) |> na.omit()
-mk_test_24 <- MannKendall(rdi_24_values)
-print(mk_test_24)
-
-
-```
-The Mann-Kendall trend analysis reveals significant negative trends in both the 12-month and 24-month RDI series for Hamburg Fuhlsbüttel (1990–2025). The 12-month RDI exhibits a moderate downward trend (τ = -0.163, p < 0.001), indicating increasing frequency of dry years. More notably, the 24-month RDI shows a strong and highly significant downward trend (τ = -0.282, p < 0.0001), suggesting an intensification of long-term drought conditions. These results support the evidence of a drying trend in the region, particularly after 2000.
-
-
 # RDI 36
+
 ```{r fig.align='center', fig.height=10, fig.width=15}
 # Data preparation
 rdi_36tbl <- monthly_rdist_tbl |> 
@@ -776,6 +738,55 @@ ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
     legend.text = element_text(size = 9),
     legend.key.size = unit(1, "cm")
   )
+
+```
+
+
+###### Comparison of RDI 12 & RDI 24 
+
+
+Metric	RDI 12-Month	RDI 24-Month	Interpretation
+Period	1990–2025*	1990–2025*	Same base period
+Drought Conditions (< -0.5)	28.2%	37.6%	24-month shows more persistent dryness
+Severe Drought (< -1.5)	7.8%	4.7%	12-month captures sharper, shorter extremes
+Wet Conditions (> 0.5)	27.1%	28.9%	Fairly similar in wet distribution
+Driest Event	Jan 2019 (RDI = -3.0)	Jan 2020 (RDI = -2.4)	12-month shows sharper negative anomaly
+Wettest Event	May 1994 (RDI = 2.6)	May 1995 (RDI = 3.0)	Similar, offset by 1 year
+
+✍️ Interpretation Summary:
+While the 24-month RDI highlights more persistent drought conditions across multi-year scales, the 12-month RDI is more sensitive to year-to-year variability, capturing sharper extremes like the 2019 drought. The higher frequency of severe drought in the 12-month scale (7.8% vs 4.7%) suggests greater short-term hydroclimatic variability, even though total wet conditions are fairly consistent across both indices.
+
+✅ Part 2: Trend Analysis – Mann-Kendall Test
+```{r}
+library(Kendall)
+
+# Ensure the data is in time order and remove NAs
+rdi_12_values <- rdi_12tbl |> arrange(date) |> pull(RDI_12) |> na.omit()
+
+# Run Mann-Kendall test
+mk_test_12 <- MannKendall(rdi_12_values)
+print(mk_test_12)
+#Do the same for RDI 24-month:
+
+
+rdi_24_values <- rdi_24tbl |> arrange(date) |> pull(RDI_24) |> na.omit()
+mk_test_24 <- MannKendall(rdi_24_values)
+print(mk_test_24)
+
+### 
+library(Kendall)
+
+# Ensure the data is in time order and remove NAs
+rdi_36_values <- rdi_36tbl |> arrange(date) |> pull(RDI_36) |> na.omit()
+
+# Run Mann-Kendall test
+mk_test_36 <- MannKendall(rdi_36_values)
+print(mk_test_36)
+
+```
+The Mann-Kendall trend analysis reveals significant negative trends in both the 12-month and 24-month RDI series for Hamburg Fuhlsbüttel (1990–2025). The 12-month RDI exhibits a moderate downward trend (τ = -0.163, p < 0.001), indicating increasing frequency of dry years. More notably, the 24-month RDI shows a strong and highly significant downward trend (τ = -0.282, p < 0.0001), suggesting an intensification of long-term drought conditions. These results support the evidence of a drying trend in the region, particularly after 2000.
+
+
 
 ```
 
