@@ -779,7 +779,7 @@ ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
 
 ```
 
-
+# Interpretation :-
 The 36-month RDI shows that nearly two-fifths of the period was affected by long-term drought conditions. The most intense and prolonged drought occurred between 2014 and 2022, with the lowest RDI in January 2021 (-2.9) — a reflection of sustained precipitation deficits and increased evapotranspiration. In contrast, the early 1990s experienced the longest and strongest wet period, peaking in June 1995 (RDI = 2.7). These findings highlight a transition from predominantly wet to persistently dry long-term hydrological conditions over the last 30 years.
 
 
@@ -1027,6 +1027,12 @@ rdi_summary_tbl |>
 ```
 
 
+```{r}
+readr::write_csv(rdi_summary_tbl, "RDI_Summary_Table.csv")
+# or
+writexl::write_xlsx(rdi_summary_tbl, "RDI_Summary_Table.xlsx")
+
+```
 
 
 
