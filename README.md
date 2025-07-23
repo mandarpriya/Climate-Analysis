@@ -71,6 +71,10 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 
 ### Drought Analysis:- 
 
+The Reconnaissance Drought Index (RDI) is a meteorological drought index that assesses drought severity by comparing precipitation to potential evapotranspiration (PET). It's a valuable tool for understanding water availability and is often used in agriculture and water resource management.
+### RDI 12 monthly Index
+![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Hamburg.png)
+
 
 
 
