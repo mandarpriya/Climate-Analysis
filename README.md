@@ -103,8 +103,20 @@ The 48-month RDI shows greater severe drought coverage (8.2%), suggesting that l
 Post-2010 Trends:
 
 Both plots highlight an extended period of drying since ~2012, but 48-month scale smooths short-term variability, emphasizing longer-term water deficits.
-
 ### 🧠 Interpretation:36-Month RDI is slightly more sensitive to shorter-term severe fluctuations but still shows significant long-term stress.48-Month RDI better captures multi-year cumulative drought, making it a more robust indicator of sustained hydrological stress.The strong downward trends in both cases underline the intensifying drought risk, with the 48-month index suggesting deeper and more persistent impacts.
+
+
+### Comparative Summary of RDI Indices (1990–2025)
+
+| RDI Scale   | Drought (%) | Severe Drought (%) | Wettest Event      | Driest Event       | Kendall’s Tau |    Trend Significance |
+|-------------|-------------|---------------------|---------------------|---------------------|----------------|---------------------|
+| 12-Month    | 28.2%       | 7.8%                | May 1994 (2.6)      | Jan 2019 (-3.0)     | -0.163         | ✓                   |
+| 24-Month    | 37.6%       | 4.7%                | May 1995 (3.0)      | Jan 2020 (-2.4)     | -0.282         | ✓                   |
+| 36-Month    | 37.2%       | 6.1%                | Jun 1995 (2.7)      | Jan 2021 (-2.9)     | -0.438         | ✓✓                  |
+| 48-Month    | 36.9%       | 8.2%                | Apr 1995 (2.7)      | Jan 2022 (-2.7)     | -0.563         | ✓✓✓                 |
+
+
+
 
 
 
