@@ -75,11 +75,18 @@ The Reconnaissance Drought Index (RDI) is a meteorological drought index that as
 ### RDI 12 monthly Index
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Hamburg.png)
 
+### RDI 24 monthly Index
+![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Hamburg.png)
+
+### RDI 36 monthly Index
+![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Hamburg.png)
+
+### RDI 48 monthly Index
+![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Hamburg.png)
 
 
 
 
-#Note:- DrinC software is commonly used by many , but we find it a bit strange that the default refrence period is Oc-Nov. This results in completely affecting the computation for the drought indces. Especialy for SPI/SPEI index in our case if we are taking from Oct to Nov (next year) then the precipitation is affected as many months do not witness precipitation. For some stations it could be RDI may suffer. We could not find it reasonable enough to accept the DrinC computation. 
 
 
 
