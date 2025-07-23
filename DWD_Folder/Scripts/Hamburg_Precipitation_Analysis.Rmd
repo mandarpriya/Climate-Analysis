@@ -28,6 +28,7 @@ library(drought)
 library(extRemes)
 library(heatwaveR)
 library(lubridate)
+
 ```
 
 
@@ -37,7 +38,7 @@ library(lubridate)
 data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
 
 precipitation_tbl <- data |> 
-  select(date,prec)
+  dplyr::select(date,prec)
 ## Monthly data
 monthly_prec_tbl <- precipitation_tbl |> 
   mutate(year = year(date),
@@ -65,16 +66,13 @@ mean_prec <- mean(annual_prec_tbl$prec, na.rm = TRUE)
 # Extreme years: max and min
 extreme_years <- annual_prec_tbl %>%
   filter(prec == max(prec, na.rm = TRUE) | prec == min(prec, na.rm = TRUE))
-```
 
-
-```{r fig.height=10, fig.width=15}
 annual_prec_tbl <- annual_prec_tbl |>
  dplyr::mutate(
     is_2025 = if_else(year == 2025, TRUE, FALSE)
   )
 
-annual_prec_tbl |> 
+p0 <- annual_prec_tbl |> 
   ggplot(aes(x = year, y = prec)) +
   geom_line(color = "#0e7b0e") +
 
@@ -130,9 +128,8 @@ theme(
     plot.background = element_blank(),
     legend.position = "none"
   )
-
-  
-
+print(p0)
+    ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/Annual_Precipitation(1936-2025).png", plot = p0, width = 15, height = 10, dpi = 450)
   
 ```
 
@@ -140,17 +137,16 @@ theme(
 
 
 
-```{r}
+```{r fig.align = 'center',fig.height=10, fig.width=15}
 pci_annual <- monthly_prec_tbl%>%
   group_by(year) |> 
   summarise(
     pci = (sum(prec^2) / (sum(prec))^2) * 100,
     .groups = 'drop'
   )
-pci_annual
 
-```
-```{r}
+
+
 pci_annual <- monthly_prec_tbl %>%
   group_by(year) %>%
   summarise(
@@ -158,10 +154,7 @@ pci_annual <- monthly_prec_tbl %>%
     .groups = 'drop'
   ) |> filter(year < 2025 & year > 1989)
 
-```
-```{r fig.height=10, fig.width=15}
-
-ggplot(pci_annual, aes(x = year, y = pci)) +
+p1 <- ggplot(pci_annual, aes(x = year, y = pci)) +
   geom_line(col = "darkblue", linewidth  = 1.2) +
   scale_x_continuous(
     breaks = seq(1990, 2024, by = 2), 
@@ -192,6 +185,8 @@ ggplot(pci_annual, aes(x = year, y = pci)) +
     panel.grid.minor = element_line(color = "gray95", linewidth  = 0.3),
     plot.margin = margin(20, 20, 20, 20)
   )
+
+  ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/Precipitation_Concentration_Index.png", plot = p1, width = 15, height = 10, dpi = 450)
 ```
 ### What we can infere
 Key Findings:
@@ -245,47 +240,95 @@ Regional impacts of broader European climate variability
 Agricultural/Hydrological Implications: For Hamburg and northern Germany, these PCI fluctuations have significant implications for water management, agriculture, and flood risk - particularly given the region's importance for German agriculture and its proximity to major river systems.
 
 The data suggests Hamburg has experienced increasingly variable precipitation concentration patterns, which is consistent with climate projections for Northern European regions.
-```{r}
+```{r,fig.align='center',fig.height=10,fig.width=15}
 library(dplyr)
 library(lubridate)
 library(ggplot2)
 
-# Add year column
+# Step 1: Add year column
 precipitation_tbl <- precipitation_tbl %>%
   mutate(year = year(date))
 
-# Create dry/wet flag
+# Step 2: Create dry/wet flags
 precip_flags <- precipitation_tbl %>%
-  mutate(wet = prec >= 1) %>%
+  mutate(wet = replace_na(prec >= 1, FALSE)) %>%  # assume NA means dry
   pull(wet)
-
-# Run Length Encoding
+# Step 3: Run Length Encoding
 rle_spells <- rle(precip_flags)
 
-# Convert RLE to dataframe
+# Step 4: Convert RLE to spell table
 spell_tbl <- tibble(
   length = rle_spells$lengths,
   type = ifelse(rle_spells$values, "wet", "dry")
 )
 
-# Assign dates to each spell (approximate using cumsum)
+# Step 5: Assign dates to spells (based on end index)
 spell_tbl <- spell_tbl %>%
   mutate(end_index = cumsum(length),
          start_index = lag(end_index, default = 1),
-         year = precipitation_tbl$date[end_index] |> year())
+         year = year(precipitation_tbl$date[end_index]))
 
-# Calculate average duration by year and spell type
+# Step 6: Calculate average duration by year and type
 spell_summary <- spell_tbl %>%
+  filter(!is.na(year)) %>%  # prevent NAs from appearing
   group_by(year, type) %>%
-  summarise(avg_duration = mean(length), .groups = "drop")
+  summarise(avg_duration = mean(length), .groups = "drop") %>%
+  mutate(
+    type = factor(type, levels = c("dry", "wet"))  # enforce clean factor levels
+  ) 
 
-# Plot
-ggplot(spell_summary, aes(x = year, y = avg_duration, color = type)) +
+# Optional: Check levels
+
+# Step 7: Plot
+p2 <- ggplot(spell_summary, aes(x = year, y = avg_duration, color = type)) +
   geom_line(linewidth = 1) +
-  labs(title = "Average Duration of Wet and Dry Spells",
-       y = "Average Spell Length (days)", color = "Spell Type")
+  scale_color_manual(values = c("dry" = "#e41a1c", "wet" = "#1f78b4")) +
+  labs(title = "Average Duration of Wet and Dry Spells",x="",
+       y = "Average Spell Length (days)",
+       color = "Spell Type") +
+  theme_minimal(base_size = 14)
 
+
+p2 <- p2 +
+  geom_point(data = filter(spell_summary, year == 2025),
+             aes(x = year, y = avg_duration, color = type),
+             shape = 21, size = 4, fill = "black", stroke = 1.5) +
+  geom_text(data = filter(spell_summary, year == 2025),
+            aes(label = round(avg_duration, 1)),
+            vjust = -1, fontface = "bold", color = "black", size = 6) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 22, face = "bold", hjust = 0.5, margin = margin(b=10)),
+    plot.subtitle = element_text(size   = 20, hjust = 0.5, color = "gray40"),
+    plot.caption = element_text(size   = 20, hjust = 1, color = "gray50"),
+    axis.title.y = element_text(size =  14, face = "bold"),
+    axis.text.x = element_text(size = 20, angle = 45, hjust = 1, colour = "gray50"),
+    axis.text.y = element_text(size  = 20, colour = "grey10"),
+    legend.title = element_text(size = 16, face = "bold"),
+     legend.text = element_text(size = 14, colour = "black"),
+    legend.position = "bottom",
+    panel.grid.major = element_line(color = "gray90", linewidth  = 0.5),
+    panel.grid.minor = element_line(color = "gray95", linewidth  = 0.3),
+    #plot.margin = margin(20, 20, 20, 20)
+  )
+
+ ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/Average_Duration_Spells.png", plot = p2, width = 15, height = 10, dpi = 450)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```{r}
 library(ggplot2)
 
@@ -419,7 +462,7 @@ seasonal_trends
 
 
 
-```{r}
+```{r,fig.align='center',fig.width=15,fig.height=10}
 # Create individual plots for each season
 library(ggplot2)
 
