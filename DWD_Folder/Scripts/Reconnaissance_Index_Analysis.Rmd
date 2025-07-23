@@ -37,7 +37,7 @@ library(fitdistrplus)
 # Data upload from the folder
 ```{r}
 data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
-
+data
 ```
 # Monthly frequency
 ```{r}
@@ -50,6 +50,7 @@ monthly_tbl <- data |>
     Tavg = mean(Tavg, na.rm = TRUE),
     Tmin = mean(Tmin, na.rm = TRUE),
     Tmax = mean(Tmax, na.rm = TRUE),
+    
     .groups = "drop"
   ) |> 
  dplyr:: mutate(date = make_date(year, month)) |> 
