@@ -82,7 +82,7 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 # Analysis:- 
 We  extend our analysis by focusing on long term trend, so using annual series of drought indices with a frequency of 3,6,9,12 . The plots shows that last decade has witnesses increase in temperature and on the other decrease in precipitation. This makes the situation worse in future as with further increase in temperature the weather will becoe more dry and will result in a further decrease in precipitation resulting in a severe drought. 
 
-## Extension:- We are working on the data for other cities in Germany.
+
 
 
 
