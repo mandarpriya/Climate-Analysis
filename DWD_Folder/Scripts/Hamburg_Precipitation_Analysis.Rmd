@@ -33,7 +33,7 @@ library(lubridate)
 
 
 
-```{r}
+```{r fig.align='center',fig.height=10, fig.width=15}
 # Reading the data 
 data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
 
@@ -55,12 +55,6 @@ annual_prec_tbl <- monthly_prec_tbl |>
     prec = sum(prec, na.rm = TRUE),
     .groups = "drop"
   )
-
-
-```
-
-# Visualizing the Annual Precipitation (1936-2025)
-```{r fig.height=10, fig.width=15}
 # Annual Plot provides a good visualiaztion for over the period 
 mean_prec <- mean(annual_prec_tbl$prec, na.rm = TRUE)
 # Extreme years: max and min
@@ -72,6 +66,7 @@ annual_prec_tbl <- annual_prec_tbl |>
     is_2025 = if_else(year == 2025, TRUE, FALSE)
   )
 
+# # Visualizing the Annual Precipitation (1936-2025)
 p0 <- annual_prec_tbl |> 
   ggplot(aes(x = year, y = prec)) +
   geom_line(color = "#0e7b0e") +
@@ -128,15 +123,16 @@ theme(
     plot.background = element_blank(),
     legend.position = "none"
   )
-print(p0)
+
     ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/Annual_Precipitation(1936-2025).png", plot = p0, width = 15, height = 10, dpi = 450)
   
+
 ```
 
-### 
 
 
 
+## Precipitation Concentration Index
 ```{r fig.align = 'center',fig.height=10, fig.width=15}
 pci_annual <- monthly_prec_tbl%>%
   group_by(year) |> 
@@ -185,6 +181,7 @@ p1 <- ggplot(pci_annual, aes(x = year, y = pci)) +
     panel.grid.minor = element_line(color = "gray95", linewidth  = 0.3),
     plot.margin = margin(20, 20, 20, 20)
   )
+
 
   ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/Precipitation_Concentration_Index.png", plot = p1, width = 15, height = 10, dpi = 450)
 ```
@@ -236,10 +233,10 @@ Changes in storm track patterns affecting northern Germany
 Potential shifts in the timing or intensity of Atlantic low-pressure systems
 Regional impacts of broader European climate variability
 
-
 Agricultural/Hydrological Implications: For Hamburg and northern Germany, these PCI fluctuations have significant implications for water management, agriculture, and flood risk - particularly given the region's importance for German agriculture and its proximity to major river systems.
-
 The data suggests Hamburg has experienced increasingly variable precipitation concentration patterns, which is consistent with climate projections for Northern European regions.
+
+
 ```{r,fig.align='center',fig.height=10,fig.width=15}
 library(dplyr)
 library(lubridate)
@@ -320,15 +317,6 @@ p2 <- p2 +
 
 
 
-
-
-
-
-
-
-
-
-
 ```{r}
 library(ggplot2)
 
@@ -391,7 +379,7 @@ annual_tbl <- annual_tbl %>%
   ))
 
 # Plot
-ggplot(annual_tbl, aes(x = year, y = prec, fill = class)) +
+p3 <- ggplot(annual_tbl, aes(x = year, y = prec, fill = class)) +
   geom_col(color = "black") +
   scale_fill_manual(values = c("Very Dry" = "#d73027", "Dry" = "#fc8d59",
                                "Normal" = "gray80", "Wet" = "#91bfdb",
@@ -401,6 +389,7 @@ ggplot(annual_tbl, aes(x = year, y = prec, fill = class)) +
 
 ```
 
+# Inflection point 
 ```{r}
 # Split data
 before_1994 <- annual_prec_tbl |> filter(year <= 1994)
@@ -439,10 +428,7 @@ seasonal_prec <- monthly_prec_tbl |>
     .groups = "drop"
   ) |> 
   filter(n_months == 3)
-```
-
-## 
-```{r}
+## Checking for recent data
 seasonal_prec_1990_2025 <- seasonal_prec |> filter(season_year > 1989)
 
 # Calculate trends for each season
@@ -455,20 +441,27 @@ seasonal_trends <- seasonal_prec |>
     # Changed this line
     .groups = "drop"
   )
-seasonal_trends
+
+
+library(knitr)
+
+# Save LaTeX-formatted table to .tex file
+kable(seasonal_trends, format = "latex", 
+      caption = "Comparative Summary of Season (1990–2025)") |> 
+  writeLines("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Tables/seasonal_trends.tex")
 ```
 
 
-
-
-
+# Seasonal Plots
 ```{r,fig.align='center',fig.width=15,fig.height=10}
 # Create individual plots for each season
 library(ggplot2)
 
-seasonal_plots <- seasonal_prec |> 
+p4 <- seasonal_prec |> 
   group_by(season) |> 
   group_map(~ {
+    .x$season <- .y$season  # <- Add season explicitly to the data
+
     ggplot(.x, aes(x = season_year, y = total_prec)) +
       geom_line(color = "steelblue", alpha = 0.7) +
       geom_point(color = "steelblue", size = 0.8) +
@@ -481,16 +474,49 @@ seasonal_plots <- seasonal_prec |>
                         ifelse(seasonal_trends$p_value[seasonal_trends$season == .y$season] < 0.05, 
                                "Significant", "Not significant"))
       ) +
-      theme_minimal() +
+      theme_minimal() + 
       theme(
         plot.title = element_text(size = 12, face = "bold"),
         axis.title = element_text(size = 10)
       )
   })
 
-# Print all plots
-seasonal_plots
 ```
+
+
+```{r,fig.align='center',fig.width=15,fig.height=10}
+library(purrr)
+
+# Generate file names
+plot_files <- paste0(unique(seasonal_prec$season), "_precipitation.png")
+
+# Save each plot
+walk2(p4, plot_files, ~ggsave(
+  filename = .y,
+  plot     = .x,
+  path     = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots",
+  width    = 15,
+  height   = 10,
+  dpi      = 450
+))
+
+```
+
+
+```{r,fig.align='center',fig.width=15,fig.height=10}
+library(patchwork)
+
+combined <- wrap_plots(p4, ncol = 2)
+
+ggsave(
+  filename = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/Seasonal_Precipitation.png",
+  plot     = combined,
+  width    = 15,
+  height   = 10,
+  dpi      = 450
+)
+```
+
 
 
 ```{r}

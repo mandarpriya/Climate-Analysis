@@ -958,7 +958,7 @@ rdi_summary_tbl <- tibble::tibble(
   `Trend Significance` = c("✓", "✓", "✓✓", "✓✓✓")
 )
 
-print(rdi_summary_tbl)
+
 
 knitr::kable(rdi_summary_tbl, caption = "Comparative Summary of RDI Indices (1990–2025)")
 
