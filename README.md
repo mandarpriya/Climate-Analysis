@@ -78,17 +78,18 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 
 ### 2. Temporal Patterns:
 
-### 1940s-1950s: Higher variability and more frequent spikes above 13
-### 1960s-1980s: More stable period with fewer extreme values
-### 1990s-2020s: Return to higher variability, similar to 1940s-1950s
+## 1940s-1950s: Higher variability and more frequent spikes above 13
+## 1960s-1980s: More stable period with fewer extreme values
+## 1990s-2020s: Return to higher variability, similar to 1940s-1950s
 
-### 3. Climate Implications:Hamburg maintains moderate seasonal precipitation concentration throughout the recordNo evidence of increasing concentration due to climate changeThe variability suggests natural climate oscillations rather than systematic change
+## 3. Climate Implications:Hamburg maintains moderate seasonal precipitation concentration throughout the recordNo evidence of increasing concentration due to climate changeThe variability suggests natural climate oscillations rather than systematic change
 
-### 4. Extreme Years:Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, and 2000s-2010sThese likely represent years with particularly wet or dry seasons
+## 4. Extreme Years:Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, and 2000s-2010sThese likely represent years with particularly wet or dry seasons
 ### German Climate Context Analysis:Regional Climate Influences: Hamburg, being in northern Germany near the North Sea, is particularly influenced by Atlantic weather systems and the North Atlantic Oscillation (NAO). The cyclical peaks you see (1999, 2011, 2018) likely correspond to periods when these Atlantic systems created more concentrated precipitation patterns.Seasonal Concentration: In Germany's temperate oceanic climate, high PCI values often indicate: Wet winters followed by dry summers (or vice versa).Clustering of precipitation into fewer, more intense events.Potential impacts from blocking high-pressure systems over Central Europe
 
 
-### Climate Change Signals: The increasing volatility after 2010 aligns with observed climate change impacts in Germany, including: More frequent extreme weather events,Shifts in seasonal precipitation patterns.Increased likelihood of both drought periods and heavy rainfall events Recent Trends (2020-2024): The declining trend toward 2024 might reflect:Changes in storm track patterns affecting northern Germany.Potential shifts in the timing or intensity of Atlantic low-pressure systems.Regional impacts of broader European climate variability Agricultural/Hydrological Implications: For Hamburg and northern Germany, these PCI fluctuations have significant implications for water management, agriculture, and flood risk - particularly given the region's importance for German agriculture and its proximity to major river systems.The data suggests Hamburg has experienced increasingly variable precipitation concentration patterns, which is consistent with climate projections for Northern European regions.
+# Climate Change Signals: 
+The increasing volatility after 2010 aligns with observed climate change impacts in Germany, including: More frequent extreme weather events,Shifts in seasonal precipitation patterns.Increased likelihood of both drought periods and heavy rainfall events Recent Trends (2020-2024): The declining trend toward 2024 might reflect:Changes in storm track patterns affecting northern Germany.Potential shifts in the timing or intensity of Atlantic low-pressure systems.Regional impacts of broader European climate variability Agricultural/Hydrological Implications: For Hamburg and northern Germany, these PCI fluctuations have significant implications for water management, agriculture, and flood risk - particularly given the region's importance for German agriculture and its proximity to major river systems.The data suggests Hamburg has experienced increasingly variable precipitation concentration patterns, which is consistent with climate projections for Northern European regions.
 
 
 ### Average Duration Spell
@@ -104,18 +105,46 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 ### Summer Season
 ![Summer Precipitation ](DWD_Folder/Plots/Summer_precipitation.png)
 ### Fall Season
-![Summer Precipitation ](DWD_Folder/Plots/Fall_precipitation.png)
+![Fall Precipitation ](DWD_Folder/Plots/Fall_precipitation.png)
 ### Winter Season
-![Summer Precipitation ](DWD_Folder/Plots/Winter_precipitation.png)
+![Winter Precipitation ](DWD_Folder/Plots/Winter_precipitation.png)
 
 ### Comparison of Period 1936:1979 & 1980:2025 for Winter Season
+![Winter Precipitation ](DWD_Folder/Plots/winter_season_box_plot.png)
 
 
+# Analysis & Inference from Precipitation:
+1980 Breakpoint Analysis:
+Mean increase: 30.8mm (166mm → 197mm)
+Percentage increase: 18.6%
+Median increase: 38mm (164mm → 202mm)
+Variability: Standard deviation increased from 60.3mm to 67.2mm
+
+1990 Breakpoint Analysis:
+Mean increase: 27.3mm (171mm → 198mm)
+Percentage increase: 16.0%
+Median increase: 23mm (175mm → 198mm)
+Variability: Standard deviation increased from 59.5mm to 71.2mm
+
+Key observations:
+Both breakpoints show substantial increases (~16-19%), confirming the trend is robust
+The 1980 breakpoint shows a slightly larger absolute increase (30.8mm vs 27.3mm), suggesting the trend started earlier but was more gradual
+The 1990 breakpoint shows the trend is more concentrated in the recent period (36 years vs 46 years)
+Increased variability in both cases - winters are not only getting wetter on average, but also more variable (higher standard deviation)
+The medians follow similar patterns to the means, indicating this isn't driven by a few extreme years
+
+Climate implications:
+An 18% increase in winter precipitation over ~45 years is climatologically significant
+The increased variability suggests more extreme wet and dry winters
+This aligns with climate projections for Northern Europe showing wetter winters
+
+This is a clear signal of changing winter precipitation patterns at Hamburg Fuhlsbüttel!
 
 
 
 ### Drought Analysis:- 
-#### Analysis:- 
+
+# Analysis:- 
 Focus is on long term trend, so using monthly series of drought indices with a frequency of 12,36,24,48 . The plots shows that last decade has witnesses increase in temperature and on the other decrease in precipitation. This makes the situation worse in future as with further increase in temperature the weather will become more dry and will result in a further decrease in precipitation resulting in a severe drought. 
 
 ### The Reconnaissance Drought Index (RDI) is a meteorological drought index that assesses drought severity by comparing precipitation to potential evapotranspiration (PET). It's a valuable tool for understanding water availability and is often used in agriculture and water resource management.
@@ -132,15 +161,17 @@ Focus is on long term trend, so using monthly series of drought indices with a f
 ![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Hamburg.png)
 
 
-Inference and Analysis:
-### The 12-month RDI analysis for Hamburg Fuhlsbüttel from 1990 to 2025 reveals a shifting pattern in annual drought dynamics. While the early 1990s experienced substantial wet conditions—including the wettest period in May 1994 (RDI = 2.6)—recent decades have seen more frequent and intense droughts, culminating in the extreme event of January 2019 (RDI = -3.0). Overall, 28.2% of the period was marked by drought (RDI < -0.5), and 7.8% experienced severe drought (RDI < -1.5), indicating a significant increase in water stress risk, particularly in the last decade. These findings emphasize the importance of ongoing monitoring and adaptation strategies, especially in light of potential climate-driven shifts in hydrological cycles.
-### The 24-month RDI trend for Hamburg Fuhlsbüttel from 1990 to 2024 reveals significant interannual variability in drought and wet conditions. While early decades (especially the 1990s) showed frequent and intense wet periods, the most recent decade has been characterized by prolonged dry conditions, culminating in the driest month observed in January 2020 (RDI = -2.4). Overall, drought conditions were present during 37.6% of the study period, with 4.7% classified as severe. This indicates increasing susceptibility to long-term water stress, especially post-2010.
-### 📌 Key Insights:
-### Consistency in Wettest Period: Both time scales agree that the wettest period was mid-1990s (Apr/Jun 1995), with very high RDI values (~2.7), reflecting a notably wet phase.
-### Recent Severe Droughts: The 36-month RDI captures Jan 2021 as the driest event (RDI = -2.9), showing short-term sharp intensity.The 48-month RDI, being smoother, flags Jan 2022 as driest (RDI = -2.7), representing longer accumulation of drought.Severe Drought Frequency:The 48-month RDI shows greater severe drought coverage (8.2%), suggesting that longer drought episodes have become more prominent in recent decades.
+## Inference and Analysis:
+ The 12-month RDI analysis for Hamburg Fuhlsbüttel from 1990 to 2025 reveals a shifting pattern in annual drought dynamics. While the early 1990s experienced substantial wet conditions—including the wettest period in May 1994 (RDI = 2.6)—recent decades have seen more frequent and intense droughts, culminating in the extreme event of January 2019 (RDI = -3.0). Overall, 28.2% of the period was marked by drought (RDI < -0.5), and 7.8% experienced severe drought (RDI < -1.5), indicating a significant increase in water stress risk, particularly in the last decade. These findings emphasize the importance of ongoing monitoring and adaptation strategies, especially in light of potential climate-driven shifts in hydrological cycles.
+The 24-month RDI trend for Hamburg Fuhlsbüttel from 1990 to 2024 reveals significant interannual variability in drought and wet conditions. While early decades (especially the 1990s) showed frequent and intense wet periods, the most recent decade has been characterized by prolonged dry conditions, culminating in the driest month observed in January 2020 (RDI = -2.4). Overall, drought conditions were present during 37.6% of the study period, with 4.7% classified as severe. This indicates increasing susceptibility to long-term water stress, especially post-2010.
+# 📌 Key Insights:
+Consistency in Wettest Period: Both time scales agree that the wettest period was mid-1990s (Apr/Jun 1995), with very high RDI values (~2.7), reflecting a notably wet phase.
+Recent Severe Droughts: The 36-month RDI captures Jan 2021 as the driest event (RDI = -2.9), showing short-term sharp intensity.The 48-month RDI, being smoother, flags Jan 2022 as driest (RDI = -2.7), representing longer accumulation of drought.Severe Drought Frequency:The 48-month RDI shows greater severe drought coverage (8.2%), suggesting that longer drought episodes have become more prominent in recent decades.
 
-## Post-2010 Trends:Both plots highlight an extended period of drying since ~2012, but 48-month scale smooths short-term variability, emphasizing longer-term water deficits.
-### 🧠 Interpretation:36-Month RDI is slightly more sensitive to shorter-term severe fluctuations but still shows significant long-term stress.48-Month RDI better captures multi-year cumulative drought, making it a more robust indicator of sustained hydrological stress.The strong downward trends in both cases underline the intensifying drought risk, with the 48-month index suggesting deeper and more persistent impacts.
+# Post-2010 Trends:
+Both plots highlight an extended period of drying since ~2012, but 48-month scale smooths short-term variability, emphasizing longer-term water deficits.
+### 🧠 Interpretation:
+36-Month RDI is slightly more sensitive to shorter-term severe fluctuations but still shows significant long-term stress.48-Month RDI better captures multi-year cumulative drought, making it a more robust indicator of sustained hydrological stress.The strong downward trends in both cases underline the intensifying drought risk, with the 48-month index suggesting deeper and more persistent impacts.
 
 
 ### Comparative Summary of RDI Indices (1990–2025)
