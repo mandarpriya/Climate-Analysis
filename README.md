@@ -105,11 +105,12 @@ The increasing volatility after 2010 aligns with observed climate change impacts
 ### Summer Season
 ![Summer Precipitation ](DWD_Folder/Plots/Summer_precipitation.png)
 ### Fall Season
-![Summer Precipitation ](DWD_Folder/Plots/Fall_precipitation.png)
+![Fall Precipitation ](DWD_Folder/Plots/Fall_precipitation.png)
 ### Winter Season
-![Summer Precipitation ](DWD_Folder/Plots/Winter_precipitation.png)
+![Winter Precipitation ](DWD_Folder/Plots/Winter_precipitation.png)
 
 ### Comparison of Period 1936:1979 & 1980:2025 for Winter Season
+
 
 
 
