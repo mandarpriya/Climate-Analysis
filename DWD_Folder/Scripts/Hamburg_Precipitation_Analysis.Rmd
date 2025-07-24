@@ -465,7 +465,7 @@ p4 <- seasonal_prec |>
     ggplot(.x, aes(x = season_year, y = total_prec)) +
       geom_line(color = "steelblue", alpha = 0.7) +
       geom_point(color = "steelblue", size = 0.8) +
-      geom_smooth(method = "lm", se = TRUE, color = "red", size = 0.8) +
+      geom_smooth(method = "lm", se = TRUE, color = "red", linewidth = 0.8) +
       labs(
         title = paste(.y$season, "Precipitation - Hamburg Fuhlsbüttel"),
         x = "Year",
@@ -519,20 +519,7 @@ ggsave(
 
 
 
-```{r}
-# Or create a faceted plot
-ggplot(seasonal_prec, aes(x = season_year, y = total_prec)) +
-  geom_line(color = "steelblue", alpha = 0.7) +
-  geom_point(color = "steelblue", size = 0.5) +
-  geom_smooth(method = "lm", se = TRUE, color = "red", size = 0.6) +
-  facet_wrap(~season, scales = "free_y", ncol = 2) +
-  labs(
-    title = "Seasonal Precipitation Trends - Hamburg Fuhlsbüttel (1936-2025)",
-    x = "Year",
-    y = "Total Precipitation (mm)"
-  ) +
-  theme_minimal()
-```
+
 ### Test´s for Trend for Winter Season:- Using 2 diffrent time frames 1936-1979 & 1980-2025
 
 ```{r}
@@ -581,8 +568,18 @@ winter_plot <- ggplot(winter_prec, aes(x = season_year, y = total_prec)) +
   ) +
   scale_x_continuous(breaks = seq(1940, 2020, 20))
 
-print(winter_plot)
+ggsave(
+  filename = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/winter_plot.png",
+  plot     = winter_plot,
+  width    = 15,
+  height   = 10,
+  dpi      = 450
+)
+```
 
+### Comparison of Winter Season for two period 1936-1979 & 1980:2025
+
+```{r}
 # Additional analysis: Before/after comparison
 winter_change <- winter_prec |> 
   mutate(
@@ -604,7 +601,7 @@ winter_change <- winter_prec |>
     change_percent = (change_mean / lag(mean_prec)) * 100
   )
 
-print(winter_change)
+
 
 # Boxplot comparison
 period_plot <- winter_prec |> 
@@ -625,7 +622,13 @@ period_plot <- winter_prec |>
   theme_minimal() +
   theme(legend.position = "none")
 
-print(period_plot)
+ggsave(
+  filename = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/Winter_Season_Variation.png",
+  plot     = period_plot,
+  width    = 15,
+  height   = 10,
+  dpi      = 450
+)
 ```
 ### Test´s for Trend for Winter Season:- Using 2 diffrent time frames 1936-1989 & 1990-2025
 ```{r}
