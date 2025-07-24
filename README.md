@@ -78,13 +78,13 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 
 ### 2. Temporal Patterns:
 
-### 1940s-1950s: Higher variability and more frequent spikes above 13
-### 1960s-1980s: More stable period with fewer extreme values
-### 1990s-2020s: Return to higher variability, similar to 1940s-1950s
+## 1940s-1950s: Higher variability and more frequent spikes above 13
+## 1960s-1980s: More stable period with fewer extreme values
+## 1990s-2020s: Return to higher variability, similar to 1940s-1950s
 
-### 3. Climate Implications:Hamburg maintains moderate seasonal precipitation concentration throughout the recordNo evidence of increasing concentration due to climate changeThe variability suggests natural climate oscillations rather than systematic change
+## 3. Climate Implications:Hamburg maintains moderate seasonal precipitation concentration throughout the recordNo evidence of increasing concentration due to climate changeThe variability suggests natural climate oscillations rather than systematic change
 
-### 4. Extreme Years:Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, and 2000s-2010sThese likely represent years with particularly wet or dry seasons
+## 4. Extreme Years:Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, and 2000s-2010sThese likely represent years with particularly wet or dry seasons
 ### German Climate Context Analysis:Regional Climate Influences: Hamburg, being in northern Germany near the North Sea, is particularly influenced by Atlantic weather systems and the North Atlantic Oscillation (NAO). The cyclical peaks you see (1999, 2011, 2018) likely correspond to periods when these Atlantic systems created more concentrated precipitation patterns.Seasonal Concentration: In Germany's temperate oceanic climate, high PCI values often indicate: Wet winters followed by dry summers (or vice versa).Clustering of precipitation into fewer, more intense events.Potential impacts from blocking high-pressure systems over Central Europe
 
 
