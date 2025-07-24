@@ -90,6 +90,10 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 
 ### Climate Change Signals: The increasing volatility after 2010 aligns with observed climate change impacts in Germany, including: More frequent extreme weather events,Shifts in seasonal precipitation patterns.Increased likelihood of both drought periods and heavy rainfall events Recent Trends (2020-2024): The declining trend toward 2024 might reflect:Changes in storm track patterns affecting northern Germany.Potential shifts in the timing or intensity of Atlantic low-pressure systems.Regional impacts of broader European climate variabilityAgricultural/Hydrological Implications: For Hamburg and northern Germany, these PCI fluctuations have significant implications for water management, agriculture, and flood risk - particularly given the region's importance for German agriculture and its proximity to major river systems.The data suggests Hamburg has experienced increasingly variable precipitation concentration patterns, which is consistent with climate projections for Northern European regions.
 
+
+### Average Duration Spell
+![Average Duration Spell](DWD_Folder/Plots/Average_Duration_Spells.png)
+
 ### Seasonal Precipitation Analysis
 
 ![Seasonl Precipitation ](DWD_Folder/Plots/Seasonal_Precipitation.png)
@@ -104,7 +108,7 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 ### Winter Season
 ![Summer Precipitation ](DWD_Folder/Plots/Winter_precipitation.png)
 
-
+### Comparison of Period 1936:1979 & 1980:2025 for Winter Season
 
 
 
