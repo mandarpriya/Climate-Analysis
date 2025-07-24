@@ -67,7 +67,14 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 ![Annual Precipitation ](DWD_Folder/Plots/Annual_Precipitation(1936-2025).png)
 
 ### Seasonal Precipitation Analysis
+![Spring Precipitation ](DWD_Folder/Plots/Spring_precipitation.png)
+
 ![Summer Precipitation ](DWD_Folder/Plots/Summer_precipitation.png)
+
+![Summer Precipitation ](DWD_Folder/Plots/Fall_precipitation.png)
+
+![Summer Precipitation ](DWD_Folder/Plots/Winter_precipitation.png)
+
 
 
 
