@@ -110,7 +110,7 @@ The increasing volatility after 2010 aligns with observed climate change impacts
 ![Winter Precipitation ](DWD_Folder/Plots/Winter_precipitation.png)
 
 ### Comparison of Period 1936:1979 & 1980:2025 for Winter Season
-
+![Winter Precipitation ](DWD_Folder/Plots/winter_season_box_plot.png)
 
 
 
