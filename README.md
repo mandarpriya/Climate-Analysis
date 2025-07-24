@@ -66,13 +66,22 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 #### Precipitation Trend (1936-2025) #### 
 ![Annual Precipitation ](DWD_Folder/Plots/Annual_Precipitation(1936-2025).png)
 
+### Precipitation Concentration Index (PCI)
+![Precipitation Concentration Index ](DWD_Folder/Plots/Precipitation_Concentration_Index.png)
+
+
 ### Seasonal Precipitation Analysis
+
+![Seasonl Precipitation ](DWD_Folder/Plots/Seasonal_Precipitation.png)
+
+
+### Spring Season
 ![Spring Precipitation ](DWD_Folder/Plots/Spring_precipitation.png)
-
+### Summer Season
 ![Summer Precipitation ](DWD_Folder/Plots/Summer_precipitation.png)
-
+### Fall Season
 ![Summer Precipitation ](DWD_Folder/Plots/Fall_precipitation.png)
-
+### Winter Season
 ![Summer Precipitation ](DWD_Folder/Plots/Winter_precipitation.png)
 
 
