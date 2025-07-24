@@ -171,7 +171,6 @@ rdi_12tbl <- monthly_rdist_tbl |>
 # Recent period chosen 1990-2025
 rdi_12tbl <- rdi_12tbl |> 
   dplyr::mutate(sign = ifelse(RDI_12 >0,"pos","neg")) |> 
-  filter(date>"1989-12-01") |> 
 # Enhanced data preparation with drought categories
  dplyr:: mutate(
     # Original sign classification
@@ -217,6 +216,7 @@ drought_stats <- rdi_12tbl |>
 stats_text <- paste0(
   "Drought conditions: ", drought_stats$drought_pct, "% | ",
   "Severe drought: ", drought_stats$severe_drought_pct, "% | ",
+  "Wet events: ", drought_stats$wet_pct, "% | ",
   "Wettest: ", format(drought_stats$max_date, "%b %Y"), " (", round(drought_stats$max_rdi, 1), ") | ",
   "Driest: ", format(drought_stats$min_date, "%b %Y"), " (", round(drought_stats$min_rdi, 1), ")"
 )
@@ -234,14 +234,16 @@ drought_colors <- c(
   "Extremely Wet" = "#0000CD"        # Medium Blue
 )
 
+drought_stats
+stats_text
+rdi_12tbl |> head()
+```
 
 
-
-
- 
+```{r fig.align='center',fig.height=10,fig.width=15}
 ###  Visualization of RDI 12 
 
-p0 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
+ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
 
@@ -262,23 +264,26 @@ p0 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
 
 # KEY INSIGHTS annotation box
   annotate("rect", 
-           xmin = as.Date("2004-05-01"), xmax = as.Date("2013-03-01"),
-           ymin = 2.3, ymax = 3.2, 
+           xmin = as.Date("1981-05-01"), xmax = as.Date("2013-03-01"),
+           ymin = 3, ymax = 3.9, 
            fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
 
-  annotate("text", x = as.Date("2005-01-01"), y = 3.0, 
+  annotate("text", x = as.Date("1981-05-01"), y = 3.75, 
            label = paste0("KEY INSIGHTS (", min(year(rdi_12tbl$date)), "-", max(year(rdi_12tbl$date)), ")"),
            size = 5, fontface = "bold", hjust = -0.1,) +
 
-  annotate("text", x = as.Date("2004-05-01"), y = 2.8, 
+  annotate("text", x = as.Date("1981-05-01"), y = 3.6, 
            label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
            size = 5, hjust = 0, color = "#CC0000") +
 
-  annotate("text", x = as.Date("2004-05-01"), y = 2.6, 
+  annotate("text", x = as.Date("1981-05-01"), y = 3.4, 
            label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
            size = 5, hjust = 0, color = "#8B0000",fontface="bold") +
+  annotate("text", x = as.Date("1981-05-01"), y = 3.2, 
+           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
+           size = 5, hjust = 0, color = "#00008B",fontface="bold") +
 
-  annotate("text", x = as.Date("2019-01-01"), y = -3, 
+  annotate("text", x = as.Date("1959-10-01"), y = -3, 
            label = paste0(" Event Extreme : ", format(drought_stats$min_date, "%b %Y"), 
                           " (RDI:",round(drought_stats$min_rdi, 1), ") •"),
            size = 5, hjust = 1, color = "grey30",fontface="bold") +
@@ -296,13 +301,13 @@ annotate("text", x = drought_stats$max_date, y = drought_stats$max_rdi + 0.2,
   scale_x_date(
     date_breaks = "5 years",
     date_labels = "%Y",
-    limits = as.Date(c("1990-01-01", "2025-05-28")),
+    limits = as.Date(c("1936-12-01", "2025-05-28")),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
 
   scale_y_continuous(
-    limits = c(-3.5,3.5),
-    breaks = seq(-3.5, 3.5, 0.5),
+    limits = c(-4,4),
+    breaks = seq(-4, 4, 0.5),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
 
@@ -319,7 +324,7 @@ annotate("text", x = drought_stats$max_date, y = drought_stats$max_rdi + 0.2,
 
   # Labels and theme
   labs(
-    title = "Drought Severity in Hamburg Fuhlsbüttel (1990–2025*)",
+    title = "Drought Severity in Hamburg Fuhlsbüttel (1936–2025*)",
     subtitle = paste0("RDI (12-Month Scale) | ", stats_text),
     caption = "Source: DWD ",
     x = "", 
@@ -343,10 +348,10 @@ annotate("text", x = drought_stats$max_date, y = drought_stats$max_rdi + 0.2,
     legend.key.size = unit(1, "cm"),
     #plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
   )
-print(p0)
 
-# Saving the plot
-  ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_12_Hamburg.png", plot = p0, width = 15, height = 10, dpi = 450)
+
+# # Saving the plot
+#   ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_12_Hamburg.png", plot = p0, width = 15, height = 10, dpi = 450)
 ```
 Inference and Analysis:
 The 12-month RDI analysis for Hamburg Fuhlsbüttel from 1990 to 2025 reveals a shifting pattern in annual drought dynamics. While the early 1990s experienced substantial wet conditions—including the wettest period in May 1994 (RDI = 2.6)—recent decades have seen more frequent and intense droughts, culminating in the extreme event of January 2019 (RDI = -3.0). Overall, 28.2% of the period was marked by drought (RDI < -0.5), and 7.8% experienced severe drought (RDI < -1.5), indicating a significant increase in water stress risk, particularly in the last decade. These findings emphasize the importance of ongoing monitoring and adaptation strategies, especially in light of potential climate-driven shifts in hydrological cycles.
