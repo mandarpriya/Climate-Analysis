@@ -653,11 +653,14 @@ winter_analysis <- winter_prec |>
   )
 
 print(winter_analysis)
+```
 
+
+```{r,fig.align='center',fig.height=10,fig.width=15}
 # Create detailed winter plot
 library(ggplot2)
 
-winter_plot <- ggplot(winter_prec, aes(x = season_year, y = total_prec)) +
+winter_trend <- ggplot(winter_prec, aes(x = season_year, y = total_prec)) +
   geom_line(color = "steelblue", alpha = 0.7, size = 0.8) +
   geom_point(color = "steelblue", size = 1.2, alpha = 0.8) +
   geom_smooth(method = "lm", se = TRUE, color = "red", size = 1, alpha = 0.7) +
@@ -677,8 +680,17 @@ winter_plot <- ggplot(winter_prec, aes(x = season_year, y = total_prec)) +
   ) +
   scale_x_continuous(breaks = seq(1940, 2020, 20))
 
-print(winter_plot)
+ggsave(
+  filename = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/Winter_Trend.png",
+  plot     = winter_trend,
+  width    = 15,
+  height   = 10,
+  dpi      = 450
+)
+```
 
+
+```{r,fig.align='center',fig.height=10,fig.width=15}
 # Additional analysis: Before/after comparison
 winter_change <- winter_prec |> 
   mutate(
@@ -700,10 +712,10 @@ winter_change <- winter_prec |>
     change_percent = (change_mean / lag(mean_prec)) * 100
   )
 
-print(winter_change)
+
 
 # Boxplot comparison
-period_plot <- winter_prec |> 
+winter_season_box_plot <- winter_prec |> 
   mutate(
     period = case_when(
       season_year < 1990 ~ "1936-1989",
@@ -720,8 +732,14 @@ period_plot <- winter_prec |>
   ) +
   theme_minimal() +
   theme(legend.position = "none")
+ggsave(
+  filename = "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/winter_season_box_plot.png",
+  plot     = winter_season_box_plot,
+  width    = 15,
+  height   = 10,
+  dpi      = 450
+)
 
-print(period_plot)
 ```
 ### Analysis:
 1980 Breakpoint Analysis:
