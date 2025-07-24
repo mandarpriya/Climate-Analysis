@@ -113,6 +113,32 @@ The increasing volatility after 2010 aligns with observed climate change impacts
 ![Winter Precipitation ](DWD_Folder/Plots/winter_season_box_plot.png)
 
 
+# Analysis & Inference from Precipitation:
+1980 Breakpoint Analysis:
+Mean increase: 30.8mm (166mm → 197mm)
+Percentage increase: 18.6%
+Median increase: 38mm (164mm → 202mm)
+Variability: Standard deviation increased from 60.3mm to 67.2mm
+
+1990 Breakpoint Analysis:
+Mean increase: 27.3mm (171mm → 198mm)
+Percentage increase: 16.0%
+Median increase: 23mm (175mm → 198mm)
+Variability: Standard deviation increased from 59.5mm to 71.2mm
+
+Key observations:
+Both breakpoints show substantial increases (~16-19%), confirming the trend is robust
+The 1980 breakpoint shows a slightly larger absolute increase (30.8mm vs 27.3mm), suggesting the trend started earlier but was more gradual
+The 1990 breakpoint shows the trend is more concentrated in the recent period (36 years vs 46 years)
+Increased variability in both cases - winters are not only getting wetter on average, but also more variable (higher standard deviation)
+The medians follow similar patterns to the means, indicating this isn't driven by a few extreme years
+
+Climate implications:
+An 18% increase in winter precipitation over ~45 years is climatologically significant
+The increased variability suggests more extreme wet and dry winters
+This aligns with climate projections for Northern Europe showing wetter winters
+
+This is a clear signal of changing winter precipitation patterns at Hamburg Fuhlsbüttel!
 
 
 
