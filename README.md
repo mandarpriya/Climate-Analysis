@@ -63,6 +63,10 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 ![Max Intensity Events](DWD_Folder/Plots/Top10_Max_Intensity_Events.png)
 
 
+#### Precipitation Trend (1936-2025) #### 
+![Annual Precipitation ](DWD_Folder/Plots/Annual_Precipitation(1936-2025).png)
+
+
 
 
 
