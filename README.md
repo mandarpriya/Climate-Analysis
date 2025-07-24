@@ -115,6 +115,7 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 
 
 ### Drought Analysis:- 
+
 #### Analysis:- 
 Focus is on long term trend, so using monthly series of drought indices with a frequency of 12,36,24,48 . The plots shows that last decade has witnesses increase in temperature and on the other decrease in precipitation. This makes the situation worse in future as with further increase in temperature the weather will become more dry and will result in a further decrease in precipitation resulting in a severe drought. 
 
@@ -132,14 +133,14 @@ Focus is on long term trend, so using monthly series of drought indices with a f
 ![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Hamburg.png)
 
 
-Inference and Analysis:
-### The 12-month RDI analysis for Hamburg Fuhlsbüttel from 1990 to 2025 reveals a shifting pattern in annual drought dynamics. While the early 1990s experienced substantial wet conditions—including the wettest period in May 1994 (RDI = 2.6)—recent decades have seen more frequent and intense droughts, culminating in the extreme event of January 2019 (RDI = -3.0). Overall, 28.2% of the period was marked by drought (RDI < -0.5), and 7.8% experienced severe drought (RDI < -1.5), indicating a significant increase in water stress risk, particularly in the last decade. These findings emphasize the importance of ongoing monitoring and adaptation strategies, especially in light of potential climate-driven shifts in hydrological cycles.
+## Inference and Analysis:
+# The 12-month RDI analysis for Hamburg Fuhlsbüttel from 1990 to 2025 reveals a shifting pattern in annual drought dynamics. While the early 1990s experienced substantial wet conditions—including the wettest period in May 1994 (RDI = 2.6)—recent decades have seen more frequent and intense droughts, culminating in the extreme event of January 2019 (RDI = -3.0). Overall, 28.2% of the period was marked by drought (RDI < -0.5), and 7.8% experienced severe drought (RDI < -1.5), indicating a significant increase in water stress risk, particularly in the last decade. These findings emphasize the importance of ongoing monitoring and adaptation strategies, especially in light of potential climate-driven shifts in hydrological cycles.
 ### The 24-month RDI trend for Hamburg Fuhlsbüttel from 1990 to 2024 reveals significant interannual variability in drought and wet conditions. While early decades (especially the 1990s) showed frequent and intense wet periods, the most recent decade has been characterized by prolonged dry conditions, culminating in the driest month observed in January 2020 (RDI = -2.4). Overall, drought conditions were present during 37.6% of the study period, with 4.7% classified as severe. This indicates increasing susceptibility to long-term water stress, especially post-2010.
-### 📌 Key Insights:
-### Consistency in Wettest Period: Both time scales agree that the wettest period was mid-1990s (Apr/Jun 1995), with very high RDI values (~2.7), reflecting a notably wet phase.
+# 📌 Key Insights:
+# Consistency in Wettest Period: Both time scales agree that the wettest period was mid-1990s (Apr/Jun 1995), with very high RDI values (~2.7), reflecting a notably wet phase.
 ### Recent Severe Droughts: The 36-month RDI captures Jan 2021 as the driest event (RDI = -2.9), showing short-term sharp intensity.The 48-month RDI, being smoother, flags Jan 2022 as driest (RDI = -2.7), representing longer accumulation of drought.Severe Drought Frequency:The 48-month RDI shows greater severe drought coverage (8.2%), suggesting that longer drought episodes have become more prominent in recent decades.
 
-## Post-2010 Trends:Both plots highlight an extended period of drying since ~2012, but 48-month scale smooths short-term variability, emphasizing longer-term water deficits.
+# Post-2010 Trends:Both plots highlight an extended period of drying since ~2012, but 48-month scale smooths short-term variability, emphasizing longer-term water deficits.
 ### 🧠 Interpretation:36-Month RDI is slightly more sensitive to shorter-term severe fluctuations but still shows significant long-term stress.48-Month RDI better captures multi-year cumulative drought, making it a more robust indicator of sustained hydrological stress.The strong downward trends in both cases underline the intensifying drought risk, with the 48-month index suggesting deeper and more persistent impacts.
 
 
