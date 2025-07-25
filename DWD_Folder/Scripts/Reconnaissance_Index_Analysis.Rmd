@@ -37,7 +37,7 @@ library(fitdistrplus)
 # Data upload from the folder
 ```{r}
 data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
-
+plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots"
 ```
 # Monthly frequency
 ```{r}
@@ -235,7 +235,7 @@ drought_colors <- c(
 )
 
 # Create the plot
-ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
+p01 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   
   # RDI columns
   geom_col(width = 18, show.legend = TRUE) +
@@ -250,16 +250,22 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   geom_vline(xintercept = as.Date("1981-05-01"), color = "#00008B", linetype = "dotdash", linewidth = 0.8) +
 
   # Annotations for extreme events
+ annotate("label",
+         x = drought_stats$min_date,
+         y = drought_stats$min_rdi,
+         label = paste0("• Extreme Drought: ", format(drought_stats$min_date, "%b %Y"),
+                        " (RDI:", round(drought_stats$min_rdi, 2), ")"),
+         fill = "#8B0000", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 0) +
+  
   annotate("label",
-           x = as.Date("1959-10-01"),
-           y = -3.9,
-           label = "• Extreme Drought: Oct 1959(RDI:-3.9)",
-           fill = "#8B0000", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 0) +
-  annotate("label",
-           x = as.Date("1981-05-01"),
-           y = 2.7,
-           label = "Wettest Event: May 1981(RDI:2.7) •",
-           fill = "#00008B", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 1) +
+         x = drought_stats$max_date,
+         y = drought_stats$max_rdi,
+         label = paste0(" Wettest Event : ", format(drought_stats$min_date, "%b %Y"),
+                        " (RDI:", round(drought_stats$max_rdi, 2), ")•"),
+         fill = "#00008B", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 1) +
+  
+           
+           
 
   # KEY INSIGHTS box
   annotate("text", x = as.Date("1945-01-01"), y = 3.85, 
@@ -331,10 +337,18 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     legend.text = element_text(size = 10, face = "bold"),
     legend.key.size = unit(1, "cm"),
     # Add plot margins to prevent clipping
-    plot.margin = margin(t = 20, r = 30, b = 20, l = 20, unit = "pt")  # Increased right margin
+    #plot.margin = margin(t = 20, r = 30, b = 20, l = 20, unit = "pt")  # Increased right margin
   )
 
+ggsave(
+  filename = file.path(plot_dir, "RDI_12_1936_1989.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
+p01
 ```
 🧾 Summary Statement
 Between 1936 and 1989, Hamburg experienced a relatively wet-dominant climate with fewer droughts and more frequent moisture surpluses. While extreme events such as the 1959 drought (RDI -3.9) and the 1981 wet event (RDI 2.7) did occur, overall drought conditions were less intense and less frequent compared to the post-1990 period. This era serves as a hydroclimatic baseline, highlighting the shift toward drier and more variable conditions in the modern climate.
@@ -426,7 +440,7 @@ drought_colors <- c(
 # stats_text <- "Drought conditions: 28.2% | Severe drought: 7.8% | Wet events: 27.1% | Wettest: May 1994 (2.6) | Driest: Jan 2019 (-3)"
 
 # Create the plot
-ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
+p02 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   
   # RDI columns
   geom_col(width = 18, show.legend = TRUE) +
@@ -530,7 +544,7 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     legend.key.size = unit(1, "cm"),
     
   )
-
+p02
 ```
 
 ```{r fig.align='center',fig.height=10,fig.width=15}
@@ -604,7 +618,7 @@ drought_colors <- c(
   "Very Wet" = "#1E90FF",            # Dodger Blue
   "Extremely Wet" = "#0000CD"        # Medium Blue
 )
-ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
+p0 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   
   # RDI columns
   geom_col(width = 18, show.legend = TRUE) +
