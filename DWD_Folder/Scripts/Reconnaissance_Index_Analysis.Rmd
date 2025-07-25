@@ -358,6 +358,119 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
 # # Saving the plot
 #   ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_12_Hamburg.png", plot = p0, width = 15, height = 10, dpi = 450)
 ```
+```{r}
+ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
+  
+  # Optional: Decade bands to improve visual perception of time
+  geom_rect(data = decade_bands_df,
+            aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+            inherit.aes = FALSE, fill = "grey90", alpha = 0.2) +
+
+  # RDI columns
+  geom_col(width = 18, show.legend = TRUE) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
+
+  # Reference lines
+  geom_hline(yintercept = c(-2, -1.5, -1, -0.5, 0.5, 1, 1.5, 2), 
+             color = "grey50", linewidth = 0.3, linetype = "dashed", alpha = 0.6) +
+
+  # Extreme drought and wet events
+  geom_vline(xintercept = drought_stats$min_date, color = "#8B0000", linetype = "dotdash", linewidth = 0.8) +
+  geom_vline(xintercept = drought_stats$max_date, color = "#00008B", linetype = "dotdash", linewidth = 0.8) +
+
+  # Annotation labels for extreme events
+ annotate("label",
+         x = drought_stats$min_date,
+         y = drought_stats$min_rdi,
+         label = paste0("Extreme Drought:",format(drought_stats$min_date, "%b %Y"),
+                        "(RDI: ",round(drought_stats$min_rdi, 2), ")"),
+         fill = "#8B0000", color = "white", fontface = "bold", size = 4, label.size = NA) +
+  annotate("label",
+         x = drought_stats$max_date,
+         y = drought_stats$max_rdi,
+         label = paste0("Wettest Event:",format(drought_stats$max_date, "%b %Y"),
+                        "(RDI:",round(drought_stats$max_rdi, 1), ")"),
+         fill = "#00008B", color = "white", fontface = "bold", size = 4, label.size = NA) +
+
+  # KEY INSIGHTS box
+  annotate("rect", 
+           xmin = as.Date("1966-04-01"), xmax = as.Date("1991-03-01"),
+           ymin = 3, ymax = 3.9, 
+           fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
+
+  annotate("text", x = as.Date("1966-05-01"), y = 3.75, 
+           label = paste0("KEY INSIGHTS (", min(year(rdi_12tbl$date)), "-", max(year(rdi_12tbl$date)), ")"),
+           size = 4.5, fontface = "bold", hjust = -0.1) +
+
+  annotate("text", x = as.Date("1966-05-01"), y = 3.6, 
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+           size = 4, hjust = 0, color = "#CC0000") +
+
+  annotate("text", x = as.Date("1966-05-01"), y = 3.4, 
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+           size = 4, hjust = 0, color = "#8B0000", fontface = "bold") +
+
+  annotate("text", x = as.Date("1966-05-01"), y = 3.2, 
+           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
+           size = 4, hjust = 0, color = "#00008B", fontface = "bold") +
+
+  # Start and end labels
+  annotate("text", x = min(rdi_12tbl$date), y = 3, 
+           label = "Start of analysis", hjust = 0, size = 5, color = "grey40", fontface = "bold") +
+  annotate("text", x = max(rdi_12tbl$date), y = 3, 
+           label = "End of analysis", hjust = .9, size = 5, color = "grey50", fontface = "bold") +
+
+  # Axis and color scales
+  scale_x_date(
+    date_breaks = "5 years",
+    date_labels = "%Y",
+    limits = as.Date(c("1936-12-01", "2025-05-28")),
+    expand = expansion(mult = c(0.01, 0.01))
+  ) +
+  scale_y_continuous(
+    limits = c(-4, 4),
+    breaks = seq(-4, 4, 1),
+    expand = expansion(mult = c(0.01, 0.01))
+  ) +
+   scale_fill_manual(
+    name = "Condition",
+    values = drought_colors,
+    guide = guide_legend(
+      title.position = "top",
+      title.hjust = 0.5,
+      nrow = 1,
+      reverse = TRUE
+    )
+  ) +
+  # Titles and themes
+  labs(
+    title = "Drought Severity in Hamburg Fuhlsbüttel (1936–2025*)",
+    subtitle = paste0("RDI (12-Month Scale)|",stats_text),
+    caption = "Source: DWD",
+    x = "", 
+    y = ""
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title.position = "plot",
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.x = element_line(color = "grey90", linewidth = 0.5),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_line(color = "grey90", linewidth = 0.5),
+    plot.title = element_text(face = "bold", size = 22, margin = margin(t = 10, b = 15)),
+    plot.subtitle = element_text(color = "grey60", size = 18, margin = margin(b = 10)),
+    plot.caption = element_text(color = "grey60", size = 15, hjust = 1, margin = margin(t = 10)),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 14, colour = "grey10", face = "bold"),
+    axis.text.y = element_text(size = 14, colour = "gray10", face = "bold"),
+    legend.position = "top",
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.text = element_text(size = 10),
+    legend.key.size = unit(1, "cm"),
+
+  )
+
+```
+
 
 
 ## RDI 24 

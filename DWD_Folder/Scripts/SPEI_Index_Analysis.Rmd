@@ -299,6 +299,7 @@ geom_shadowtext(
 
   theme_minimal(base_size = 12) +
   theme(
+    plot.title.position = "plot",
     panel.grid.minor.x = element_blank(),
     panel.grid.major.x = element_line(color = "grey90", linewidth = 0.5),
     panel.grid.minor.y = element_blank(),
@@ -315,7 +316,7 @@ geom_shadowtext(
   )
 p12
 # Saving the plot
-  ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/SPEI_12_Hamburg.png", plot = p12, width = 15, height = 10, dpi = 450)
+ # ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/SPEI_12_Hamburg.png", plot = p12, width = 15, height = 10, dpi = 450)
 ```
 ```{r}
 spei_12tbl <- spei_12tbl |> filter(date >"1989-12-01")
