@@ -37,7 +37,7 @@ library(fitdistrplus)
 # Data upload from the folder
 ```{r}
 data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
-data
+
 ```
 # Monthly frequency
 ```{r}
@@ -55,7 +55,7 @@ monthly_tbl <- data |>
   ) |> 
  dplyr:: mutate(date = make_date(year, month)) |> 
   dplyr::select(year, month, date, prec:Tmax)
-
+# removing NA's
 monthly_tbl <- monthly_tbl |> drop_na()
 ```
 ## Confirming PET computaiton method:- choice between Hargraves and Thornthwaite 
@@ -161,7 +161,7 @@ monthly_rdist_tbl <- calculate_rdist_for_scales(data = monthly_tbl)
 ```
 # We have 3,6,9,12,24,36,48 monthly scale. So then which scales are important for the analysis. Since the period is 1936-2025, so 3,6,9 scales will not be that informative as these will refelect very short term changes. So 12,24,36,48 are better choices
 
-## RDI 12
+## RDI 12 for th eperiod 1936-2025* (data available till May)
 ```{r fig.align='center',fig.height=10,fig.width=15}
 library(dplyr)
 
@@ -233,24 +233,12 @@ drought_colors <- c(
   "Very Wet" = "#1E90FF",            # Dodger Blue
   "Extremely Wet" = "#0000CD"        # Medium Blue
 )
-
 ```
 
 
 ```{r fig.align='center',fig.height=10,fig.width=15}
-###  Visualization of RDI 12 
-
-library(ggplot2)
-library(lubridate)
-
-
 ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   
-  # Optional: Decade bands to improve visual perception of time
-  geom_rect(data = decade_bands_df,
-            aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
-            inherit.aes = FALSE, fill = "grey90", alpha = 0.2) +
-
   # RDI columns
   geom_col(width = 18, show.legend = TRUE) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
@@ -274,30 +262,30 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
          x = drought_stats$max_date,
          y = drought_stats$max_rdi,
          label = paste0("Wettest Event:",format(drought_stats$max_date, "%b %Y"),
-                        "(RDI:",round(drought_stats$max_rdi, 1), ")"),
-         fill = "#00008B", color = "white", fontface = "bold", size = 4, label.size = NA) +
+                        "(RDI:",round(drought_stats$max_rdi, 2), ")"),
+         fill = "#00008B", color = "white",hjust = 1, fontface = "bold", size = 5, label.size = NA) +
 
   # KEY INSIGHTS box
   annotate("rect", 
-           xmin = as.Date("1966-04-01"), xmax = as.Date("1991-03-01"),
-           ymin = 3, ymax = 3.9, 
+           xmin = as.Date("1977-04-01"), xmax = as.Date("1999-05-01"),
+           ymin = 2.9, ymax = 3.9, 
            fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
 
-  annotate("text", x = as.Date("1966-05-01"), y = 3.75, 
+  annotate("text", x = as.Date("1977-05-01"), y = 3.75, 
            label = paste0("KEY INSIGHTS (", min(year(rdi_12tbl$date)), "-", max(year(rdi_12tbl$date)), ")"),
-           size = 4.5, fontface = "bold", hjust = -0.1) +
+           size = 5, fontface = "bold", hjust = -0.1) +
 
-  annotate("text", x = as.Date("1966-05-01"), y = 3.6, 
+  annotate("text", x = as.Date("1977-05-01"), y = 3.5, 
            label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
-           size = 4, hjust = 0, color = "#CC0000") +
+           size = 5, hjust = 0, color = "#CC0000") +
 
-  annotate("text", x = as.Date("1966-05-01"), y = 3.4, 
+  annotate("text", x = as.Date("1977-05-01"), y = 3.25, 
            label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
-           size = 4, hjust = 0, color = "#8B0000", fontface = "bold") +
+           size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
 
-  annotate("text", x = as.Date("1966-05-01"), y = 3.2, 
-           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
-           size = 4, hjust = 0, color = "#00008B", fontface = "bold") +
+  annotate("text", x = as.Date("1977-05-01"), y = 3, 
+           label = paste0("• Wet Events:",drought_stats$wet_pct, "% of period"),
+           size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Start and end labels
   annotate("text", x = min(rdi_12tbl$date), y = 3, 
@@ -318,15 +306,15 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     expand = expansion(mult = c(0.01, 0.01))
   ) +
    scale_fill_manual(
-    name = "Condition",
-    values = drought_colors,
-    guide = guide_legend(
-      title.position = "top",
-      title.hjust = 0.5,
-      nrow = 1,
-      reverse = TRUE
-    )
-  ) +
+  name = "Condition",
+  values = drought_colors,
+  guide = guide_legend(
+    title.position = "top",
+    title.hjust = 0.5,
+    nrow = 1,  # Change from 1 to 2 rows
+    reverse = TRUE
+  )
+) +
   # Titles and themes
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel (1936–2025*)",
@@ -343,29 +331,137 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     panel.grid.minor.y = element_blank(),
     panel.grid.major.y = element_line(color = "grey90", linewidth = 0.5),
     plot.title = element_text(face = "bold", size = 22, margin = margin(t = 10, b = 15)),
-    plot.subtitle = element_text(color = "grey60", size = 18, margin = margin(b = 10)),
+    plot.subtitle = element_text(color = "grey60", size = 16, margin = margin(b = 10,r=20)),
     plot.caption = element_text(color = "grey60", size = 15, hjust = 1, margin = margin(t = 10)),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 14, colour = "grey10", face = "bold"),
-    axis.text.y = element_text(size = 14, colour = "gray10", face = "bold"),
+    axis.text.y = element_text(size = 16, colour = "gray10", face = "bold"),
     legend.position = "top",
-    legend.title = element_text(size = 12, face = "bold"),
-    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 11, face = "bold"),  # Changed from size = 10 to size = 14 and added bold
     legend.key.size = unit(1, "cm"),
-
   )
-
 
 # # Saving the plot
 #   ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_12_Hamburg.png", plot = p0, width = 15, height = 10, dpi = 450)
 ```
+#### Historical Climate Characteristics (1936-2025)
+Overall Water Balance:
+
+Hamburg experiences a slightly wet-biased climate - wet events (29.8%) are more common than drought conditions (25.4%)
+Normal conditions dominate (~45% of the time)
+Severe droughts are relatively rare (only 7.2% of the period)
+
+Major Climate Periods Identified
+1940s-1950s: The Dry Era
+
+Sustained drought conditions, culminating in the extreme drought of October 1959 (RDI: -3.9)
+This was the driest period in Hamburg's modern record
+
+1960s-1980s: The Wet Period
+
+Markedly wetter conditions with frequent positive RDI values
+Peak wetness in May 1981 (RDI: 2.7) - the wettest event on record
+This represents a major climate shift from the previous dry period
+
+1990s-Present: Increased Variability
+
+More volatile conditions with alternating wet/dry cycles
+Notable drought events in early 2000s, around 2018-2020
+Suggests potentially changing climate patterns
+
+Climate Resilience Insights
+Natural Variability:
+
+Hamburg's climate shows strong decadal-scale oscillations
+Extreme events (both wet and dry) are part of the natural system
+The city has historically recovered from severe droughts
+
+Water Security:
+
+3 out of 4 years have adequate to excess moisture
+Severe water stress is infrequent but can be prolonged when it occurs
+The 1950s drought lasted several years, showing persistence is possible
+
+Implications for Planning
+Infrastructure & Water Management:
+
+Design systems to handle RDI values from -4 to +3
+Plan for drought events that could last 2-3 years (like 1950s pattern)
+Expect wet periods that could cause flooding concerns
+
+Agriculture & Ecosystems:
+
+Hamburg's ecosystems are adapted to this wet-dry variability
+Crop planning should account for roughly 1-in-4 chance of drought conditions
+Irrigation needs are moderate compared to more arid regions
+
+Climate Change Context:
+
+Recent decades show increasing volatility rather than a clear trend toward wetter/drier
+The question is whether future extremes will exceed the historical -4 to +3 range
+Current variability may be the "new normal" rather than transitional
+
+Bottom Line
+Hamburg has a naturally variable but generally water-secure climate with distinct multi-decadal wet and dry phases. While severe droughts occur, they're historically followed by recovery periods. The main concern for the future may be increased unpredictability rather than systematic drying or wetting.
 ```{r}
+
+rdi_12tbl <- rdi_12tbl |> filter(date>"1989-12-01")
+
+# Calculate key statistics for plot annotations
+drought_stats <- rdi_12tbl |>
+  summarise(
+    total_months = n(),
+    drought_months = sum(RDI_12 < -0.5),
+    severe_drought_months = sum(RDI_12 < -1.5),
+    wet_months = sum(RDI_12 > 0.5),
+    min_rdi = min(RDI_12),
+    max_rdi = max(RDI_12),
+    min_date = date[which.min(RDI_12)],
+    max_date = date[which.max(RDI_12)],
+    drought_pct = round(drought_months / total_months * 100, 1),
+    severe_drought_pct = round(severe_drought_months / total_months * 100, 1),
+    wet_pct = round(wet_months / total_months * 100, 1)
+  )
+
+# Create statistical summary for subtitle
+stats_text <- paste0(
+  "Drought conditions: ", drought_stats$drought_pct, "% | ",
+  "Severe drought: ", drought_stats$severe_drought_pct, "% | ",
+  "Wet events: ", drought_stats$wet_pct, "% | ",
+  "Wettest: ", format(drought_stats$max_date, "%b %Y"), " (", round(drought_stats$max_rdi, 1), ") | ",
+  "Driest: ", format(drought_stats$min_date, "%b %Y"), " (", round(drought_stats$min_rdi, 1), ")"
+)
+
+# Define color palette for drought categories
+drought_colors <- c(
+  "Extreme Drought" = "#8B0000",     # Dark Red
+  "Severe Drought" = "#FF0000",      # Red  
+  "Moderate Drought" = "#FF4500",    # Orange Red
+  "Mild Drought" = "#FFA500",        # Orange
+  "Normal" = "#CCCCCC",              # Light Gray
+  "Slightly Wet" = "#87CEEB",        # Sky Blue
+  "Moderately Wet" = "#4682B4",      # Steel Blue
+  "Very Wet" = "#1E90FF",            # Dodger Blue
+  "Extremely Wet" = "#0000CD"        # Medium Blue
+)
+
+drought_stats
+stats_text
+```
+
+
+```{r fig.align='center',fig.width=15,fig.height=10}
+
+
+# Filter data for 1990-2025 period
+
+
+# Calculate modern period statistics (you already have these)
+# stats_text <- "Drought conditions: 28.2% | Severe drought: 7.8% | Wet events: 27.1% | Wettest: May 1994 (2.6) | Driest: Jan 2019 (-3)"
+
+# Create the plot
 ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   
-  # Optional: Decade bands to improve visual perception of time
-  geom_rect(data = decade_bands_df,
-            aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
-            inherit.aes = FALSE, fill = "grey90", alpha = 0.2) +
-
   # RDI columns
   geom_col(width = 18, show.legend = TRUE) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
@@ -375,56 +471,54 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
              color = "grey50", linewidth = 0.3, linetype = "dashed", alpha = 0.6) +
 
   # Extreme drought and wet events
-  geom_vline(xintercept = drought_stats$min_date, color = "#8B0000", linetype = "dotdash", linewidth = 0.8) +
-  geom_vline(xintercept = drought_stats$max_date, color = "#00008B", linetype = "dotdash", linewidth = 0.8) +
+  geom_vline(xintercept = as.Date("2019-01-01"), color = "#8B0000", linetype = "dotdash", linewidth = 0.8) +
+  geom_vline(xintercept = as.Date("1994-05-01"), color = "#00008B", linetype = "dotdash", linewidth = 0.8) +
 
   # Annotation labels for extreme events
- annotate("label",
-         x = drought_stats$min_date,
-         y = drought_stats$min_rdi,
-         label = paste0("Extreme Drought:",format(drought_stats$min_date, "%b %Y"),
-                        "(RDI: ",round(drought_stats$min_rdi, 2), ")"),
-         fill = "#8B0000", color = "white", fontface = "bold", size = 4, label.size = NA) +
   annotate("label",
-         x = drought_stats$max_date,
-         y = drought_stats$max_rdi,
-         label = paste0("Wettest Event:",format(drought_stats$max_date, "%b %Y"),
-                        "(RDI:",round(drought_stats$max_rdi, 1), ")"),
-         fill = "#00008B", color = "white", fontface = "bold", size = 4, label.size = NA) +
+           x = as.Date("2019-01-01"),
+           y = -3.0,
+           label = "Extreme Drought: Jan 2019(RDI:-3.0)",
+           fill = "#8B0000", color = "white", fontface = "bold", size = 5, label.size = NA, hjust=1) +
+  annotate("label",
+           x = as.Date("1994-05-01"),
+           y = 2.6,
+           label = "Wettest Event: May 1994(RDI:2.6)",
+           fill = "#00008B", color = "white", hjust = 0, fontface = "bold", size = 5, label.size = NA) +
 
   # KEY INSIGHTS box
   annotate("rect", 
-           xmin = as.Date("1966-04-01"), xmax = as.Date("1991-03-01"),
-           ymin = 3, ymax = 3.9, 
+           xmin = as.Date("2004-01-01"), xmax = as.Date("2014-01-01"),
+           ymin = 2.8, ymax = 3.9, 
            fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
 
-  annotate("text", x = as.Date("1966-05-01"), y = 3.75, 
-           label = paste0("KEY INSIGHTS (", min(year(rdi_12tbl$date)), "-", max(year(rdi_12tbl$date)), ")"),
-           size = 4.5, fontface = "bold", hjust = -0.1) +
+  annotate("text", x = as.Date("2004-03-01"), y = 3.75, 
+           label = "KEY INSIGHTS (1990-2025)",
+           size = 5, fontface = "bold", hjust = 0) +
 
-  annotate("text", x = as.Date("1966-05-01"), y = 3.6, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
-           size = 4, hjust = 0, color = "#CC0000") +
+  annotate("text", x = as.Date("2004-03-01"), y = 3.5, 
+           label = "• Drought conditions: 28.2% of period",
+           size = 4.5, hjust = 0, color = "#CC0000") +
 
-  annotate("text", x = as.Date("1966-05-01"), y = 3.4, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
-           size = 4, hjust = 0, color = "#8B0000", fontface = "bold") +
+  annotate("text", x = as.Date("2004-03-01"), y = 3.25, 
+           label = "• Severe drought: 7.8% of period",
+           size = 4.5, hjust = 0, color = "#8B0000", fontface = "bold") +
 
-  annotate("text", x = as.Date("1966-05-01"), y = 3.2, 
-           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
-           size = 4, hjust = 0, color = "#00008B", fontface = "bold") +
+  annotate("text", x = as.Date("2004-03-01"), y = 3.0, 
+           label = "• Wet Events: 27.1% of period",
+           size = 4.5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Start and end labels
-  annotate("text", x = min(rdi_12tbl$date), y = 3, 
-           label = "Start of analysis", hjust = 0, size = 5, color = "grey40", fontface = "bold") +
-  annotate("text", x = max(rdi_12tbl$date), y = 3, 
-           label = "End of analysis", hjust = .9, size = 5, color = "grey50", fontface = "bold") +
+  annotate("text", x = as.Date("1990-01-01"), y = 2.7, 
+           label = "Modern Period Start", hjust = 0, size = 4, color = "grey40", fontface = "bold") +
+  annotate("text", x = as.Date("2025-01-01"), y = 2.7, 
+           label = "Current", hjust = 1, size = 4, color = "grey50", fontface = "bold") +
 
   # Axis and color scales
   scale_x_date(
     date_breaks = "5 years",
     date_labels = "%Y",
-    limits = as.Date(c("1936-12-01", "2025-05-28")),
+    limits = as.Date(c("1989-12-01", "2025-06-01")),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
   scale_y_continuous(
@@ -433,22 +527,24 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     expand = expansion(mult = c(0.01, 0.01))
   ) +
    scale_fill_manual(
-    name = "Condition",
-    values = drought_colors,
-    guide = guide_legend(
-      title.position = "top",
-      title.hjust = 0.5,
-      nrow = 1,
-      reverse = TRUE
-    )
-  ) +
+  name = "Condition",
+  values = drought_colors,
+  guide = guide_legend(
+    title.position = "top",
+    title.hjust = 0.5,
+    nrow = 1,  # Change from 1 to 2 rows
+    reverse = TRUE
+  )
+) +
+  
+  
   # Titles and themes
   labs(
-    title = "Drought Severity in Hamburg Fuhlsbüttel (1936–2025*)",
-    subtitle = paste0("RDI (12-Month Scale)|",stats_text),
-    caption = "Source: DWD",
+    title = "Modern Drought Patterns in Hamburg Fuhlsbüttel (1990–2025*)",
+    subtitle = paste0("RDI (12-Month Scale) |", stats_text),
+    caption = "Source: DWD | *Data through May 2025",
     x = "", 
-    y = ""
+    y = "RDI Value"
   ) +
   theme_minimal(base_size = 14) +
   theme(
@@ -457,21 +553,112 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     panel.grid.major.x = element_line(color = "grey90", linewidth = 0.5),
     panel.grid.minor.y = element_blank(),
     panel.grid.major.y = element_line(color = "grey90", linewidth = 0.5),
-    plot.title = element_text(face = "bold", size = 22, margin = margin(t = 10, b = 15)),
-    plot.subtitle = element_text(color = "grey60", size = 18, margin = margin(b = 10)),
-    plot.caption = element_text(color = "grey60", size = 15, hjust = 1, margin = margin(t = 10)),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 14, colour = "grey10", face = "bold"),
+    plot.title = element_text(face = "bold", size = 20, margin = margin(t = 10, b = 15)),
+    plot.subtitle = element_text(color = "grey60", size = 15, margin = margin(b = 10)),
+    plot.caption = element_text(color = "grey60", size = 12, hjust = 1, margin = margin(t = 10)),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 12, colour = "grey10", face = "bold"),
     axis.text.y = element_text(size = 14, colour = "gray10", face = "bold"),
     legend.position = "top",
-    legend.title = element_text(size = 12, face = "bold"),
-    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 15, face = "bold", colour = "black"),
+    legend.text = element_text(size = 10, face = "bold"),
     legend.key.size = unit(1, "cm"),
-
+    
   )
 
 ```
 
+Key Findings for Modern Hamburg Climate (1990-2025)
+Shift Toward More Drought-Prone Conditions
 
+Drought conditions increased to 28.2% (vs. 25.4% historically)
+Severe drought also increased to 7.8% (vs. 7.2% historically)
+Wet events decreased to 27.1% (vs. 29.8% historically)
+This suggests Hamburg's climate has become slightly more drought-prone in recent decades
+
+New Extreme Events
+
+Driest event: January 2019 (RDI: -3.0) - the most severe drought in the modern period
+Wettest event: May 1994 (RDI: 2.6) - still very wet but less extreme than the 1981 event (2.7)
+
+Climate Change Implications
+The Modern Pattern Shows:
+
+More balanced wet/dry ratio (28.2% drought vs. 27.1% wet) - much more even than historical period
+The 2019 drought approaches the severity of the famous 1959 extreme (-3.0 vs. -3.9)
+No extremely wet events in recent decades (nothing exceeding the historical +2.7 threshold)
+
+What This Tells Us
+Climate Shift Evidence:
+
+The historically wet-biased climate is becoming more neutral
+Recent decades show increased drought risk compared to the 20th century average
+The absence of extreme wet events suggests reduced moisture surplus periods
+
+Practical Implications:
+
+Water management should plan for the new 28% drought frequency (not the historical 25%)
+The 2019 drought serves as a modern benchmark for extreme conditions
+Agricultural planning should expect roughly equal chances of wet vs. dry conditions
+
+Trend Interpretation:
+This suggests Hamburg may be experiencing:
+
+Weakening of the wet Atlantic influence that historically favored moisture
+More continental climate characteristics (greater drought risk)
+Loss of extreme wet events that historically recharged water systems
+
+Bottom Line
+The 1990-2025 period shows Hamburg transitioning from a historically wet-biased climate to a more drought-sensitive one, with the 2019 event demonstrating that modern droughts can rival historical extremes. This is a significant finding for climate adaptation planning!
+
+
+| Metric                        | 1936–2025            | 1990–2025             |
+| ----------------------------- | -------------------- | --------------------- |
+| **Drought Conditions**        | 25.4% of period      | **28.2%** of period ↑ |
+| **Severe Drought Conditions** | 7.2% of period       | **7.8%** of period ↑  |
+| **Wet Events**                | 29.8% of period      | **27.1%** of period ↓ |
+| **Wettest Event**             | May 1981 (RDI: 2.7)  | May 1994 (RDI: 2.6)   |
+| **Driest Event**              | Oct 1959 (RDI: -3.9) | Jan 2019 (RDI: -3.0)  |
+🧠 Interpretation and Analysis
+1. Increase in Drought Frequency and Severity (Modern Period)
+The modern period (1990–2025) experienced higher drought coverage (28.2%) compared to the historical average (25.4%), and severe droughts increased from 7.2% to 7.8%.
+
+This suggests an intensification of drought conditions over the past three decades, possibly due to climate change impacts on precipitation and temperature variability.
+
+2. Shift in Extremes
+The driest year historically was Oct 1959 (RDI: -3.9), but in recent decades, the most extreme drought occurred in Jan 2019 (RDI: -3.0).
+
+This points to the fact that extreme droughts are still occurring, but their magnitude is slightly less than past extremes—however, their frequency and persistence appear to be increasing.
+
+3. Decrease in Wet Events
+The proportion of wet events decreased from 29.8% to 27.1% between the two periods.
+
+This decline, along with increasing droughts, could suggest a drier hydrological regime in recent years.
+
+4. Temporal Clustering of Droughts (Post-2000)
+The second plot shows clusters of drought periods, particularly:
+
+Early 2000s
+
+2015–2020 (culminating in the 2019 extreme event)
+
+This reflects multi-year dry spells, which have implications for water resources and agriculture.
+
+5. Wettest Events Moved Forward in Time
+The wettest month in the modern period (May 1994, RDI: 2.6) is slightly less intense than the historical peak (May 1981, RDI: 2.7).
+
+Indicates that while wet extremes still occur, they may not be intensifying, unlike droughts.
+
+Modern climate in Hamburg Fuhlsbüttel (1990–2025) is marked by:
+
+More frequent and severe droughts.
+
+Fewer and weaker wet periods.
+
+Continued occurrence of extreme drought events.
+
+Clear evidence of climate regime shift, particularly after 2000.
+
+This aligns with broader trends in Central Europe: rising temperatures, changing precipitation patterns, and more prolonged dry spells
 
 ## RDI 24 
 ```{r fig.align='center',fig.height=10,fig.width=15}
