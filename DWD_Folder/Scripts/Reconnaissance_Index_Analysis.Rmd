@@ -403,6 +403,171 @@ Current variability may be the "new normal" rather than transitional
 
 Bottom Line
 Hamburg has a naturally variable but generally water-secure climate with distinct multi-decadal wet and dry phases. While severe droughts occur, they're historically followed by recovery periods. The main concern for the future may be increased unpredictability rather than systematic drying or wetting.
+
+```{r}
+rdi_12tbl <- rdi_12tbl |> filter(date <="1989-12-01")
+# Calculate key statistics for plot annotations
+drought_stats <- rdi_12tbl |>
+  summarise(
+    total_months = n(),
+    drought_months = sum(RDI_12 < -0.5),
+    severe_drought_months = sum(RDI_12 < -1.5),
+    wet_months = sum(RDI_12 > 0.5),
+    min_rdi = min(RDI_12),
+    max_rdi = max(RDI_12),
+    min_date = date[which.min(RDI_12)],
+    max_date = date[which.max(RDI_12)],
+    drought_pct = round(drought_months / total_months * 100, 2),
+    severe_drought_pct = round(severe_drought_months / total_months * 100, 2),
+    wet_pct = round(wet_months / total_months * 100, 1)
+  )
+
+# Create statistical summary for subtitle
+stats_text <- paste0(
+  "Drought conditions: ", drought_stats$drought_pct, "% | ",
+  "Severe drought: ", drought_stats$severe_drought_pct, "% | ",
+  "Wet events: ", drought_stats$wet_pct, "% | ",
+  "Wettest: ", format(drought_stats$max_date, "%b %Y"), " (", round(drought_stats$max_rdi, 2), ") | ",
+  "Driest: ", format(drought_stats$min_date, "%b %Y"), " (", round(drought_stats$min_rdi, 2), ")"
+)
+
+# Define color palette for drought categories
+drought_colors <- c(
+  "Extreme Drought" = "#8B0000",     # Dark Red
+  "Severe Drought" = "#FF0000",      # Red  
+  "Moderate Drought" = "#FF4500",    # Orange Red
+  "Mild Drought" = "#FFA500",        # Orange
+  "Normal" = "#CCCCCC",              # Light Gray
+  "Slightly Wet" = "#87CEEB",        # Sky Blue
+  "Moderately Wet" = "#4682B4",      # Steel Blue
+  "Very Wet" = "#1E90FF",            # Dodger Blue
+  "Extremely Wet" = "#0000CD"        # Medium Blue
+)
+
+drought_stats
+stats_text
+
+
+
+
+```
+
+
+```{r fig.align='center', fig.width=15, fig.height=10}
+# Create the plot
+ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
+  
+  # RDI columns
+  geom_col(width = 18, show.legend = TRUE) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
+
+  # Reference lines
+  geom_hline(yintercept = c(-2, -1.5, -1, -0.5, 0.5, 1, 1.5, 2), 
+             color = "grey50", linewidth = 0.3, linetype = "dashed", alpha = 0.6) +
+
+  # Extreme drought (Oct 1959) and Wet event (May 1981)
+  geom_vline(xintercept = as.Date("1959-10-01"), color = "#8B0000", linetype = "dotdash", linewidth = 0.8) +
+  geom_vline(xintercept = as.Date("1981-05-01"), color = "#00008B", linetype = "dotdash", linewidth = 0.8) +
+
+  # Annotations for extreme events
+  annotate("label",
+           x = as.Date("1959-10-01"),
+           y = -3.9,
+           label = "• Extreme Drought: Oct 1959(RDI:-3.9)",
+           fill = "#8B0000", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 0) +
+  annotate("label",
+           x = as.Date("1981-05-01"),
+           y = 2.7,
+           label = "Wettest Event: May 1981(RDI:2.7) •",
+           fill = "#00008B", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 1) +
+
+  # KEY INSIGHTS box
+  # annotate("rect", 
+  #          xmin = as.Date("1955-01-01"), xmax = as.Date("1966-01-01"),
+  #          ymin = 2, ymax = 3.75, 
+  #          fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
+  annotate("text", x = as.Date("1960-01-01"), y = 3.9, 
+           label = "KEY INSIGHTS (1936–1989)",
+           size = 5, fontface = "bold", hjust = 0) +
+  annotate("text", x = as.Date("1960-01-01"), y = 3.65, 
+           label = "• Drought conditions: 23.5% of the period",
+           size = 4.5, hjust = 0, color = "#CC0000") +
+  annotate("text", x = as.Date("1960-01-01"), y = 3.35, 
+           label = "• Severe drought: 6.8% of the period",
+           size = 4.5, hjust = 0, color = "#8B0000", fontface = "bold") +
+  annotate("text", x = as.Date("1960-01-01"), y = 3, 
+           label = "• Wet Events: 31.7% of period",
+           size = 4.5, hjust = 0, color = "#00008B", fontface = "bold") +
+
+  # Start and End Labels (adjusted positioning)
+  annotate("text", x = as.Date("1936-01-01"), y = 3.7, 
+           label = "Starting Period", hjust = 0, size = 4, color = "grey40", fontface = "bold") +
+  annotate("text", x = as.Date("1989-12-01"), y = 3.7,  # Moved further left
+           label = "End Period", hjust = 0, size = 4, color = "grey50", fontface = "bold") +
+
+  # X & Y axes - KEY CHANGES HERE
+  scale_x_date(
+    date_breaks = "5 years",
+    date_labels = "%Y",
+    limits = as.Date(c("1935-01-01", "1991-12-01")),  # Extended further on both sides
+    expand = expansion(mult = c(0.02, 0.02))  # Increased expansion on both sides
+  ) +
+  scale_y_continuous(
+    limits = c(-4.2, 4.2),  # Slightly extended Y limits
+    breaks = seq(-4, 4, 1),
+    expand = expansion(mult = c(0.0, 0.01))  # Added small expansion
+  ) +
+
+  # Fill colors for drought categories
+  scale_fill_manual(
+    name = "Condition",
+    values = drought_colors,
+    guide = guide_legend(
+      title.position = "top",
+      title.hjust = 0.5,
+      nrow = 1,
+      reverse = TRUE
+    )
+  ) +
+
+  # Labels and Theme
+  labs(
+    title = "Drought Patterns in Hamburg Fuhlsbüttel (1936–1989)",
+    subtitle = paste0("RDI (12-Month Scale)|",stats_text),
+    caption = "Source: DWD",
+    x = "", 
+    y = "RDI Value"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title.position = "plot",
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.x = element_line(color = "grey90", linewidth = 0.5),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_line(color = "grey90", linewidth = 0.5),
+    plot.title = element_text(face = "bold", size = 20, margin = margin(t = 10, b = 15)),
+    plot.subtitle = element_text(color = "grey60", size = 15, margin = margin(b = 10)),
+    plot.caption = element_text(color = "grey60", size = 12, hjust = 1, margin = margin(t = 10)),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 12, colour = "grey10", face = "bold"),
+    axis.text.y = element_text(size = 14, colour = "gray10", face = "bold"),
+    legend.position = "top",
+    legend.title = element_text(size = 15, face = "bold", colour = "black"),
+    legend.text = element_text(size = 10, face = "bold"),
+    legend.key.size = unit(1, "cm"),
+    # Add plot margins to prevent clipping
+    plot.margin = margin(t = 20, r = 30, b = 20, l = 20, unit = "pt")  # Increased right margin
+  )
+
+
+```
+
+
+```{r}
+
+ 
+
+```
+
 ```{r}
 
 rdi_12tbl <- rdi_12tbl |> filter(date>"1989-12-01")
@@ -567,48 +732,7 @@ ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
 
 ```
 
-Key Findings for Modern Hamburg Climate (1990-2025)
-Shift Toward More Drought-Prone Conditions
 
-Drought conditions increased to 28.2% (vs. 25.4% historically)
-Severe drought also increased to 7.8% (vs. 7.2% historically)
-Wet events decreased to 27.1% (vs. 29.8% historically)
-This suggests Hamburg's climate has become slightly more drought-prone in recent decades
-
-New Extreme Events
-
-Driest event: January 2019 (RDI: -3.0) - the most severe drought in the modern period
-Wettest event: May 1994 (RDI: 2.6) - still very wet but less extreme than the 1981 event (2.7)
-
-Climate Change Implications
-The Modern Pattern Shows:
-
-More balanced wet/dry ratio (28.2% drought vs. 27.1% wet) - much more even than historical period
-The 2019 drought approaches the severity of the famous 1959 extreme (-3.0 vs. -3.9)
-No extremely wet events in recent decades (nothing exceeding the historical +2.7 threshold)
-
-What This Tells Us
-Climate Shift Evidence:
-
-The historically wet-biased climate is becoming more neutral
-Recent decades show increased drought risk compared to the 20th century average
-The absence of extreme wet events suggests reduced moisture surplus periods
-
-Practical Implications:
-
-Water management should plan for the new 28% drought frequency (not the historical 25%)
-The 2019 drought serves as a modern benchmark for extreme conditions
-Agricultural planning should expect roughly equal chances of wet vs. dry conditions
-
-Trend Interpretation:
-This suggests Hamburg may be experiencing:
-
-Weakening of the wet Atlantic influence that historically favored moisture
-More continental climate characteristics (greater drought risk)
-Loss of extreme wet events that historically recharged water systems
-
-Bottom Line
-The 1990-2025 period shows Hamburg transitioning from a historically wet-biased climate to a more drought-sensitive one, with the 2019 event demonstrating that modern droughts can rival historical extremes. This is a significant finding for climate adaptation planning!
 
 
 | Metric                        | 1936–2025            | 1990–2025             |
@@ -618,47 +742,71 @@ The 1990-2025 period shows Hamburg transitioning from a historically wet-biased 
 | **Wet Events**                | 29.8% of period      | **27.1%** of period ↓ |
 | **Wettest Event**             | May 1981 (RDI: 2.7)  | May 1994 (RDI: 2.6)   |
 | **Driest Event**              | Oct 1959 (RDI: -3.9) | Jan 2019 (RDI: -3.0)  |
-🧠 Interpretation and Analysis
-1. Increase in Drought Frequency and Severity (Modern Period)
-The modern period (1990–2025) experienced higher drought coverage (28.2%) compared to the historical average (25.4%), and severe droughts increased from 7.2% to 7.8%.
+🌡️ Shift Toward More Drought-Prone Conditions
+Drought conditions increased to 28.2% of months, up from 25.4% historically.
 
-This suggests an intensification of drought conditions over the past three decades, possibly due to climate change impacts on precipitation and temperature variability.
+Severe droughts rose to 7.8%, compared to 7.2% in the full-period record.
 
-2. Shift in Extremes
-The driest year historically was Oct 1959 (RDI: -3.9), but in recent decades, the most extreme drought occurred in Jan 2019 (RDI: -3.0).
+Wet events declined to 27.1%, down from 29.8% during 1936–2025.
 
-This points to the fact that extreme droughts are still occurring, but their magnitude is slightly less than past extremes—however, their frequency and persistence appear to be increasing.
+➡️ Implication: Hamburg's climate has become slightly more drought-prone in recent decades, with increasing frequency and intensity of dry conditions.
 
-3. Decrease in Wet Events
-The proportion of wet events decreased from 29.8% to 27.1% between the two periods.
+📉 New Extremes and Reduced Wet Surpluses
+Driest event: January 2019 (RDI: -3.0) — most severe drought of the modern period.
 
-This decline, along with increasing droughts, could suggest a drier hydrological regime in recent years.
+Wettest event: May 1994 (RDI: 2.6) — strong but slightly below the 1981 historical maximum (RDI: 2.7).
 
-4. Temporal Clustering of Droughts (Post-2000)
-The second plot shows clusters of drought periods, particularly:
+No wet events above +2.7 RDI observed since 1981.
 
-Early 2000s
+➡️ Implication: While extreme wet events have diminished in intensity, extreme droughts still occur, and their frequency is increasing.
 
-2015–2020 (culminating in the 2019 extreme event)
+🔁 Changing Balance in Climate Variability
+The modern RDI distribution is nearly balanced:
 
-This reflects multi-year dry spells, which have implications for water resources and agriculture.
+28.2% drought vs. 27.1% wet events.
 
-5. Wettest Events Moved Forward in Time
-The wettest month in the modern period (May 1994, RDI: 2.6) is slightly less intense than the historical peak (May 1981, RDI: 2.7).
+In contrast, the historical period showed a wet bias (29.8% wet vs. 25.4% drought).
 
-Indicates that while wet extremes still occur, they may not be intensifying, unlike droughts.
+The absence of extremely wet years after 1994 suggests a loss of moisture surplus periods.
 
-Modern climate in Hamburg Fuhlsbüttel (1990–2025) is marked by:
+➡️ Implication: The long-term wet-dominated climate is giving way to a more neutral or drought-inclined regime.
 
-More frequent and severe droughts.
+🧠 Interpretation and Trends
+1. Drought Intensification
+The rise in both total and severe drought occurrences during 1990–2025 highlights a shift toward more persistent and impactful dry spells, consistent with warming-related hydroclimatic stress.
 
-Fewer and weaker wet periods.
+2. Persistence and Clustering
+Clusters of droughts, particularly in the early 2000s and 2015–2020, point to multi-year drought patterns rather than isolated events.
 
-Continued occurrence of extreme drought events.
+3. Declining Wet Extremes
+No extremely wet events exceeding RDI > 2.7 occurred post-1981, indicating that extreme recharge periods have not matched past levels.
 
-Clear evidence of climate regime shift, particularly after 2000.
+4. Modern Drought Benchmark
+The 2019 drought (RDI: -3.0) serves as a new benchmark for planning and adaptation, nearly matching the legendary 1959 drought (RDI: -3.9).
 
-This aligns with broader trends in Central Europe: rising temperatures, changing precipitation patterns, and more prolonged dry spells
+📌 Climate Change Implications for Hamburg
+Evidence of Regime Shift:
+More frequent droughts.
+
+Fewer, less intense wet events.
+
+Balanced but more variable hydroclimate.
+
+Possible Drivers:
+Weakened Atlantic (maritime) moisture influence.
+
+Increased continentality, favoring drier extremes.
+
+🛠️ Practical Recommendations
+Water resource planning should be based on a 28% drought frequency, not the outdated 25%.
+
+The 2019 drought should be used as a realistic extreme scenario in infrastructure and policy assessments.
+
+Agriculture and ecosystems must be managed with the expectation of symmetrical risk of both drought and wet periods — unlike the past wet-dominated conditions.
+
+Bottom Line
+Between 1990 and 2025, Hamburg has transitioned from a historically wet-biased climate to a more drought-sensitive one. The rising frequency of dry conditions and absence of extreme wet years underline the need for updated climate adaptation strategies.
+
 
 ## RDI 24 
 ```{r fig.align='center',fig.height=10,fig.width=15}
