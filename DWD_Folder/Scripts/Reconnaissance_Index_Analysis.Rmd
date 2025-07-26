@@ -161,7 +161,7 @@ monthly_rdist_tbl <- calculate_rdist_for_scales(data = monthly_tbl)
 ```
 # We have 3,6,9,12,24,36,48 monthly scale. So then which scales are important for the analysis. Since the period is 1936-2025, so 3,6,9 scales will not be that informative as these will refelect very short term changes. So 12,24,36,48 are better choices
 
-## RDI 12 period 1936-1989
+## RDI 12 1936-1989
 ```{r fig.align='center',fig.height=10,fig.width=15}
 rdi_12tbl <- monthly_rdist_tbl |> 
   dplyr::select(date,RDI_12) |> 
@@ -260,7 +260,7 @@ p01 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   annotate("label",
          x = drought_stats$max_date,
          y = drought_stats$max_rdi,
-         label = paste0(" Wettest Event : ", format(drought_stats$min_date, "%b %Y"),
+         label = paste0(" Wettest Event : ", format(drought_stats$max_date, "%b %Y"),
                         " (RDI:", round(drought_stats$max_rdi, 2), ")•"),
          fill = "#00008B", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 1) +
   
@@ -292,7 +292,7 @@ p01 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     date_breaks = "5 years",
     date_labels = "%Y",
     limits = as.Date(c("1935-01-01", "1989-12-01")),  # Extended further on both sides
-    expand = expansion(mult = c(0.02, 0.02))  # Increased expansion on both sides
+    expand = expansion(mult = c(0.01, 0.01))  # Increased expansion on both sides
   ) +
   scale_y_continuous(
     limits = c(-4.2, 4.2),  # Slightly extended Y limits
@@ -340,15 +340,8 @@ p01 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     #plot.margin = margin(t = 20, r = 30, b = 20, l = 20, unit = "pt")  # Increased right margin
   )
 
-ggsave(
-  filename = file.path(plot_dir, "RDI_12_1936_1989.png"),
-  plot = last_plot(),
-  width = 15,
-  height = 10,
-  dpi = 450
-)
-
 p01
+
 ```
 🧾 Summary Statement
 Between 1936 and 1989, Hamburg experienced a relatively wet-dominant climate with fewer droughts and more frequent moisture surpluses. While extreme events such as the 1959 drought (RDI -3.9) and the 1981 wet event (RDI 2.7) did occur, overall drought conditions were less intense and less frequent compared to the post-1990 period. This era serves as a hydroclimatic baseline, highlighting the shift toward drier and more variable conditions in the modern climate.
@@ -547,6 +540,7 @@ p02 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
 p02
 ```
 
+## RDI 1936-2025
 ```{r fig.align='center',fig.height=10,fig.width=15}
 library(dplyr)
 
