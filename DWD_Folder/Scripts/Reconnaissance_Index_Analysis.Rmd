@@ -278,7 +278,7 @@ p01 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
            label = "• Severe drought: 6.8% of the period",
            size = 4.5, hjust = 0, color = "#8B0000", fontface = "bold") +
   annotate("text", x = as.Date("1945-01-01"), y = 2.95, 
-           label = "• Wet Events: 31.7% of period",
+           label = "• Wet Events: 31.7%",
            size = 4.5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Start and End Labels (adjusted positioning)
@@ -470,15 +470,15 @@ p02 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
            size = 5, fontface = "bold", hjust = 0) +
 
   annotate("text", x = as.Date("2004-03-01"), y = 3.5, 
-           label = "• Drought conditions: 28.2% of period",
+           label = "• Drought conditions: 28.2%",
            size = 4.5, hjust = 0, color = "#CC0000") +
 
   annotate("text", x = as.Date("2004-03-01"), y = 3.25, 
-           label = "• Severe drought: 7.8% of period",
+           label = "• Severe drought: 7.8%",
            size = 4.5, hjust = 0, color = "#8B0000", fontface = "bold") +
 
   annotate("text", x = as.Date("2004-03-01"), y = 3.0, 
-           label = "• Wet Events: 27.1% of period",
+           label = "• Wet Events: 27.1%",
            size = 4.5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Start and end labels
@@ -651,15 +651,15 @@ p0 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
            size = 5, fontface = "bold", hjust = -0.1) +
 
   annotate("text", x = as.Date("1977-05-01"), y = 3.5, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
 
   annotate("text", x = as.Date("1977-05-01"), y = 3.25, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
            size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
 
   annotate("text", x = as.Date("1977-05-01"), y = 3, 
-           label = paste0("• Wet Events:",drought_stats$wet_pct, "% of period"),
+           label = paste0("• Wet Events:",drought_stats$wet_pct, "%"),
            size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Start and end labels
@@ -958,13 +958,13 @@ ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
            label = paste0("KEY INSIGHTS (", year(date_range[1]) - 1, "-", year(date_range[2]), ")"),
            size = 5, fontface = "bold", hjust = 0) +
   annotate("text", x = annotation_start, y = 3., 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
   annotate("text", x = annotation_start, y = 2.75, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
            size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
   annotate("text", x = annotation_start, y = 2.45, 
-           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
+           label = paste0("• Wet Events: ", drought_stats$wet_pct, "%"),
            size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
    # Annotation labels for extreme events
@@ -1149,14 +1149,14 @@ p1 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
            size = 5, fontface = "bold", hjust = -0.1,) +
 
   annotate("text", x = as.Date("2004-05-01"), y = 2.75, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = -0.1, color = "#CC0000") +
 
   annotate("text", x = as.Date("2004-05-01"), y = 2.5, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
            size = 5, hjust = -0.1, color = "#8B0000",fontface="bold") +
   annotate("text", x = as.Date("2004-05-01"), y = 2.25, 
-           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
+           label = paste0("• Wet Events: ", drought_stats$wet_pct, "%"),
            size = 5, hjust = -0.1, color = "#00008B",fontface="bold") +
 
    # Annotation labels for extreme events
@@ -1245,7 +1245,6 @@ print(p1)
 
 ## RDI 24 for 1936-2025
 ```{r fig.align='center', fig.height=10,fig.width=15}
-
 # Create RDI table and classify
 rdi_24tbl <- monthly_rdist_tbl |> 
   dplyr::select(date, RDI_24) |> 
@@ -1310,9 +1309,12 @@ drought_colors <- c(
 # Define dynamic x-axis and annotation window
 date_range <- range(rdi_24tbl$date)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
-annotation_start <- mid_date %m-% years(15)
-annotation_end <- mid_date %m+% years(5)
+annotation_start <- mid_date %m-% years(20)
+annotation_end <- mid_date %m-% years(1)
+```
 
+
+```{r fig.align='center', fig.height=10,fig.width=15}
 # Plot
 ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
@@ -1324,18 +1326,18 @@ ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
 
   # Annotation box
   annotate("rect", xmin = annotation_start , xmax = annotation_end,
-           ymin = 2, ymax = 3.5, fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
-  annotate("text", x = annotation_start, y = 3.0, 
-           label = paste0("KEY INSIGHTS (", year(date_range[1]), "-", year(date_range[2]), ")"),
+           ymin = 2.25, ymax = 3.5, fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
+  annotate("text", x = annotation_start, y = 3.4,
+           label = paste0("KEY INSIGHTS (", year(date_range[1]) - 1, "-", year(date_range[2]), ")"),
            size = 5, fontface = "bold", hjust = 0) +
-  annotate("text", x = annotation_start, y = 2.75, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+  annotate("text", x = annotation_start, y = 3,
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
-  annotate("text", x = annotation_start, y = 2.5, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+  annotate("text", x = annotation_start, y = 2.75,
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
            size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
-  annotate("text", x = annotation_start, y = 2.25, 
-           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
+  annotate("text", x = annotation_start, y = 2.4,
+           label = paste0("• Wet Events: ", drought_stats$wet_pct, "%"),
            size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Labels for events
@@ -1358,12 +1360,12 @@ ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
   scale_x_date(
     date_breaks = "5 years",
     date_labels = "%Y",
-    limits = c(as.Date("1936-01-01"),as.Date("2025-05-01")),
+    limits = c(as.Date("1936-01-01"),as.Date("2025-05-28")),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
   scale_y_continuous(
-    limits = c(-3, 3.5),
-    breaks = seq(-3, 3.5, 0.5),
+    limits = c(-3.5, 3.5),
+    breaks = seq(-3.5, 3.5, 0.5),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
   scale_fill_manual(
@@ -1405,7 +1407,7 @@ Inference and Analysis:
 The 12-month RDI analysis for Hamburg Fuhlsbüttel from 1990 to 2025 reveals a shifting pattern in annual drought dynamics. While the early 1990s experienced substantial wet conditions—including the wettest period in May 1994 (RDI = 2.6)—recent decades have seen more frequent and intense droughts, culminating in the extreme event of January 2019 (RDI = -3.0). Overall, 28.2% of the period was marked by drought (RDI < -0.5), and 7.8% experienced severe drought (RDI < -1.5), indicating a significant increase in water stress risk, particularly in the last decade. These findings emphasize the importance of ongoing monitoring and adaptation strategies, especially in light of potential climate-driven shifts in hydrological cycles.
 
  
-### Interpretation & Analysis
+## Interpretation & Analysis
 The 24-month RDI trend for Hamburg Fuhlsbüttel from 1990 to 2024 reveals significant interannual variability in drought and wet conditions. While early decades (especially the 1990s) showed frequent and intense wet periods, the most recent decade has been characterized by prolonged dry conditions, culminating in the driest month observed in January 2020 (RDI = -2.4). Overall, drought conditions were present during 37.6% of the study period, with 4.7% classified as severe. This indicates increasing susceptibility to long-term water stress, especially post-2010.
 
  
@@ -1498,13 +1500,13 @@ ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
            label = paste0("KEY INSIGHTS (", year(date_range[1]) - 2, "-", year(date_range[2]), ")"),
            size = 5, fontface = "bold", hjust = 0) +
   annotate("text", x = annotation_start, y = 3.15, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
   annotate("text", x = annotation_start, y = 2.9, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
            size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
   annotate("text", x = annotation_start, y = 2.65, 
-           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
+           label = paste0("• Wet Events: ", drought_stats$wet_pct, "%"),
            size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Labels for events
@@ -1657,13 +1659,13 @@ ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
            label = paste0("KEY INSIGHTS (", year(date_range[1]) - 4, "-", year(date_range[2]), ")"),
            size = 5, fontface = "bold", hjust = 0) +
   annotate("text", x = annotation_start, y = 3.15, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
   annotate("text", x = annotation_start, y = 2.9, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
            size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
   annotate("text", x = annotation_start, y = 2.65, 
-           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
+           label = paste0("• Wet Events: ", drought_stats$wet_pct, "%"),
            size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Labels for events
@@ -1779,6 +1781,7 @@ drought_stats <- rdi_36tbl |>
 stats_text <- paste0(
   "Drought conditions: ", drought_stats$drought_pct, "% | ",
   "Severe drought: ", drought_stats$severe_drought_pct, "% | ",
+  "Wet events: ", drought_stats$wet_pct,"% |",
   "Wettest: ", format(drought_stats$max_date, "%b %Y"), " (", round(drought_stats$max_rdi, 1), ") | ",
   "Driest: ", format(drought_stats$min_date, "%b %Y"), " (", round(drought_stats$min_rdi, 1), ")"
 )
@@ -1826,13 +1829,13 @@ ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
            label = paste0("KEY INSIGHTS (", year(date_range[1]) , "-", year(date_range[2]), ")"),
            size = 5, fontface = "bold", hjust = 0) +
   annotate("text", x = annotation_start, y = 3.15, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
   annotate("text", x = annotation_start, y = 2.9, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
            size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
   annotate("text", x = annotation_start, y = 2.65, 
-           label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
+           label = paste0("• Wet Events: ", drought_stats$wet_pct, "%"),
            size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Labels for events
@@ -1991,13 +1994,13 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
            label = paste0("KEY INSIGHTS (", year(date_range[1]) - 3, "-", year(date_range[2]), ")"),
             size = 5, fontface = "bold", hjust = 0) +
    annotate("text", x = annotation_start, y = 2.65, 
-            label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+            label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
    annotate("text", x = annotation_start, y = 2.45, 
-            label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+            label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
             size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
    annotate("text", x = annotation_start, y = 2.25, 
-          label = paste0("• Wet Events: ", drought_stats$wet_pct, "% of period"),
+          label = paste0("• Wet Events: ", drought_stats$wet_pct, "%"),
             size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
   # Labels for events
@@ -2061,9 +2064,9 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
     legend.key.size = unit(.5, "cm")
   )
 ```
+## RDI 48 (1936-1989)
 
-
-```{r}
+```{r fig.align='center', fig.height=10, fig.width=15}
 rdi_48tbl <- monthly_rdist_tbl |> 
   dplyr::select(date, RDI_48) |> 
   drop_na() |> 
@@ -2135,7 +2138,8 @@ date_range <- range(rdi_48tbl$date)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date %m-% years(20)
 annotation_end <- mid_date %m-% years(5)
-p3 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
+
+ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
 
@@ -2148,35 +2152,40 @@ p3 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
 
   geom_vline(xintercept = drought_stats$max_date, color = "#00008B", linetype = "dotdash", linewidth = 0.8) +
 
-  # KEY INSIGHTS annotation box
-  annotate("rect", 
-           xmin = as.Date("2004-05-01"), xmax = as.Date("2013-03-01"),
+  # # KEY INSIGHTS annotation box
+  annotate("rect",
+           xmin = annotation_start, xmax = annotation_end,
            ymin = 2.3, ymax = 3.2,
            fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
 
-  annotate("text", x = as.Date("2008-01-01"), y = 3.0, 
+  annotate("text", x = annotation_start, y = 3.0,
          label = paste0("KEY INSIGHTS (", min(year(rdi_48tbl$date)), "-", max(year(rdi_48tbl$date)), ")"),
-         size = 5, fontface = "bold", hjust = 0.5) +
+         size = 5, fontface = "bold", hjust = 0) +
 
 
-  annotate("text", x = as.Date("2004-05-01"), y = 2.8, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+  annotate("text", x = annotation_start, y = 2.8,
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
 
-  annotate("text", x = as.Date("2004-05-01"), y = 2.6, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
-           size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
+  annotate("text", x = annotation_start, y = 2.6,
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
+           size = 5, hjust = 0, color = "#8B0000", fontface = "bold")  +
+  annotate("text", x = annotation_start, y = 2.4, 
+          label = paste0("• Wet Events: ", drought_stats$wet_pct, "%"),
+            size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
-  annotate("text", x = drought_stats$min_date, y = -2.9, 
-           label = paste0(format(drought_stats$min_date, "%Y %b"), " Event Extreme", 
+ 
+  
+  annotate("text", x = drought_stats$min_date, y = -2.9,
+           label = paste0(format(drought_stats$min_date, "%Y %b"), " Event Extreme",
                           " (RDI: ", round(drought_stats$min_rdi, 1), ") •"),
            size = 5, hjust = 1, color = "grey30", fontface = "bold") +
-  
-  annotate("text", x = drought_stats$max_date, y = drought_stats$max_rdi + 0.2, 
-           label = paste0("• Wettest event: ", format(drought_stats$max_date, "%b %Y"),
-                          " (RDI: ", round(drought_stats$max_rdi, 1), ")"),
-           size = 5, hjust = 0, color = "grey30", fontface = "bold") +
-  
+
+  annotate("label", x = drought_stats$max_date, y = drought_stats$max_rdi,
+           label = paste0("Wettest Event: ", format(drought_stats$max_date, "%b %Y"),
+                          " (RDI: ", round(drought_stats$max_rdi, 2), ")"),
+           fill = "#00008B", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 1) +
+
   # Start and end of analysis period
   annotate("text", x = min(rdi_48tbl$date), y = 3, 
            label = "Start of analysis", hjust = 0.8, size = 5, color = "grey40", fontface = "bold", angle = 90) +
@@ -2187,7 +2196,7 @@ p3 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   scale_x_date(
     date_breaks = "5 years",
     date_labels = "%Y",
-    limits = as.Date(c("1990-01-01", "2025-05-28")),
+    limits = as.Date(c("1936-01-01", "1990-01-01")),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
 
@@ -2210,8 +2219,8 @@ p3 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
 
   # Labels and theme
   labs(
-    title = "Drought Severity in Hamburg Fuhlsbüttel (1990–2025*)",
-    subtitle = paste0("RDI (48-Month Scale) | ", stats_text),
+    title = "Drought Severity in Hamburg Fuhlsbüttel (1936–1989)",
+    subtitle = paste0("RDI (48-Month Scale) | ",stats_text),
     caption = "Source: DWD ",
     x = "", 
     y = ""
@@ -2219,18 +2228,19 @@ p3 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
 
   theme_minimal(base_size = 12) +
   theme(
+    plot.title.position = "plot",
     panel.grid.minor.x = element_blank(),
     panel.grid.major.x = element_line(color = "grey90", linewidth = 0.5),
     panel.grid.minor.y = element_blank(),
     panel.grid.major.y = element_line(color = "grey90", linewidth = 0.5),
     plot.title = element_text(face = "bold", size = 22, margin = margin(t = 10, b = 15)),
-    plot.subtitle = element_text(color = "grey60", size = 18, margin = margin(b = 10)),
+    plot.subtitle = element_text(color = "grey60", size = 16, margin = margin(b = 10)),
     plot.caption = element_text(color = "grey60", size = 15, hjust = 1, margin = margin(t = 10)),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 18, colour = "grey10", face = "bold"),
     axis.text.y = element_text(size = 18, colour = "gray10", face = "bold"),
     legend.position = "top",
     legend.title = element_text(size = 12, face = "bold"),
-    legend.text = element_text(size = 9),
+    legend.text = element_text(size = 14),
     legend.key.size = unit(1, "cm")
   )
 
@@ -2306,7 +2316,7 @@ drought_colors <- c(
 )
 
 # Create the plot
-p3 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
+ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
 
@@ -2331,11 +2341,11 @@ p3 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
 
 
   annotate("text", x = as.Date("2004-05-01"), y = 2.8, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
 
   annotate("text", x = as.Date("2004-05-01"), y = 2.6, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "%"),
            size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
 
   annotate("text", x = drought_stats$min_date, y = -2.9, 
@@ -2405,8 +2415,8 @@ p3 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
     legend.key.size = unit(1, "cm")
   )
 
-print(p3)
-ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_48_Hamburg.png", plot = p3, width = 15, height = 10, dpi = 450)
+
+#ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_48_Hamburg.png", plot = p3, width = 15, height = 10, dpi = 450)
 ```
 ```
 
