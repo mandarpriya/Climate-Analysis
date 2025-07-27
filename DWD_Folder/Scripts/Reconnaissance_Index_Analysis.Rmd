@@ -2070,7 +2070,7 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
 rdi_48tbl <- monthly_rdist_tbl |> 
   dplyr::select(date, RDI_48) |> 
   drop_na() |> 
-  filter(date <"1990-01-01") |> 
+  filter(date >= "1990-01-01") |> 
   dplyr::mutate(
     # Original sign classification
     sign = ifelse(RDI_48 > 0, "pos", "neg"),
@@ -2136,8 +2136,8 @@ drought_colors <- c(
 # Define dynamic x-axis and annotation window
 date_range <- range(rdi_48tbl$date)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
-annotation_start <- mid_date %m-% years(20)
-annotation_end <- mid_date %m-% years(5)
+annotation_start <- mid_date
+annotation_end <- mid_date %m+% years(5)
 
 ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
@@ -2176,15 +2176,21 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
 
  
   
-  annotate("text", x = drought_stats$min_date, y = -2.9,
-           label = paste0(format(drought_stats$min_date, "%Y %b"), " Event Extreme",
-                          " (RDI: ", round(drought_stats$min_rdi, 1), ") •"),
-           size = 5, hjust = 1, color = "grey30", fontface = "bold") +
-
+  annotate("label", 
+         x = drought_stats$min_date, 
+         y = -2.9,
+         label = paste0(format(drought_stats$min_date, " ⬤ %Y %b "), 
+                        "Event Extreme (RDI: ", round(drought_stats$min_rdi, 1), ")"),
+         fill = "#8B0000",              # Background color of the label
+         size = 5, 
+         hjust = 1, 
+         color = "white",       
+         fontface = "bold", label.size = NA ) +
+         
   annotate("label", x = drought_stats$max_date, y = drought_stats$max_rdi,
            label = paste0("Wettest Event: ", format(drought_stats$max_date, "%b %Y"),
-                          " (RDI: ", round(drought_stats$max_rdi, 2), ")"),
-           fill = "#00008B", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 1) +
+                          " (RDI: ", round(drought_stats$max_rdi, 2), ") •"),
+           fill = "#00008B", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 0) +
 
   # Start and end of analysis period
   annotate("text", x = min(rdi_48tbl$date), y = 3, 
@@ -2196,7 +2202,7 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   scale_x_date(
     date_breaks = "5 years",
     date_labels = "%Y",
-    limits = as.Date(c("1936-01-01", "1990-01-01")),
+    limits = as.Date(c("1989-12-01", "2025-12-31")),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
 
@@ -2240,11 +2246,13 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
     axis.text.y = element_text(size = 18, colour = "gray10", face = "bold"),
     legend.position = "top",
     legend.title = element_text(size = 12, face = "bold"),
-    legend.text = element_text(size = 14),
+    legend.text = element_text(size = 12),
     legend.key.size = unit(1, "cm")
   )
 
 ```
+
+## RDI 48 
 
 ```{r fig.align='center',fig.height=10, fig.width=15}
 
