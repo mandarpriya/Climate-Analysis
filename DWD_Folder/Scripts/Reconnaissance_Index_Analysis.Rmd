@@ -1234,7 +1234,6 @@ p1 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
   )
 
 # Print the final plot
-print(p1)
 
 # ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_24_Hamburg.png", plot = p1, width = 15, height = 10, dpi = 450)
 
@@ -2325,7 +2324,7 @@ drought_colors <- c(
 date_range <- range(rdi_48tbl$date)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date  %m-% years(15)
-annotation_end <- mid_date %m+% years(2)
+annotation_end <- mid_date %m+% years(7)
 ```
 
 
@@ -2349,22 +2348,22 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   # # KEY INSIGHTS annotation box
   annotate("rect",
            xmin = annotation_start, xmax = annotation_end,
-           ymin = 2, ymax = 3,
+           ymin = 2.5, ymax = 3.5,
            fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
 
-  annotate("text", x = annotation_start, y = 2.85,
+  annotate("text", x = annotation_start, y = 3.35,
          label = paste0("KEY INSIGHTS (", min(year(rdi_48tbl$date)) - 3, "-", max(year(rdi_48tbl$date)), ")"),
          size = 6, fontface = "bold", hjust = 0) +
 
 
-  annotate("text", x = annotation_start, y = 2.65,
+  annotate("text", x = annotation_start, y = 3.1,
            label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 6, hjust = 0, color = "#CC0000") +
 
-  annotate("text", x = annotation_start, y = 2.45,
+  annotate("text", x = annotation_start, y = 2.85,
            label = paste0("•Severe drought:",drought_stats$severe_drought_pct,"%"),
            size = 6, hjust = 0, color = "#8B0000", fontface = "bold")  +
-  annotate("text", x = annotation_start, y = 2.25, 
+  annotate("text", x = annotation_start, y = 2.6, 
           label = paste0("•Wet Events:",drought_stats$wet_pct, "%"),
             size = 6, hjust = 0, color = "#00008B", fontface = "bold") +
 
