@@ -111,178 +111,166 @@ spei_24tbl <- spei_24tbl |> drop_na()
 spei_36tbl <- spei_36tbl |> drop_na()
 spei_48tbl <- spei_48tbl |> drop_na()
 ```
-```{r}
 
-```
+# spei 12 1936-2025
+```{r fig.align='center', fig.width=15, fig.height=10}
+library(shadowtext)
+library(ggplot2)
+library(lubridate)
 
-### SPEI 12 from 1936-2025
-```{r}
-
-
-# Define drought breaks and labels
-spei_breaks <- c(-Inf, -2, -1.5, -1, -0.5, 0.5, 1, 1.5, 2, Inf)
-spei_labels <- c(
-  "Extreme Drought", "Severe Drought", "Moderate Drought", 
-  "Mild Drought", "Normal", "Slightly Wet", 
-  "Moderately Wet", "Very Wet", "Extremely Wet"
-)
-
-# Apply dynamic categorization
+# Fixed classification with proper handling of NA values and non-overlapping ranges
 spei_12tbl <- spei_12tbl |> 
   mutate(
     sign = ifelse(spei_12 > 0, "pos", "neg"),
-    drought_category = cut(
-      spei_12, 
-      breaks = spei_breaks, 
-      labels = spei_labels, 
-      include.lowest = TRUE, 
-      right = FALSE
+    
+    drought_category = case_when(
+      is.na(spei_12)                      ~ NA_character_,  # Handle NA values explicitly
+      spei_12 >= 2.0                      ~ "Extremely Wet",
+      spei_12 >= 1.5                      ~ "Very Wet", 
+      spei_12 >= 1.0                      ~ "Moderate Wet",
+      spei_12 > 0.99                      ~ "Normal",        # Changed to > to avoid overlap
+      spei_12 >= -0.99                    ~ "Normal",
+      spei_12 >= -1.0                     ~ "Moderate Dry",  # Simplified range
+      spei_12 >= -1.5                     ~ "Very Dry",      # Simplified range
+      spei_12 < -2.0                      ~ "Extremely Dry", # Changed to < for clarity
+      TRUE                                ~ "Normal"         # Catch-all for any missed values
     ),
-    drought_category = factor(drought_category, levels = spei_labels)
+    
+    drought_category = factor(
+      drought_category,
+      levels = c(
+        "Extremely Dry", "Very Dry", "Moderate Dry",
+        "Normal",
+        "Moderate Wet", "Very Wet", "Extremely Wet"
+      )
+    )
   )
 
+# Check for any remaining NA values in drought_category
+na_check <- sum(is.na(spei_12tbl$drought_category))
+if(na_check > 0) {
+  cat("Warning: There are", na_check, "NA values in drought_category\n")
+  
+  # Option 1: Remove rows with NA
+  # spei_12tbl <- spei_12tbl |> filter(!is.na(drought_category))
+  
+  # Option 2: Replace NA with "Normal" (if that makes sense for your data)
+  # spei_12tbl$drought_category[is.na(spei_12tbl$drought_category)] <- "Normal"
+}
 
+# Rest of your code remains the same...
+# Summary statistics
 drought_stats <- spei_12tbl |> 
   summarise(
     total_months = n(),
-    drought_months = sum(spei_12 < -0.5),
-    severe_drought_months = sum(spei_12 < -1.5),
-    wet_months = sum(spei_12 > 0.5),
+    drought_months = sum(spei_12 < -0.5, na.rm = TRUE),
+    severe_drought_months = sum(spei_12 <= -1.5 & spei_12 >= -1.99, na.rm = TRUE),
+    extreme_drought_months = sum(spei_12 <= -2, na.rm = TRUE),
+    wet_months = sum(spei_12 > 0.5, na.rm = TRUE),
     min_spei = min(spei_12, na.rm = TRUE),
     max_spei = max(spei_12, na.rm = TRUE),
     min_date = date[which.min(spei_12)],
     max_date = date[which.max(spei_12)],
-    drought_pct = round(drought_months / total_months * 100, 1),
-    severe_drought_pct = round(severe_drought_months / total_months * 100, 1),
+    drought_pct = round(drought_months / total_months * 100, 2),
+    severe_drought_pct = round(severe_drought_months / total_months * 100, 2),
+    extreme_drought_pct = round(extreme_drought_months / total_months * 100, 2),
     wet_pct = round(wet_months / total_months * 100, 1)
   )
-# Create statistical summary for subtitle
+
+# Subtitle
 stats_text <- paste0(
-  "Drought conditions: ", drought_stats$drought_pct, "% | ",
+  "Drought pct: ", drought_stats$drought_pct, "% | ",
   "Severe drought: ", drought_stats$severe_drought_pct, "% | ",
+  "Extreme drought: ", drought_stats$extreme_drought_pct,"% | ",
   "Wet events: ", drought_stats$wet_pct, "% | ",
   "Wettest: ", format(drought_stats$max_date, "%b %Y"), 
-  " (", round(drought_stats$max_spei, 2), ") | ",
+  " (SPEI: ", round(drought_stats$max_spei, 2), ") | ",
   "Driest: ", format(drought_stats$min_date, "%b %Y"), 
-  " (", round(drought_stats$min_spei, 2), ")"
+  " (SPEI: ", round(drought_stats$min_spei, 2), ")"
 )
-
 
 drought_colors <- c(
-  "Extreme Drought" = "#8B0000",
-  "Severe Drought" = "#FF0000",
-  "Moderate Drought" = "#FF4500",
-  "Mild Drought" = "#FFA500",
-  "Normal" = "#CCCCCC",
-  "Slightly Wet" = "#87CEEB",
-  "Moderately Wet" = "#4682B4",
-  "Very Wet" = "#1E90FF",
-  "Extremely Wet" = "#0000CD"
+  "Extremely Dry"  = "#8B0000",
+  "Very Dry"       = "#FF0000",
+  "Moderate Dry"   = "#FFA07A",
+  "Normal"         = "#CCCCCC",
+  "Moderate Wet"   = "#87CEEB",
+  "Very Wet"       = "#4682B4",
+  "Extremely Wet"  = "#00008B"
 )
 
+date_range <- range(spei_12tbl$date, na.rm = TRUE)
+mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
+annotation_start <- mid_date %m-% years(20)
+annotation_end   <- mid_date %m-% years(3)
 
-```
-
-
-
-
-
-```{r fig.align='center',fig.height=10,fig.width=15}
-library(ggplot2)
-library(lubridate)
-library(shadowtext)
-p12 <- ggplot(spei_12tbl, aes(x = date, y = spei_12, fill = drought_category)) +
+# Plot with additional safeguards
+ggplot(spei_12tbl |> filter(!is.na(drought_category)), # Filter out NA values for plotting
+       aes(x = date, y = spei_12, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
-
-  # Reference dashed lines for thresholds
   geom_hline(yintercept = c(-2, -1.5, -1, -0.5, 0.5, 1, 1.5, 2), 
              color = "grey50", linewidth = 0.3, linetype = "dashed", alpha = 0.6) +
 
-  # Highlight driest and wettest periods
   geom_vline(xintercept = drought_stats$min_date, color = "#8B0000", linetype = "dotdash", linewidth = 0.8) +
   geom_vline(xintercept = drought_stats$max_date, color = "#00008B", linetype = "dotdash", linewidth = 0.8) +
 
-  # Key Insights annotation box
-  annotate("rect", 
-           xmin = as.Date("1966-01-01"), xmax = as.Date("1989-01-01"),
-           ymin = 2.5, ymax = 3.45, 
-           fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
-
-  annotate("text", x = as.Date("1967-01-01"), y = 3.3, 
-           label = paste0("KEY INSIGHTS (", min(year(spei_12tbl$date)), "-", max(year(spei_12tbl$date)), ")"),
+  # Key Insights box
+  annotate("rect", xmin = annotation_start , xmax = annotation_end,
+           ymin = 2.3, ymax = 3.45, fill = "white", color = "grey60", alpha = 0.9, linewidth = 0.5) +
+  annotate("text", x = annotation_start, y = 3.3, 
+           label = paste0("KEY INSIGHTS (", year(date_range[1]), "-", year(date_range[2]), ")"),
            size = 5, fontface = "bold", hjust = 0) +
-
-  annotate("text", x = as.Date("1967-01-01"), y = 3.1, 
-           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "% of period"),
+  annotate("text", x = annotation_start, y = 3.1, 
+           label = paste0("• Drought conditions: ", drought_stats$drought_pct, "%"),
            size = 5, hjust = 0, color = "#CC0000") +
-
-  annotate("text", x = as.Date("1967-01-01"), y = 2.9, 
-           label = paste0("• Severe drought: ", drought_stats$severe_drought_pct, "% of period"),
+  annotate("text", x = annotation_start, y = 2.9, 
+           label = paste0("• Extreme Drought: ", drought_stats$extreme_drought_pct, "%"),
            size = 5, hjust = 0, color = "#8B0000", fontface = "bold") +
-  annotate("text", x = as.Date("1967-01-01"), y = 2.7, 
-           label = paste0("• Wet Events : ", drought_stats$wet_pct, "% of period"),
+  annotate("text", x = annotation_start, y = 2.65, 
+           label = paste0("• Severe Drought: ", drought_stats$severe_drought_pct, "%"),
+           size = 5, hjust = 0, color = "#B22222", fontface = "bold") +
+  annotate("text", x = annotation_start, y = 2.45, 
+           label = paste0("• Wet Events: ", drought_stats$wet_pct, "%"),
            size = 5, hjust = 0, color = "#00008B", fontface = "bold") +
 
-  # Extreme dry and wet events
-  
-  
+  # Extreme events annotation
+  annotate("label",
+           x = drought_stats$min_date,
+           y = drought_stats$min_spei,
+           label = paste0("Extreme Drought: ", format(drought_stats$min_date, "%b %Y"),
+                          " (SPEI: ", round(drought_stats$min_spei, 2), ")"),
+           fill = "#8B0000", color = "white", fontface = "bold", size = 4, label.size = NA, hjust = 1) +
 
- geom_shadowtext(
-  data = data.frame(
-    x = as.Date("1960-03-01"),
-    y = -3.017,
-    label = "Extreme Drought ●\nMar 1960 (SPEI: -3.02)"
-  ),
-  mapping = aes(x = x, y = y, label = label),
-  color = "white",
-  bg.colour = "#8B0000",
-  fontface = "bold",
-  size = 4.5,
-  hjust = 1,
-  inherit.aes = FALSE
-) +
+  annotate("label",
+           x = drought_stats$max_date,
+           y = drought_stats$max_spei,
+           label = paste0("Wettest Event: ", format(drought_stats$max_date, "%b %Y"),
+                          " (SPEI: ", round(drought_stats$max_spei, 2), ")"),
+           fill = "#00008B", color = "white", fontface = "bold", size = 5, label.size = NA, hjust = 0) +
 
-geom_shadowtext(
-  data = data.frame(
-    x = as.Date("2002-08-01"),
-    y = 2.35,
-    label = "Wettest Day ●\nAug 2002 (SPEI: 2.35)"
-  ),
-  mapping = aes(x = x, y = y, label = label),
-  color = "white",            # Text color
-  bg.colour = "#00008B",      # Background (shadow) color
-  fontface = "bold",
-  size = 4.5,
-  hjust = 1,
-  inherit.aes = FALSE
-) +
-
-
-  # Start and end of analysis period
-  annotate("text", x = min(spei_12tbl$date), y = 3, 
+  # Start/End
+  annotate("text", x = min(spei_12tbl$date, na.rm = TRUE), y = 3, 
            label = "Start of analysis", hjust = 0, size = 5, color = "grey40", fontface = "bold") +
-
-  annotate("text", x = max(spei_12tbl$date), y = 3, 
+  annotate("text", x = max(spei_12tbl$date, na.rm = TRUE), y = 3, 
            label = "End of analysis", hjust = 0.9, size = 5, color = "grey50", fontface = "bold") +
 
-  # X and Y scales
+  # Axis and scales
   scale_x_date(
     date_breaks = "5 years",
     date_labels = "%Y",
-    limits = as.Date(c("1936-12-01", "2025-05-28")),
+    limits = as.Date(c("1936-01-01", "2026-01-01")),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
-
   scale_y_continuous(
     limits = c(-3.5, 3.5),
     breaks = seq(-3.5, 3.5, 0.5),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
-
   scale_fill_manual(
     name = "Condition",
     values = drought_colors,
+    na.translate = FALSE,  # This prevents NA from appearing in legend
     guide = guide_legend(
       title.position = "top",
       title.hjust = 0.5,
@@ -291,7 +279,6 @@ geom_shadowtext(
     )
   ) +
 
-  # Plot labels and theme
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel (1936–2025*)",
     subtitle = paste0("SPEI (12-Month Scale) | ", stats_text),
@@ -308,15 +295,30 @@ geom_shadowtext(
     panel.grid.minor.y = element_blank(),
     panel.grid.major.y = element_line(color = "grey90", linewidth = 0.5),
     plot.title = element_text(face = "bold", size = 22, margin = margin(t = 10, b = 15)),
-    plot.subtitle = element_text(color = "grey60", size = 18, margin = margin(b = 10)),
+    plot.subtitle = element_text(color = "grey60", size = 16),
     plot.caption = element_text(color = "grey60", size = 15, hjust = 1, margin = margin(t = 10)),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 18, colour = "grey10", face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 16, colour = "grey10", face = "bold"),
     axis.text.y = element_text(size = 18, colour = "grey10", face = "bold"),
     legend.position = "top",
     legend.title = element_text(size = 12, face = "bold"),
-    legend.text = element_text(size = 9),
-    legend.key.size = unit(1, "cm")
+    legend.text = element_text(size = 12),
+    legend.key.size = unit(1, "cm"),
+    #plot.margin = margin(t = 10, r = 5, b = 10, l = 5)
   )
+
+```
+
+
+
+
+
+
+
+```{r fig.align='center',fig.height=10,fig.width=15}
+library(ggplot2)
+library(lubridate)
+library(shadowtext)
+p12 <- 
 p12
 # Saving the plot
  # ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/SPEI_12_Hamburg.png", plot = p12, width = 15, height = 10, dpi = 450)
@@ -382,11 +384,7 @@ drought_colors <- c(
   "Extremely Wet" = "#0000CD"        # Medium Blue
 )
 
-#stats_text
-drought_stats
-```
-
-```{r fig.align='center', fig.height=12,fig.width=18}
+#r fig.align='center', fig.height=12,fig.width=18}
  ggplot(spei_12tbl, aes(x = date, y = spei_12, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
