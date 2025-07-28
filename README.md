@@ -70,13 +70,13 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 ![Precipitation Concentration Index ](DWD_Folder/Plots/Precipitation_Concentration_Index.png)
 
 ### Key Findings:
-### 1. Overall Stability:
+# 1. Overall Stability:
 
-### PCI values consistently range between ~9.0-13.5 over 89 years
-### Mean appears stable around 10.5-10.6 (moderate concentration)
-### No significant long-term trend (black LOESS line is relatively flat)
+# PCI values consistently range between ~9.0-13.5 over 89 years
+# Mean appears stable around 10.5-10.6 (moderate concentration)
+# No significant long-term trend (black LOESS line is relatively flat)
 
-### 2. Temporal Patterns:
+# 2. Temporal Patterns:
 
 ## 1940s-1950s: Higher variability and more frequent spikes above 13
 ## 1960s-1980s: More stable period with fewer extreme values
@@ -85,7 +85,7 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 ## 3. Climate Implications:Hamburg maintains moderate seasonal precipitation concentration throughout the recordNo evidence of increasing concentration due to climate changeThe variability suggests natural climate oscillations rather than systematic change
 
 ## 4. Extreme Years:Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, and 2000s-2010sThese likely represent years with particularly wet or dry seasons
-### German Climate Context Analysis:Regional Climate Influences: Hamburg, being in northern Germany near the North Sea, is particularly influenced by Atlantic weather systems and the North Atlantic Oscillation (NAO). The cyclical peaks you see (1999, 2011, 2018) likely correspond to periods when these Atlantic systems created more concentrated precipitation patterns.Seasonal Concentration: In Germany's temperate oceanic climate, high PCI values often indicate: Wet winters followed by dry summers (or vice versa).Clustering of precipitation into fewer, more intense events.Potential impacts from blocking high-pressure systems over Central Europe
+# German Climate Context Analysis:Regional Climate Influences: Hamburg, being in northern Germany near the North Sea, is particularly influenced by Atlantic weather systems and the North Atlantic Oscillation (NAO). The cyclical peaks you see (1999, 2011, 2018) likely correspond to periods when these Atlantic systems created more concentrated precipitation patterns.Seasonal Concentration: In Germany's temperate oceanic climate, high PCI values often indicate: Wet winters followed by dry summers (or vice versa).Clustering of precipitation into fewer, more intense events.Potential impacts from blocking high-pressure systems over Central Europe
 
 
 # Climate Change Signals: 
@@ -148,19 +148,27 @@ This is a clear signal of changing winter precipitation patterns at Hamburg Fuhl
 Focus is on long term trend, so using monthly series of drought indices with a frequency of 12,36,24,48 . The plots shows that last decade has witnesses increase in temperature and on the other decrease in precipitation. This makes the situation worse in future as with further increase in temperature the weather will become more dry and will result in a further decrease in precipitation resulting in a severe drought. 
 
 ### The Reconnaissance Drought Index (RDI) is a meteorological drought index that assesses drought severity by comparing precipitation to potential evapotranspiration (PET). It's a valuable tool for understanding water availability and is often used in agriculture and water resource management.
-### RDI 12 monthly Index
+## RDI 12 monthly Index
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1936_1989.png)
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1990_2025.png)
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1936_2025.png)
 
-### RDI 24 monthly Index
-![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Hamburg.png)
+## RDI 24 monthly Index
+![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Monthly_1936_1989.png)
+![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Monthly_1990_2025.png)
+![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Monthly_1936_2025.png)
 
-### RDI 36 monthly Index
-![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Hamburg.png)
 
-### RDI 48 monthly Index
-![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Hamburg.png)
+## RDI 36 monthly Index
+![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Monthly_1936_1989.png)
+![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Monthly_1990_2025.png)
+![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Monthly_1936_2025.png)
+
+## RDI 48 monthly Index
+![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Monthly_1936_1989.png)
+![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Monthly_1990_2025.png)
+![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Monthly_1936_2025.png)
+
 
 
 
