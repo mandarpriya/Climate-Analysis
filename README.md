@@ -13,74 +13,75 @@ Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881
 # Temperature Analysis
 I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 
-### Annual Temperature Trend (1936–2024)
+Annual Temperature Trend (1936–2024)
 
 ![Annual Temperature Trend](DWD_Folder/Plots/Annual_Temperature_Trend.png)
 
-### 📊 Decadal Temperature (Bar Plot)
+ 📊 Decadal Temperature (Bar Plot)
 ![Decadal Temperature Bar](DWD_Folder/Plots/Decadal_Temperature_Bar.png)
 
-### 📉 Decadal Temperature Trends (Line Plot)
+ 📉 Decadal Temperature Trends (Line Plot)
 ![Decadal Temperature Line](DWD_Folder/Plots/Decadal_Temperature_Line.png)
 
-### 🔥 Heatwave Intensity Trend (1990–2024)
+ 🔥 Heatwave Intensity Trend (1990–2024)
 ![Heatwave_Intensity_Trend](DWD_Folder/Plots/Heatwave_Intensity_Trend_1990_2024.png)
 
-### 🌡️ Maximum Daily Exceedance in Heatwaves (1990–2024)
+ 🌡️ Maximum Daily Exceedance in Heatwaves (1990–2024)
 ![Max Exceedance](DWD_Folder/Plots/Heatwave_Max_Exceedance_1990_2024.png)
 
-### 🔁 Annual Number of Heatwave Events (HWMId, 1990–2024)
+ 🔁 Annual Number of Heatwave Events (HWMId, 1990–2024)
 ![HWMId Annual Events](DWD_Folder/Plots/HWMId_Annual_Events_1990_2024.png)
 
-### 🗓️ Julian Day of Peak Heatwave Intensity
+ 🗓️ Julian Day of Peak Heatwave Intensity
 ![Peak Julian Day](DWD_Folder/Plots/HWMId_Peak_Julian_Day_Line.png)
 
-### 📅 Frequency of Heatwave Peak Months (1990–2024)
+ 📅 Frequency of Heatwave Peak Months (1990–2024)
 ![Peak Month Count](DWD_Folder/Plots/Heatwave_Peak_Month_Count.png)
 
-### 📆 Peak Months by Decade
+ 📆 Peak Months by Decade
 ![Peak Month by Decade](DWD_Folder/Plots/Peak_Months_by_Decade.png)
 
-### 🧮 Heatwave Frequency per Climatology Period
+ 🧮 Heatwave Frequency per Climatology Period
 ![Heatwave Frequency by Climatology](DWD_Folder/Plots/Heatwave_Frequency_Climatology_Period.png)
 
-### 📊 Frequency of Heatwave Events (Tmax ≥ 28°C, ≥3 Days)
+ 📊 Frequency of Heatwave Events (Tmax ≥ 28°C, ≥3 Days)
 ![Exceedance Frequency](DWD_Folder/Plots/Exceedance_28C_Frequency_Annual.png)
 
-### ↘️ Rate of Decline After Heatwave Peak
+ ↘️ Rate of Decline After Heatwave Peak
 ![Rate of Decline](DWD_Folder/Plots/Exceedance_Rate_Decline.png)
 
-### 🐢 Top 10 Slowest Heatwave Declines
+ 🐢 Top 10 Slowest Heatwave Declines
 ![Slowest Decline](DWD_Folder/Plots/Top10_Slowest_Decline_Rate.png)
 
-### ⏳ Top 10 Longest Duration Heatwave Events
+ ⏳ Top 10 Longest Duration Heatwave Events
 ![Longest Duration](DWD_Folder/Plots/Top10_Longest_Heatwaves.png)
 
-### 📌 Top 10 Heatwaves by Maximum Intensity
+ 📌 Top 10 Heatwaves by Maximum Intensity
 ![Max Intensity Events](DWD_Folder/Plots/Top10_Max_Intensity_Events.png)
 
 
-#### Precipitation Trend (1936-2025) #### 
+# Precipitation Analysis
+ Precipitation Trend (1936-2025) #### 
 ![Annual Precipitation ](DWD_Folder/Plots/Annual_Precipitation(1936-2025).png)
 
-### Precipitation Concentration Index (PCI)
+ Precipitation Concentration Index (PCI)
 ![Precipitation Concentration Index ](DWD_Folder/Plots/Precipitation_Concentration_Index.png)
 
-### Key Findings:
-# 1. Overall Stability:
+# Key Findings:
+ 1. Overall Stability:
  PCI values consistently range between ~9.0-13.5 over 89 years
  Mean appears stable around 10.5-10.6 (moderate concentration)
  No significant long-term trend (black LOESS line is relatively flat)
 
-# 2. Temporal Patterns:
+ 2. Temporal Patterns:
 1940s-1950s: Higher variability and more frequent spikes above 13
  1960s-1980s: More stable period with fewer extreme values
 1990s-2020s: Return to higher variability, similar to 1940s-1950s
 
-# 3. Climate Implications:
+ 3. Climate Implications:
 Hamburg maintains moderate seasonal precipitation concentration throughout the recordNo evidence of increasing concentration due to climate changeThe variability suggests natural climate oscillations rather than systematic change
 
-# 4. Extreme Years:
+ 4. Extreme Years:
 Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, and 2000s-2010sThese likely represent years with particularly wet or dry seasons
  German Climate Context Analysis:Regional Climate Influences: Hamburg, being in northern Germany near the North Sea, is particularly influenced by Atlantic weather systems and the North Atlantic Oscillation (NAO). The cyclical peaks you see (1999, 2011, 2018) likely correspond to periods when these Atlantic systems created more concentrated precipitation patterns.Seasonal Concentration: In Germany's temperate oceanic climate, high PCI values often indicate: Wet winters followed by dry summers (or vice versa).Clustering of precipitation into fewer, more intense events.Potential impacts from blocking high-pressure systems over Central Europe
 
@@ -89,24 +90,24 @@ Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, an
 The increasing volatility after 2010 aligns with observed climate change impacts in Germany, including: More frequent extreme weather events,Shifts in seasonal precipitation patterns.Increased likelihood of both drought periods and heavy rainfall events Recent Trends (2020-2024): The declining trend toward 2024 might reflect:Changes in storm track patterns affecting northern Germany.Potential shifts in the timing or intensity of Atlantic low-pressure systems.Regional impacts of broader European climate variability Agricultural/Hydrological Implications: For Hamburg and northern Germany, these PCI fluctuations have significant implications for water management, agriculture, and flood risk - particularly given the region's importance for German agriculture and its proximity to major river systems.The data suggests Hamburg has experienced increasingly variable precipitation concentration patterns, which is consistent with climate projections for Northern European regions.
 
 
-### Average Duration Spell
+# Average Duration Spell
 ![Average Duration Spell](DWD_Folder/Plots/Average_Duration_Spells.png)
 
-### Seasonal Precipitation Analysis
+# Seasonal Precipitation Analysis
 
 ![Seasonl Precipitation ](DWD_Folder/Plots/Seasonal_Precipitation.png)
 
 
-### Spring Season
+Spring Season
 ![Spring Precipitation ](DWD_Folder/Plots/Spring_precipitation.png)
-### Summer Season
+ Summer Season
 ![Summer Precipitation ](DWD_Folder/Plots/Summer_precipitation.png)
-### Fall Season
+ Fall Season
 ![Fall Precipitation ](DWD_Folder/Plots/Fall_precipitation.png)
-### Winter Season
+ Winter Season
 ![Winter Precipitation ](DWD_Folder/Plots/Winter_precipitation.png)
 
-### Comparison of Period 1936:1979 & 1980:2025 for Winter Season
+ Comparison of Period 1936:1979 & 1980:2025 for Winter Season
 ![Winter Precipitation ](DWD_Folder/Plots/winter_season_box_plot.png)
 
 
