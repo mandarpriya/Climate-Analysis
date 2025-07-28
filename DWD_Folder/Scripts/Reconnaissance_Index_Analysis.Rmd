@@ -157,7 +157,7 @@ calculate_rdist_for_scales <- function(data, scales = c(3,6,9,12,24,36,48)) {
 
 
 monthly_rdist_tbl <- calculate_rdist_for_scales(data = monthly_tbl)
-
+plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots"
 ```
 # We have 3,6,9,12,24,36,48 monthly scale. So then which scales are important for the analysis. Since the period is 1936-2025, so 3,6,9 scales will not be that informative as these will refelect very short term changes. So 12,24,36,48 are better choices
 
@@ -291,7 +291,7 @@ p01 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   scale_x_date(
     date_breaks = "5 years",
     date_labels = "%Y",
-    limits = as.Date(c("1935-01-01", "1989-12-01")),  # Extended further on both sides
+    limits = as.Date(c("1935-01-01", "1990-01-01")),  # Extended further on both sides
     expand = expansion(mult = c(0.01, 0.01))  # Increased expansion on both sides
   ) +
   scale_y_continuous(
@@ -340,7 +340,13 @@ p01 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     #plot.margin = margin(t = 20, r = 30, b = 20, l = 20, unit = "pt")  # Increased right margin
   )
 
-p01
+ggsave(
+  filename = file.path(plot_dir, "RDI_12_Monthly_1936_1989.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 🧾 Summary Statement
@@ -429,8 +435,7 @@ drought_colors <- c(
 # Filter data for 1990-2025 period
 
 
-# Calculate modern period statistics (you already have these)
-# stats_text <- "Drought conditions: 28.2% | Severe drought: 7.8% | Wet events: 27.1% | Wettest: May 1994 (2.6) | Driest: Jan 2019 (-3)"
+
 
 # Create the plot
 p02 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
@@ -537,7 +542,13 @@ p02 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     legend.key.size = unit(1, "cm"),
     
   )
-p02
+ggsave(
+  filename = file.path(plot_dir, "RDI_12_Monthly_1990_2025.png"),
+  plot = p02,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 
 ## RDI 12 for  1936-2025
@@ -547,7 +558,7 @@ library(dplyr)
 rdi_12tbl <- monthly_rdist_tbl |> 
   dplyr::select(date,RDI_12) |> 
   drop_na()
-# Recent period chosen 1990-2025
+
 rdi_12tbl <- rdi_12tbl |> 
   dplyr::mutate(sign = ifelse(RDI_12 >0,"pos","neg")) |> 
 # Enhanced data preparation with drought categories
@@ -672,7 +683,7 @@ p0 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   scale_x_date(
     date_breaks = "5 years",
     date_labels = "%Y",
-    limits = as.Date(c("1936-12-01", "2025-05-28")),
+    limits = as.Date(c("1935-12-01", "2025-05-28")),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
   scale_y_continuous(
@@ -715,6 +726,14 @@ p0 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
     legend.text = element_text(size = 11, face = "bold"),  # Changed from size = 10 to size = 14 and added bold
     legend.key.size = unit(1, "cm"),
   )
+
+ggsave(
+  filename = file.path(plot_dir, "RDI_12_Monthly_1936_2025.png"),
+  plot = p0,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 
@@ -927,11 +946,8 @@ date_range <- range(rdi_24tbl$date)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date %m-% years(20)
 annotation_end <- mid_date %m-% years(5)
-```
-
-
-```{r fig.align='center', fig.height=10, fig.width=15}
-ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
+#{r fig.align='center', fig.height=10, fig.width=15}
+p11 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
 
@@ -1041,6 +1057,13 @@ ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
     #plot.margin = margin(t = 10, r = 20, b = 10, l = 20)
   )
 
+ggsave(
+  filename = file.path(plot_dir, "RDI_24_Monthly_1936_1989.png"),
+  plot = p11,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 
 ```
@@ -1100,6 +1123,7 @@ drought_stats <- rdi_24tbl |>
 stats_text <- paste0(
   "Drought conditions: ", drought_stats$drought_pct, "% | ",
   "Severe drought: ", drought_stats$severe_drought_pct, "% | ",
+  "Wet eventst: ", drought_stats$wet_pct, "% | ",
   "Wettest: ", format(drought_stats$max_date, "%b %Y"), " (", round(drought_stats$max_rdi, 1), ") | ",
   "Driest: ", format(drought_stats$min_date, "%b %Y"), " (", round(drought_stats$min_rdi, 1), ")"
 )
@@ -1119,7 +1143,7 @@ drought_colors <- c(
 
 
 # Plot
-p1 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
+p12 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
 
@@ -1216,13 +1240,14 @@ p1 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
 
   theme_minimal(base_size = 12) +
   theme(
+    
     plot.title.position = "plot",
     panel.grid.minor.x = element_blank(),
     panel.grid.major.x = element_line(color = "grey90", linewidth = 0.5),
     panel.grid.minor.y = element_blank(),
     panel.grid.major.y = element_line(color = "grey90", linewidth = 0.5),
     plot.title = element_text(face = "bold", size = 22, margin = margin(t = 10, b = 15)),
-    plot.subtitle = element_text(color = "grey60", size = 18, margin = margin(b = 10)),
+    plot.subtitle = element_text(color = "grey60", size = 16, margin = margin(b = 10)),
     plot.caption = element_text(color = "grey60", size = 15, hjust = 1, margin = margin(t=10)),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 18, colour = "grey10",face = "bold"),
     axis.text.y = element_text(size = 18, colour = "gray10",face="bold"),
@@ -1230,12 +1255,18 @@ p1 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
     legend.title = element_text(size = 12, face = "bold"),
     legend.text = element_text(size = 9),
     legend.key.size = unit(1, "cm"),
-    #plot.margin = margin(t = 10, r = 20, b = 10, l = 20)
+    plot.margin = margin(t = 10, r = 20, b = 10, l = 20)
   )
 
 # Print the final plot
 
-# ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_24_Hamburg.png", plot = p1, width = 15, height = 10, dpi = 450)
+ggsave(
+  filename = file.path(plot_dir, "RDI_24_Monthly_1990_2025.png"),
+  plot = p12,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 
 
@@ -1310,12 +1341,9 @@ date_range <- range(rdi_24tbl$date)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date %m-% years(20)
 annotation_end <- mid_date %m-% years(1)
-```
-
-
-```{r fig.align='center', fig.height=10,fig.width=15}
+#{r fig.align='center', fig.height=10,fig.width=15}
 # Plot
-ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
+p10 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
   geom_hline(yintercept = seq(-2, 2, 0.5), 
@@ -1399,6 +1427,15 @@ ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
     legend.text = element_text(size = 14,face = "bold"),
     legend.key.size = unit(.5, "cm")
   )
+ggsave(
+  filename = file.path(plot_dir, "RDI_24_Monthly_1936_2025.png"),
+  plot = p10,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
+
+p10
 
 ```
 
@@ -1484,7 +1521,7 @@ mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date %m-% years(20)
 annotation_end <- mid_date %m+% years(7)
 # Plot
-ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
+p30 <- ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
   geom_hline(yintercept = seq(-2, 2, 0.5), 
@@ -1528,7 +1565,7 @@ ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
   scale_x_date(
     date_breaks = "5 years",
     date_labels = "%Y",
-    limits = c(as.Date("1936-01-01"),as.Date("2025-05-01")),
+    limits = c(as.Date("1935-12-01"),as.Date("2025-05-28")),
     expand = expansion(mult = c(0.01, 0.01))
   ) +
   scale_y_continuous(
@@ -1568,6 +1605,17 @@ ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
     legend.text = element_text(size = 14,face = "bold"),
     legend.key.size = unit(.5, "cm")
   )
+
+ggsave(
+  filename = file.path(plot_dir, "RDI_36_Monthly_1936_2025.png"),
+  plot = p30,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
+
+
+
 ```
 ## RDI 36 (1936-1989)
 ```{r fig.align='center', fig.height=10, fig.width=15}
@@ -1643,7 +1691,7 @@ annotation_start <- mid_date %m-% years(20)
 annotation_end <- mid_date %m-% years(4)
 
 # Plot
-ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
+p31 <- ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
   geom_hline(yintercept = seq(-2, 2, 0.5), 
@@ -1727,6 +1775,15 @@ ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
     legend.text = element_text(size = 14,face = "bold"),
     legend.key.size = unit(.5, "cm")
   )
+
+ggsave(
+  filename = file.path(plot_dir, "RDI_36_Monthly_1936_1989.png"),
+  plot = p31,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
+
 ```
 ## RDI 36 (1990-2025)
 
@@ -1803,12 +1860,9 @@ date_range <- range(rdi_36tbl$date)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date %m-% years(2)
 annotation_end <- mid_date %m+% years(7)
-```
-
-
-```{r fig.align='center', fig.height=10, fig.width=15}
+#{r fig.align='center', fig.height=10, fig.width=15}
 # Create the plot
-ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
+p32 <- ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
 
@@ -1899,7 +1953,13 @@ ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
   )
 
 
-# ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_36_Hamburg.png", plot = p2, width = 15, height = 10, dpi = 450)
+ggsave(
+  filename = file.path(plot_dir, "RDI_36_Monthly_1990_2025.png"),
+  plot = p32,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 
@@ -1978,7 +2038,7 @@ mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date %m-% years(20)
 annotation_end <- mid_date %m-% years(5)
 # Plot
-ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
+p41 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
   geom_hline(yintercept = seq(-2, 2, 0.5), 
@@ -2062,6 +2122,14 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
     legend.text = element_text(size = 15,face = "bold"),
     legend.key.size = unit(.5, "cm")
   )
+
+ggsave(
+  filename = file.path(plot_dir, "RDI_48_Monthly_1936_1989.png"),
+  plot = p41,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 ## RDI 48 (1990-2025)
 
@@ -2138,7 +2206,7 @@ mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date
 annotation_end <- mid_date %m+% years(5)
 
-ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
+p42 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
 
@@ -2248,7 +2316,13 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
     legend.text = element_text(size = 12),
     legend.key.size = unit(1, "cm")
   )
-
+ggsave(
+  filename = file.path(plot_dir, "RDI_48_Monthly_1990_2025.png"),
+  plot = p42,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 
 ## RDI 48 (1936-2025)
@@ -2325,14 +2399,11 @@ date_range <- range(rdi_48tbl$date)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date  %m-% years(15)
 annotation_end <- mid_date %m+% years(7)
-```
-
-
-```{r fig.align='center',fig.height=10, fig.width=15}
+#{r fig.align='center',fig.height=10, fig.width=15}
 # Create the plot
 
 
-ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
+p40 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
 
@@ -2443,6 +2514,13 @@ ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
     legend.key.size = unit(1, "cm")
   )
 
+ggsave(
+  filename = file.path(plot_dir, "RDI_48_Monthly_1936_2025.png"),
+  plot = p40,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 #ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_48_Hamburg.png", plot = p3, width = 15, height = 10, dpi = 450)
 ```
