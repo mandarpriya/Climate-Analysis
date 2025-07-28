@@ -71,21 +71,21 @@ I first perform Temperature analysis for  Hamburg Fuhlsbüttel
 
 ### Key Findings:
 # 1. Overall Stability:
-
-# PCI values consistently range between ~9.0-13.5 over 89 years
-# Mean appears stable around 10.5-10.6 (moderate concentration)
-# No significant long-term trend (black LOESS line is relatively flat)
+ PCI values consistently range between ~9.0-13.5 over 89 years
+ Mean appears stable around 10.5-10.6 (moderate concentration)
+ No significant long-term trend (black LOESS line is relatively flat)
 
 # 2. Temporal Patterns:
+1940s-1950s: Higher variability and more frequent spikes above 13
+ 1960s-1980s: More stable period with fewer extreme values
+1990s-2020s: Return to higher variability, similar to 1940s-1950s
 
-## 1940s-1950s: Higher variability and more frequent spikes above 13
-## 1960s-1980s: More stable period with fewer extreme values
-## 1990s-2020s: Return to higher variability, similar to 1940s-1950s
+# 3. Climate Implications:
+Hamburg maintains moderate seasonal precipitation concentration throughout the recordNo evidence of increasing concentration due to climate changeThe variability suggests natural climate oscillations rather than systematic change
 
-## 3. Climate Implications:Hamburg maintains moderate seasonal precipitation concentration throughout the recordNo evidence of increasing concentration due to climate changeThe variability suggests natural climate oscillations rather than systematic change
-
-## 4. Extreme Years:Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, and 2000s-2010sThese likely represent years with particularly wet or dry seasons
-# German Climate Context Analysis:Regional Climate Influences: Hamburg, being in northern Germany near the North Sea, is particularly influenced by Atlantic weather systems and the North Atlantic Oscillation (NAO). The cyclical peaks you see (1999, 2011, 2018) likely correspond to periods when these Atlantic systems created more concentrated precipitation patterns.Seasonal Concentration: In Germany's temperate oceanic climate, high PCI values often indicate: Wet winters followed by dry summers (or vice versa).Clustering of precipitation into fewer, more intense events.Potential impacts from blocking high-pressure systems over Central Europe
+# 4. Extreme Years:
+Several years show PCI >13 (irregular distribution): notably in 1940s, 1960s, and 2000s-2010sThese likely represent years with particularly wet or dry seasons
+ German Climate Context Analysis:Regional Climate Influences: Hamburg, being in northern Germany near the North Sea, is particularly influenced by Atlantic weather systems and the North Atlantic Oscillation (NAO). The cyclical peaks you see (1999, 2011, 2018) likely correspond to periods when these Atlantic systems created more concentrated precipitation patterns.Seasonal Concentration: In Germany's temperate oceanic climate, high PCI values often indicate: Wet winters followed by dry summers (or vice versa).Clustering of precipitation into fewer, more intense events.Potential impacts from blocking high-pressure systems over Central Europe
 
 
 # Climate Change Signals: 
@@ -147,7 +147,7 @@ This is a clear signal of changing winter precipitation patterns at Hamburg Fuhl
 # Analysis:- 
 Focus is on long term trend, so using monthly series of drought indices with a frequency of 12,36,24,48 . The plots shows that last decade has witnesses increase in temperature and on the other decrease in precipitation. This makes the situation worse in future as with further increase in temperature the weather will become more dry and will result in a further decrease in precipitation resulting in a severe drought. 
 
-### The Reconnaissance Drought Index (RDI) is a meteorological drought index that assesses drought severity by comparing precipitation to potential evapotranspiration (PET). It's a valuable tool for understanding water availability and is often used in agriculture and water resource management.
+# The Reconnaissance Drought Index (RDI) is a meteorological drought index that assesses drought severity by comparing precipitation to potential evapotranspiration (PET). It's a valuable tool for understanding water availability and is often used in agriculture and water resource management.
 ## RDI 12 monthly Index
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1936_1989.png)
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1990_2025.png)
@@ -171,13 +171,7 @@ Focus is on long term trend, so using monthly series of drought indices with a f
 
 
 
-
-
-
-
-
-
-## Critical Insights:
+# Critical Insights:
 # Scale-Dependent Drought Evolution:
 
 12-month: High variability, frequent short droughts
@@ -212,14 +206,20 @@ The tripling of severe long-term droughts represents a major shift in regional w
 This analysis clearly shows that while short-term drought variability has increased moderately, the most dramatic change is in sustained multi-year drought conditions - exactly the type that poses the greatest challenge to water resources and ecosystem adaptation.
 
 
-### Comparative Summary of RDI Indices (1990–2025)
+### **Reconnaissance Drought Index (RDI) Summary: Hamburg Fuhlsbüttel**
 
-| RDI Scale   | Drought (%) | Severe Drought (%) | Wettest Event      | Driest Event       | Kendall’s Tau |    Trend Significance |
-|-------------|-------------|---------------------|---------------------|---------------------|----------------|---------------------|
-| 12-Month    | 28.2%       | 7.8%                | May 1994 (2.6)      | Jan 2019 (-3.0)     | -0.163         | ✓                   |
-| 24-Month    | 37.6%       | 4.7%                | May 1995 (3.0)      | Jan 2020 (-2.4)     | -0.282         | ✓                   |
-| 36-Month    | 37.2%       | 6.1%                | Jun 1995 (2.7)      | Jan 2021 (-2.9)     | -0.438         | ✓✓                  |
-| 48-Month    | 36.9%       | 8.2%                | Apr 1995 (2.7)      | Jan 2022 (-2.7)     | -0.563         | ✓✓✓                 |
+| **Time Scale** | **Period**     | **Drought Conditions** | **Severe Drought** | **Wet Events** | **Key Extreme (Dry)**     |
+|----------------|----------------|-------------------------|---------------------|----------------|---------------------------|
+| **12-month**   | 1936–1989      | 23.6%                   | 6.8%                | 31.7%          | Oct 1959 (**−3.9**)       |
+|                | 1990–2025      | 28.2%                   | 7.8%                | 27.1%          | Jan 2019 (**−3.0**)       |
+| **24-month**   | 1936–1989      | 29.6%                   | 6.2%                | 33.3%          | Jul 1960 (**−2.7**)       |
+|                | 1936–2025      | 32.9%                   | 5.6%                | 31.5%          | Jul 1960 (**−2.75**)      |
+| **36-month**   | 1936–1989      | 36.1%                   | 3.3%                | 33.4%          | Jul 1940 (**−2.0**)       |
+|                | 1990–2025      | 37.2%                   | 6.1%                | 29.2%          | Jan 2021 (**−2.9**)       |
+| **48-month**   | 1936–1989      | 36.1%                   | 2.7%                | 27.6%          | Jul 1941 (**−1.85**)      |
+|                | 1990–2025      | 36.9%                   | 8.2%                | 27.1%          | Jan 2022 (**−2.7**)       |
+
+
 
 
 
