@@ -49,8 +49,6 @@ monthly_tbl <- data |>
   dplyr::select(year, month, date, prec:Tmax)
 
 monthly_tbl <- monthly_tbl |> drop_na()
-
-data |> tail()
 ```
 ## From previous analysis we already know that Hargreaves method is suitable for PET
 ```{r}
@@ -117,40 +115,43 @@ spei_48tbl <- spei_48tbl |> drop_na()
 
 ```
 
-### visualization fo SPEI
+### SPEI 12 from 1936-2025
 ```{r}
+
+
+# Define drought breaks and labels
+spei_breaks <- c(-Inf, -2, -1.5, -1, -0.5, 0.5, 1, 1.5, 2, Inf)
+spei_labels <- c(
+  "Extreme Drought", "Severe Drought", "Moderate Drought", 
+  "Mild Drought", "Normal", "Slightly Wet", 
+  "Moderately Wet", "Very Wet", "Extremely Wet"
+)
+
+# Apply dynamic categorization
 spei_12tbl <- spei_12tbl |> 
   mutate(
-    sign = ifelse(spei_12 >0,"pos","neg"),
-    drought_category=case_when(
-      spei_12 >= 2.0 ~ "Extremely Wet",
-      spei_12 >= 1.5 & spei_12 < 1.99 ~ "Very Wet", 
-      spei_12 >= 1.0 & spei_12 < 1.49 ~ "Moderately Wet",
-      spei_12 >= 0.5 & spei_12 < 0.99 ~ "Slightly Wet",
-      spei_12 >= -0.5 & spei_12 < 0.5 ~ "Normal",
-      spei_12 >= -1.0 & spei_12 < -0.5 ~ "Mild Drought",
-      spei_12 >= -1.5 & spei_12 < -1.0 ~ "Moderate Drought",
-      spei_12 >= -2.0 & spei_12 < -1.5 ~ "Severe Drought",
-      TRUE ~ "Extreme Drought" 
+    sign = ifelse(spei_12 > 0, "pos", "neg"),
+    drought_category = cut(
+      spei_12, 
+      breaks = spei_breaks, 
+      labels = spei_labels, 
+      include.lowest = TRUE, 
+      right = FALSE
     ),
-     drought_category = factor(drought_category, levels = c(
-      "Extreme Drought", "Severe Drought", "Moderate Drought", 
-      "Mild Drought", "Normal", "Slightly Wet", 
-      "Moderately Wet", "Very Wet", "Extremely Wet"
-  ))
-  
+    drought_category = factor(drought_category, levels = spei_labels)
   )
 
-drought_stats <- spei_12tbl |>
+
+drought_stats <- spei_12tbl |> 
   summarise(
     total_months = n(),
-    drought_months = sum(spei_12tbl$spei_12 < -0.5),
+    drought_months = sum(spei_12 < -0.5),
     severe_drought_months = sum(spei_12 < -1.5),
-    wet_months = sum(spei_12tbl$spei_12 > 0.5),
-    min_spei = min(spei_12),
-    max_spei = max(spei_12tbl$spei_12),
-    min_date = date[which.min(spei_12tbl$spei_12)],
-    max_date = date[which.max(spei_12tbl$spei_12)],
+    wet_months = sum(spei_12 > 0.5),
+    min_spei = min(spei_12, na.rm = TRUE),
+    max_spei = max(spei_12, na.rm = TRUE),
+    min_date = date[which.min(spei_12)],
+    max_date = date[which.max(spei_12)],
     drought_pct = round(drought_months / total_months * 100, 1),
     severe_drought_pct = round(severe_drought_months / total_months * 100, 1),
     wet_pct = round(wet_months / total_months * 100, 1)
@@ -160,21 +161,23 @@ stats_text <- paste0(
   "Drought conditions: ", drought_stats$drought_pct, "% | ",
   "Severe drought: ", drought_stats$severe_drought_pct, "% | ",
   "Wet events: ", drought_stats$wet_pct, "% | ",
-  "Wettest: ", format(drought_stats$max_date, "%b %Y"), " (", round(drought_stats$max_spei, 2), ") | ",
-  "Driest: ", format(drought_stats$min_date, "%b %Y"), " (", round(drought_stats$min_spei, 2), ")"
+  "Wettest: ", format(drought_stats$max_date, "%b %Y"), 
+  " (", round(drought_stats$max_spei, 2), ") | ",
+  "Driest: ", format(drought_stats$min_date, "%b %Y"), 
+  " (", round(drought_stats$min_spei, 2), ")"
 )
 
-# Define color palette for drought categories
+
 drought_colors <- c(
-  "Extreme Drought" = "#8B0000",     # Dark Red
-  "Severe Drought" = "#FF0000",      # Red  
-  "Moderate Drought" = "#FF4500",    # Orange Red
-  "Mild Drought" = "#FFA500",        # Orange
-  "Normal" = "#CCCCCC",              # Light Gray
-  "Slightly Wet" = "#87CEEB",        # Sky Blue
-  "Moderately Wet" = "#4682B4",      # Steel Blue
-  "Very Wet" = "#1E90FF",            # Dodger Blue
-  "Extremely Wet" = "#0000CD"        # Medium Blue
+  "Extreme Drought" = "#8B0000",
+  "Severe Drought" = "#FF0000",
+  "Moderate Drought" = "#FF4500",
+  "Mild Drought" = "#FFA500",
+  "Normal" = "#CCCCCC",
+  "Slightly Wet" = "#87CEEB",
+  "Moderately Wet" = "#4682B4",
+  "Very Wet" = "#1E90FF",
+  "Extremely Wet" = "#0000CD"
 )
 
 

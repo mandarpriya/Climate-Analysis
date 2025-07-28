@@ -2524,7 +2524,7 @@ ggsave(
 
 #ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_48_Hamburg.png", plot = p3, width = 15, height = 10, dpi = 450)
 ```
-```
+
 
 
 ###### Comparison of RDI 12 & RDI 24 & RDI 36 & RDI 48
@@ -2543,83 +2543,55 @@ While the 24-month RDI highlights more persistent drought conditions across mult
 
 ✅ Part 2: Trend Analysis – Mann-Kendall Test
 ```{r}
-library(Kendall)
+rdi_12tbl <- monthly_rdist_tbl |> 
+  dplyr::select(date, RDI_12) |> 
+  drop_na()
+rdi_24tbl <- monthly_rdist_tbl |> 
+  dplyr::select(date, RDI_24) |> 
+  drop_na()
+rdi_36tbl <- monthly_rdist_tbl |> 
+  dplyr::select(date, RDI_36) |> 
+  drop_na()
+rdi_48tbl <- monthly_rdist_tbl |> 
+  dplyr::select(date, RDI_48) |> 
+  drop_na()
 
-# Ensure the data is in time order and remove NAs
-rdi_12_values <- rdi_12tbl |> arrange(date) |> pull(RDI_12) |> na.omit()
+library(trend)
+trend::mk.test(rdi_12tbl$RDI_12)
+trend::mk.test(rdi_24tbl$RDI_24)
+trend::mk.test(rdi_36tbl$RDI_36)
+trend::mk.test(rdi_48tbl$RDI_48)
 
-# Run Mann-Kendall test
-mk_test_12 <- MannKendall(rdi_12_values)
-print(mk_test_12)
-#Do the same for RDI 24-month:
-
-
-rdi_24_values <- rdi_24tbl |> arrange(date) |> pull(RDI_24) |> na.omit()
-mk_test_24 <- MannKendall(rdi_24_values)
-print(mk_test_24)
-
-### 
-library(Kendall)
-
-# Ensure the data is in time order and remove NAs
-rdi_36_values <- rdi_36tbl |> arrange(date) |> pull(RDI_36) |> na.omit()
-
-# Run Mann-Kendall test
-mk_test_36 <- MannKendall(rdi_36_values)
-print(mk_test_36)
-
-rdi_48_values <- rdi_48tbl |> arrange(date) |> pull(RDI_48) |> na.omit()
-
-# Run Mann-Kendall test
-mk_test_48 <- MannKendall(rdi_48_values)
-print(mk_test_48)
 ```
-```
-The Mann-Kendall trend analysis reveals significant negative trends in both the 12-month and 24-month RDI series for Hamburg Fuhlsbüttel (1990–2025). The 12-month RDI exhibits a moderate downward trend (τ = -0.163, p < 0.001), indicating increasing frequency of dry years. More notably, the 24-month RDI shows a strong and highly significant downward trend (τ = -0.282, p < 0.0001), suggesting an intensification of long-term drought conditions. These results support the evidence of a drying trend in the region, particularly after 2000.
-The Mann-Kendall trend analysis of the 36-month RDI series reveals a strong and statistically significant downward trend (τ = -0.438, p < 0.0001), indicating a persistent and intensifying shift toward long-term drought conditions in Hamburg Fuhlsbüttel over the period 1990–2025. This scale, which reflects hydrological droughts and multi-year water deficits, highlights a marked departure from the relatively wet conditions of the early 1990s. The trend corroborates observed extreme drought events, particularly the one peaking in January 2021 (RDI = -2.9), and suggests a long-term decline in regional water availability.
-
-The 48-month RDI shows a persistent and intensifying long-term drought trend in Hamburg Fuhlsbüttel from 1990 to 2025. Nearly 37% of the period exhibits negative RDI values below -0.5, and 8.2% qualifies as severe drought. The most extreme drought occurred in January 2022 (RDI = -2.7), following a decade of steadily declining multi-year moisture conditions. The Mann-Kendall test confirms a strong and statistically significant drying trend (τ = -0.563, p < 0.0001), signaling major long-term hydrological stress in the region. In contrast, the early 1990s, particularly April 1995, marked a period of sustained wet conditions (RDI = 2.7), a level that has not been approached since.
 
 
-##### RDI Summmary #####
+### Inter periods
 ```{r}
-rdi_summary_tbl <- tibble::tibble(
-  `RDI Scale` = c("12-Month", "24-Month", "36-Month", "48-Month"),
-  `Drought (%)` = c("28.2%", "37.6%", "37.2%", "36.9%"),
-  `Severe Drought (%)` = c("7.8%", "4.7%", "6.1%", "8.2%"),
-  `Wettest Event` = c("May 1994 (2.6)", "May 1995 (3.0)", "Jun 1995 (2.7)", "Apr 1995 (2.7)"),
-  `Driest Event` = c("Jan 2019 (-3.0)", "Jan 2020 (-2.4)", "Jan 2021 (-2.9)", "Jan 2022 (-2.7)"),
-  `Kendall’s Tau` = c("-0.163", "-0.282", "-0.438", "-0.563"),
-  `Trend Significance` = c("✓", "✓", "✓✓", "✓✓✓")
-)
+rdi_12tbl_1936_1989 <- rdi_12tbl |> filter(date<="1989-12-01")
+rdi_24tbl_1936_1989 <- rdi_24tbl |> filter(date<="1989-12-01")
+rdi_36tbl_1936_1989 <- rdi_36tbl |> filter(date<="1989-12-01")
+rdi_48tbl_1936_1989 <- rdi_48tbl |> filter(date<="1989-12-01")
 
-
-
-knitr::kable(rdi_summary_tbl, caption = "Comparative Summary of RDI Indices (1990–2025)")
-
+mk.test(rdi_12tbl_1936_1989$RDI_12)
+mk.test(rdi_24tbl_1936_1989$RDI_24)
+mk.test(rdi_36tbl_1936_1989$RDI_36)
+mk.test(rdi_48tbl_1936_1989$RDI_48)
 ```
-
 
 ```{r}
-library(knitr)
+rdi_12tbl_1990_2025 <- rdi_12tbl |> filter(date>"1989-12-01")
+rdi_24tbl_1990_2025 <- rdi_24tbl |> filter(date>"1989-12-01")
 
-# Save LaTeX-formatted table to .tex file
-kable(rdi_summary_tbl, format = "latex", 
-      caption = "Comparative Summary of RDI Indices (1990–2025)") |> 
-  writeLines("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Tables/RDI_Summary_Table.tex")
+rdi_36tbl_1990_2025 <- rdi_36tbl |> filter(date>"1989-12-01")
+rdi_48tbl_1990_2025 <- rdi_48tbl |> filter(date>"1989-12-01")
+
+mk.test(rdi_12tbl_1990_2025$RDI_12)
+mk.test(rdi_24tbl_1990_2025$RDI_24)
+mk.test(rdi_36tbl_1990_2025$RDI_36)
+mk.test(rdi_48tbl_1990_2025$RDI_48)
 ```
 
 
-```{r}
-readr::write_csv(
-  rdi_summary_tbl,
-  "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Tables/RDI_Summary_Table.csv"
-)
-
-```
-
-
-##### End of RDI Index ######
 
 
 
