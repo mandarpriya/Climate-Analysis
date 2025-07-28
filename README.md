@@ -140,37 +140,34 @@ This is a clear signal of changing winter precipitation patterns at Hamburg Fuhl
 
 
 
-### Drought Analysis:- 
-
-# Analysis:- 
+# Drought Analysis:- 
 Focus is on long term trend, so using monthly series of drought indices with a frequency of 12,36,24,48 . The plots shows that last decade has witnesses increase in temperature and on the other decrease in precipitation. This makes the situation worse in future as with further increase in temperature the weather will become more dry and will result in a further decrease in precipitation resulting in a severe drought. 
 
-# The Reconnaissance Drought Index (RDI) is a meteorological drought index that assesses drought severity by comparing precipitation to potential evapotranspiration (PET). It's a valuable tool for understanding water availability and is often used in agriculture and water resource management.
-## RDI 12 monthly Index
+The Reconnaissance Drought Index (RDI) is a meteorological drought index that assesses drought severity by comparing precipitation to potential evapotranspiration (PET). It's a valuable tool for understanding water availability and is often used in agriculture and water resource management.
+ RDI 12 monthly Index
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1936_1989.png)
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1990_2025.png)
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1936_2025.png)
 
-## RDI 24 monthly Index
+RDI 24 monthly Index
 ![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Monthly_1936_1989.png)
 ![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Monthly_1990_2025.png)
 ![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Monthly_1936_2025.png)
 
 
-## RDI 36 monthly Index
+ RDI 36 monthly Index
 ![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Monthly_1936_1989.png)
 ![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Monthly_1990_2025.png)
 ![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Monthly_1936_2025.png)
 
-## RDI 48 monthly Index
+RDI 48 monthly Index
 ![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Monthly_1936_1989.png)
 ![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Monthly_1990_2025.png)
 ![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Monthly_1936_2025.png)
 
 
-
 # Critical Insights:
-# Scale-Dependent Drought Evolution:
+ Scale-Dependent Drought Evolution:
 
 12-month: High variability, frequent short droughts
 24-month: Intermediate persistence, moderate severity increases
@@ -204,7 +201,7 @@ The tripling of severe long-term droughts represents a major shift in regional w
 This analysis clearly shows that while short-term drought variability has increased moderately, the most dramatic change is in sustained multi-year drought conditions - exactly the type that poses the greatest challenge to water resources and ecosystem adaptation.
 
 
-### **Reconnaissance Drought Index (RDI) Summary: Hamburg Fuhlsbüttel**
+# **Reconnaissance Drought Index (RDI) Summary: Hamburg Fuhlsbüttel**
 
 | **Time Scale** | **Period**     | **Drought Conditions** | **Severe Drought** | **Wet Events** | **Key Extreme (Dry)**     |
 |----------------|----------------|-------------------------|---------------------|----------------|---------------------------|
