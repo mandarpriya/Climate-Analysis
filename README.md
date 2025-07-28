@@ -221,9 +221,30 @@ This analysis clearly shows that while short-term drought variability has increa
 
 
 
+# Mann Kendall Trend Test summary
+| **Scale** | **Period** | **Tau**     | **Z-statistic** | **p-value**  | **Trend Direction**  | **Significance** |
+| --------- | ---------- | ----------- | --------------- | ------------ | -------------------- | ---------------- |
+| 12-month  | 1936–2025  | +0.0232     | 1.133           | 0.2572       | Slight Increase      | ✗ (not sig.)     |
+| 24-month  | 1936–2025  | +0.0353     | 1.711           | 0.0871       | Mild Increase        | (•) (10% level)  |
+| 36-month  | 1936–2025  | +0.0434     | 2.093           | **0.0364**   | Moderate Increase    | ✓                |
+| 48-month  | 1936–2025  | +0.0528     | 2.534           | **0.0113**   | Moderate Increase    | ✓✓               |
+| 12-month  | 1936–1989  | +0.2098     | 7.920           | < 2.4e-15    | Strong Increase      | ✓✓✓              |
+| 24-month  | 1936–1989  | +0.3233     | 12.088          | < 2.2e-16    | Strong Increase      | ✓✓✓              |
+| 36-month  | 1936–1989  | +0.3839     | 14.215          | < 2.2e-16    | Strong Increase      | ✓✓✓              |
+| 48-month  | 1936–1989  | +0.4417     | 16.194          | < 2.2e-16    | Strong Increase      | ✓✓✓              |
+| 12-month  | 1990–2025  | **−0.1626** | −5.008          | **5.49e-07** | Moderate Decrease    | ✓✓✓              |
+| 24-month  | 1990–2025  | **−0.2820** | −8.678          | < 2.2e-16    | Strong Decrease      | ✓✓✓              |
+| 36-month  | 1990–2025  | **−0.4383** | −13.497         | < 2.2e-16    | Strong Decrease      | ✓✓✓              |
+| 48-month  | 1990–2025  | **−0.5629** | −17.337         | < 2.2e-16    | Very Strong Decrease | ✓✓✓              |
 
 
+# Interpretation:-
+ Interpretation
+1936–1989: All time scales show strong positive trends — conditions became wetter or less drought-prone.
 
+1990–2025: Clear negative trends — longer scales (36, 48 months) show increasingly severe and prolonged drought conditions.
+
+1936–2025: Full-period trends are mild and mixed — overall signal is weaker due to opposite trends in sub-periods.
 
 
 
