@@ -8,7 +8,10 @@ Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881
 # Analysis is done in following steps
 1) Temperature
 2) Precipitation
-3) Drought Indices
+3) Drought Indices:
+   a) Reconnaissance Drought Index (RDI)
+   b) Standarized Precipitation Evapotranspitation Indexc (SPEI)
+   c) Standardized Precipitation Index (SPI) 
 
 # Temperature Analysis
 I first perform Temperature analysis for  Hamburg Fuhlsbüttel
