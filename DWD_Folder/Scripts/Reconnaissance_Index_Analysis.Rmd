@@ -36,8 +36,8 @@ library(fitdistrplus)
 ```
 # Data upload from the folder
 ```{r}
-data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
-plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots"
+data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/Deutscher Wetterdienst (DWD)_Folder/Data_Deutscher Wetterdienst (DWD)/Hamburg_Fuhlsbüttel.rds")
+plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/Deutscher Wetterdienst (DWD)_Folder/Plots"
 ```
 # Monthly frequency
 ```{r}
@@ -157,7 +157,7 @@ calculate_rdist_for_scales <- function(data, scales = c(3,6,9,12,24,36,48)) {
 
 
 monthly_rdist_tbl <- calculate_rdist_for_scales(data = monthly_tbl)
-plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots"
+plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/Deutscher Wetterdienst (DWD)_Folder/Plots"
 ```
 # We have 3,6,9,12,24,36,48 monthly scale. So then which scales are important for the analysis. Since the period is 1936-2025, so 3,6,9 scales will not be that informative as these will refelect very short term changes. So 12,24,36,48 are better choices
 
@@ -316,7 +316,7 @@ p01 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   labs(
     title = "Drought Patterns in Hamburg Fuhlsbüttel (1936–1989)",
     subtitle = paste0("RDI (12-Month Scale)|",stats_text),
-    caption = "Source: DWD",
+    caption = "Source: Deutscher Wetterdienst (DWD)",
     x = "", 
     y = "RDI Value"
   ) +
@@ -520,7 +520,7 @@ p02 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   labs(
     title = "Modern Drought Patterns in Hamburg Fuhlsbüttel (1990–2025*)",
     subtitle = paste0("RDI (12-Month Scale) |", stats_text),
-    caption = "Source: DWD | *Data through May 2025",
+    caption = "Source: Deutscher Wetterdienst (DWD) | *Data through May 2025",
     x = "", 
     y = "RDI Value"
   ) +
@@ -705,7 +705,7 @@ p0 <- ggplot(rdi_12tbl, aes(x = date, y = RDI_12, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel (1936–2025*)",
     subtitle = paste0("RDI (12-Month Scale)|",stats_text),
-    caption = "Source: DWD",
+    caption = "Source: Deutscher Wetterdienst (DWD)",
     x = "", 
     y = ""
   ) +
@@ -1033,7 +1033,7 @@ p11 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel (1936–1989)",
      subtitle = paste0("RDI (24-Month Scale) | ", stats_text),
-    caption = "Source: DWD ",
+    caption = "Source: Deutscher Wetterdienst (DWD) ",
     x = "", 
     y = ""
   ) +
@@ -1233,7 +1233,7 @@ p12 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel (1990–2025*)",
      subtitle = paste0("RDI (24-Month Scale) | ", stats_text),
-    caption = "Source: DWD ",
+    caption = "Source: Deutscher Wetterdienst (DWD) ",
     x = "", 
     y = ""
   ) +
@@ -1408,7 +1408,7 @@ p10 <- ggplot(rdi_24tbl, aes(x = date, y = RDI_24, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel(1936-2025*)",
     subtitle = paste0("RDI (24-Month Scale)|",stats_text),
-    caption = "Source: DWD",
+    caption = "Source: Deutscher Wetterdienst (DWD)",
     x = NULL, y = NULL
   ) +
   theme_minimal(base_size = 12) +
@@ -1586,7 +1586,7 @@ p30 <- ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel(1936-2025*)",
     subtitle = paste0("RDI (36-Month Scale)|",stats_text),
-    caption = "Source: DWD",
+    caption = "Source: Deutscher Wetterdienst (DWD)",
     x = NULL, y = NULL
   ) +
   theme_minimal(base_size = 12) +
@@ -1756,7 +1756,7 @@ p31 <- ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel(1936-1989)",
     subtitle = paste0("RDI (36-Month Scale)|",stats_text),
-    caption = "Source: DWD",
+    caption = "Source: Deutscher Wetterdienst (DWD)",
     x = NULL, y = NULL
   ) +
   theme_minimal(base_size = 12) +
@@ -1932,7 +1932,7 @@ p32 <- ggplot(rdi_36tbl, aes(x = date, y = RDI_36, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel(1990-2025)",
     subtitle = paste0("RDI (36-Month Scale)|",stats_text),
-    caption = "Source: DWD",
+    caption = "Source: Deutscher Wetterdienst (DWD)",
     x = NULL, y = NULL
   ) +
   theme_minimal(base_size = 12) +
@@ -2103,7 +2103,7 @@ p41 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel(1936-1989)",
     subtitle = paste0("RDI (48-Month Scale)|",stats_text),
-    caption = "Source: DWD",
+    caption = "Source: Deutscher Wetterdienst (DWD)",
     x = NULL, y = NULL
   ) +
   theme_minimal(base_size = 12) +
@@ -2294,7 +2294,7 @@ p42 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel (1990–2025)",
     subtitle = paste0("RDI (48-Month Scale) | ",stats_text),
-    caption = "Source: DWD ",
+    caption = "Source: Deutscher Wetterdienst (DWD) ",
     x = "", 
     y = ""
   ) +
@@ -2491,7 +2491,7 @@ p40 <- ggplot(rdi_48tbl, aes(x = date, y = RDI_48, fill = drought_category)) +
   labs(
     title = "Drought Severity in Hamburg Fuhlsbüttel (1936–2025)",
     subtitle = paste0("RDI (48-Month Scale) | ",stats_text),
-    caption = "Source: DWD ",
+    caption = "Source: Deutscher Wetterdienst (DWD) ",
     x = "", 
     y = ""
   ) +
@@ -2522,7 +2522,7 @@ ggsave(
   dpi = 450
 )
 
-#ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots/RDI_48_Hamburg.png", plot = p3, width = 15, height = 10, dpi = 450)
+#ggsave("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/Deutscher Wetterdienst (DWD)_Folder/Plots/RDI_48_Hamburg.png", plot = p3, width = 15, height = 10, dpi = 450)
 ```
 
 
