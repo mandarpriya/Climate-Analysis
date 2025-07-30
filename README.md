@@ -299,7 +299,28 @@ This analysis explores the **Standardized Precipitation Evapotranspiration Index
 
 📌 *Source: Deutscher Wetterdienst (DWD)*  
 
+---
 
+# 📈 Mann–Kendall Trend Analysis (SPEI)
+
+Statistical trends in SPEI indices were tested using the Mann–Kendall non-parametric test.
+
+| SPEI Scale | Period       | τ (Kendall’s Tau) | Z-Statistic | p-value       | Trend Direction | Significance        |
+|------------|--------------|-------------------|-------------|---------------|------------------|----------------------|
+| SPEI-12    | 1936–1989    | +0.201             | +7.58       | 3.48e-14      | Increasing        | ✅ Highly Significant |
+|            | 1990–2025    | −0.153             | −4.72       | 2.31e-06      | Decreasing        | ✅ Highly Significant |
+| SPEI-24    | 1936–1989    | +0.315             | +11.78      | < 2.2e-16     | Increasing        | ✅ Highly Significant |
+|            | 1990–2025    | −0.269             | −8.29       | < 2.2e-16     | Decreasing        | ✅ Highly Significant |
+| SPEI-36    | 1936–1989    | +0.376             | +13.92      | < 2.2e-16     | Increasing        | ✅ Highly Significant |
+|            | 1990–2025    | −0.411             | −12.66      | < 2.2e-16     | Decreasing        | ✅ Highly Significant |
+| SPEI-48    | 1936–1989    | +0.432             | +15.86      | < 2.2e-16     | Increasing        | ✅ Highly Significant |
+|            | 1990–2025    | −0.535             | −16.47      | < 2.2e-16     | Decreasing        | ✅ Highly Significant |
+
+### 🧠 Interpretation
+
+- There is a clear **reversal in trend** direction between the two periods.
+- **Earlier decades (1936–1989)** were characterized by **gradual wetting**, whereas
+- **Recent decades (1990–2025)** show a **marked drying pattern**, especially in long-term moisture balance (SPEI-36, SPEI-48).
 
 
 
