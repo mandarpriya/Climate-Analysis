@@ -37,7 +37,7 @@ library(fitdistrplus)
 # Data upload from the folder
 ```{r}
 data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/Deutscher Wetterdienst (DWD)_Folder/Data_Deutscher Wetterdienst (DWD)/Hamburg_Fuhlsbüttel.rds")
-plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/Deutscher Wetterdienst (DWD)_Folder/Plots"
+plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots"
 ```
 # Monthly frequency
 ```{r}

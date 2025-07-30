@@ -834,7 +834,7 @@ extreme_events <- spei_24tbl |>
   ungroup()
 
 # Your main plot
-ggplot(spei_24tbl |> filter(!is.na(drought_category)), 
+spei_24_1990_2025 <- ggplot(spei_24tbl |> filter(!is.na(drought_category)), 
        aes(x = date, y = spei_24, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
@@ -951,7 +951,13 @@ ggplot(spei_24tbl |> filter(!is.na(drought_category)),
     legend.text = element_text(size = 16),
     legend.key.size = unit(1, "cm")
   )
-
+ggsave(
+  filename = file.path(plot_dir, "spei_24_1990_2025.png"),
+  plot = spei_24_1990_2025,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 # SPEI 36 1936-1989
@@ -1047,7 +1053,7 @@ annotation_end   <- mid_date %m-% years(5)
 
 
 # Plot with additional safeguards
-ggplot(spei_36tbl |> filter(!is.na(drought_category)), # Filter out NA values for plotting
+spei_36_1936_1989 <- ggplot(spei_36tbl |> filter(!is.na(drought_category)), # Filter out NA values for plotting
        aes(x = date, y = spei_36, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
@@ -1151,6 +1157,13 @@ theme_minimal(base_size = 12) +
     legend.key.size = unit(1, "cm"),
     
   )
+ggsave(
+  filename = file.path(plot_dir, "spei_36_1936_1989.png"),
+  plot = spei_36_1936_1989,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 
 ```
@@ -1246,7 +1259,7 @@ annotation_start <- mid_date %m-% years(5)
 annotation_end   <- mid_date %m+% years(3)
 
 # Plot with additional safeguards
-ggplot(spei_36tbl |> filter(!is.na(drought_category)), # Filter out NA values for plotting
+spei_36_1990_2025 <- ggplot(spei_36tbl |> filter(!is.na(drought_category)), # Filter out NA values for plotting
        aes(x = date, y = spei_36, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
@@ -1351,6 +1364,14 @@ theme_minimal(base_size = 12) +
     
   )
 
+ggsave(
+  filename = file.path(plot_dir, "spei_36_1990_2025.png"),
+  plot = spei_36_1990_2025,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
+
 ```
 # SPEI 48 1936-1989
 ```{r fig.align='center',fig.width=15, fig.height=10, fig.dpi=450}
@@ -1440,11 +1461,7 @@ date_range <- range(spei_48tbl$date, na.rm = TRUE)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date %m-% years(10)
 annotation_end   <- mid_date 
-```
-
-
-```{r fig.align='center',fig.width=15, fig.height=10, fig.dpi=450}
-ggplot(spei_48tbl|> filter(!is.na(drought_category)), # Filter out NA values for plotting
+spei_48_1936_1989 <- ggplot(spei_48tbl|> filter(!is.na(drought_category)), # Filter out NA values for plotting
        aes(x = date, y = spei_48, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
@@ -1548,6 +1565,14 @@ theme_minimal(base_size = 12) +
     legend.key.size = unit(1, "cm"),
     
   )
+
+ggsave(
+  filename = file.path(plot_dir, "spei_48_1936_1989.png"),
+  plot = spei_48_1936_1989,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 
 # SPEI 48 1990-2025
@@ -1639,7 +1664,7 @@ mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date %m-% years(5)
 annotation_end   <- mid_date %m+% years(3)
 
-ggplot(spei_48tbl|> filter(!is.na(drought_category)), # Filter out NA values for plotting
+spei_48_1990_2025 <- ggplot(spei_48tbl|> filter(!is.na(drought_category)), # Filter out NA values for plotting
        aes(x = date, y = spei_48, fill = drought_category)) +
   geom_col(show.legend = TRUE, width = 20) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
@@ -1743,5 +1768,39 @@ theme_minimal(base_size = 12) +
     legend.key.size = unit(1, "cm"),
     
   )
+
+
+ggsave(
+  filename = file.path(plot_dir, "spei_48_1990_2025.png"),
+  plot = spei_48_1990_2025,
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
+
+
+# Mann Kendall Trend Test
+```{r}
+library(trend)
+
+spei_12tbl_1936_1989 <- spei_12tbl |> filter(date<"1990-01-01")
+spei_12tbl_1990_2025 <- spei_12tbl |> filter(date>="1990-01-01")
+spei_24tbl_1936_1989 <- spei_24tbl |> filter(date<"1990-01-01")
+spei_24tbl_1990_2025 <- spei_24tbl |> filter(date >="1990-01-01")
+spei_36tbl_1936_1989 <- spei_36tbl |> filter(date< "1990-01-01")
+spei_36tbl_1990_2025 <- spei_36tbl |> filter(date >="1990-01-01")
+spei_48tbl_1936_1989 <- spei_48tbl |> filter(date<"1990-01-01")
+spei_48tbl_1990_2025 <- spei_48tbl |> filter(date >="1990-01-01")
+
+trend::mk.test(spei_12tbl_1936_1989$spei_12)
+ trend::mk.test(spei_12tbl_1990_2025$spei_12)
+               mk.test(spei_24tbl_1936_1989$spei_24)
+               mk.test(spei_24tbl_1990_2025$spei_24)
+               mk.test(spei_36tbl_1936_1989$spei_36)
+               mk.test(spei_36tbl_1990_2025$spei_36)
+               mk.test(spei_48tbl_1936_1989$spei_48)
+               mk.test(spei_48tbl_1990_2025$spei_48)
+```
+
 
