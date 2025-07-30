@@ -1,6 +1,6 @@
  # Climate Analysis :- 
- This  project  analyses  the Climate data for Hamburg Fuhlsbüttel. 
-## Data Source:-
+ This  project is about analysing  the Climate data for Hamburg Fuhlsbüttel. 
+# Data Source:-
 The source for this data is in the following link :- opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily
 The data collected  is from the time period  1936-2025(May) based on daily frequency. 
 Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881
@@ -150,23 +150,22 @@ The Reconnaissance Drought Index (RDI) is a meteorological drought index that as
  RDI 12 monthly Index
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1936_1989.png)
 ![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1990_2025.png)
-![RDI 12 Monthly ](DWD_Folder/Plots/RDI_12_Monthly_1936_2025.png)
+
 
 RDI 24 monthly Index
 ![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Monthly_1936_1989.png)
 ![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Monthly_1990_2025.png)
-![RDI 24 Monthly ](DWD_Folder/Plots/RDI_24_Monthly_1936_2025.png)
+
 
 
  RDI 36 monthly Index
 ![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Monthly_1936_1989.png)
 ![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Monthly_1990_2025.png)
-![RDI 36 Monthly ](DWD_Folder/Plots/RDI_36_Monthly_1936_2025.png)
+
 
 RDI 48 monthly Index
 ![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Monthly_1936_1989.png)
 ![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Monthly_1990_2025.png)
-![RDI 48 Monthly ](DWD_Folder/Plots/RDI_48_Monthly_1936_2025.png)
 
 
 # Critical Insights:
@@ -245,14 +244,90 @@ This analysis clearly shows that while short-term drought variability has increa
 1936–2025: Full-period trends are mild and mixed — overall signal is weaker due to opposite trends in sub-periods.
 
 
+# SPEI Index 
+ Climatic Moisture Variability in Hamburg Fuhlsbüttel (1936–2025)
+
+This analysis explores the **Standardized Precipitation Evapotranspiration Index (SPEI)** at multiple timescales (12, 24, 36, and 48 months) across two time periods:
+- **Historical Baseline:** 1936–1989
+- **Recent Period:** 1990–2025
+
+---
+
+## 📊 Summary Table
+
+| Scale      | Period       | Moderate Dry (%) | Severe Drought (%) | Extreme Drought (%) | Wet Events (%) | Wettest Event           | Driest Event              |
+|------------|--------------|------------------|---------------------|----------------------|----------------|--------------------------|---------------------------|
+| SPEI-12    | 1936–1989    | 7.06             | 3.92                | 2.98                 | 15.9           | May 1981 (2.3)           | Mar 1960 (-3.02)          |
+|            | 1990–2025    | 10.35            | 4.71                | 2.35                 | 19.5           | Aug 2002 (2.35)          | Apr 2019 (-2.74)          |
+| SPEI-24    | 1937–1989    | 9.92             | 4.64                | 1.92                 | 16.6           | Nov 1981 (2.17)          | Jul 1960 (-2.4)           |
+|            | 1990–2025    | 12.94            | 3.29                | 1.41                 | 18.6           | Apr 1995 (2.37)          | Jan 2020 (-2.24)          |
+| SPEI-36    | 1938–1989    | 13.05            | 4.4                 | 0.00                 | 18.1           | May 1983 (2.12)          | May 1978 (-1.97)          |
+|            | 1990–2025    | 7.53             | 4.71                | 2.59                 | 13.4           | Sep 1995 (2.33)          | Apr 2021 (-2.88)          |
+| SPEI-48    | 1939–1989    | 14.31            | 3.16                | 0.00                 | 21.3           | Oct 1981 (1.99)          | Jun 1941 (-1.9)           |
+|            | 1990–2025    | 6.59             | 6.35                | 3.29                 | 16.0           | Apr 1995 (2.2)           | Jan 2022 (-2.73)          |
+
+---
+
+## 📈 SPEI Time Series Plots
+
+### 🔹 SPEI-12
+- ![SPEI 12 (1936–1989)](DWD_Folder/Plots/spei_12_1936_1989.png)
+- ![SPEI 12 (1990–2025)](DWD_Folder/Plots/spei_12_1990_2025.png)
+
+### 🔹 SPEI-24
+- ![SPEI 24 (1936–1989)](DWD_Folder/Plots/spei_24_1936_1989.png)
+- ![SPEI 24 (1990–2025)](DWD_Folder/Plots/spei_24_1990_2025.png)
+
+### 🔹 SPEI-36
+- ![SPEI 36 (1936–1989)](DWD_Folder/Plots/spei_36_1936_1989.png)
+- ![SPEI 36 (1990–2025)](DWD_Folder/Plots/spei_36_1990_2025.png)
+
+### 🔹 SPEI-48
+- ![SPEI 48 (1936–1989)](DWD_Folder/Plots/spei_48_1936_1989.png)
+- ![SPEI 48 (1990–2025)](DWD_Folder/Plots/spei_48_1990_2025.png)
+
+---
+
+## 🧠 Key Insights
+
+- **Drought severity increased post-1990**, with **more persistent and extreme droughts** especially in the 36- and 48-month SPEI.
+- **Wet events dominated the earlier period (1936–1989)**, particularly in the early 1980s.
+- **Post-2000**, the **frequency of wet events decreased**, while **multi-year droughts increased** in length and intensity.
+- **Recent extremes** (e.g., Jan 2022, Apr 2021) point toward increasing **climatic water deficits** likely due to rising temperatures and evapotranspiration.
+
+---
+
+📌 *Source: Deutscher Wetterdienst (DWD)*  
+
+---
+
+# 📈 Mann–Kendall Trend Analysis (SPEI)
+
+Statistical trends in SPEI indices were tested using the Mann–Kendall non-parametric test.
+
+| SPEI Scale | Period       | τ (Kendall’s Tau) | Z-Statistic | p-value       | Trend Direction | Significance        |
+|------------|--------------|-------------------|-------------|---------------|------------------|----------------------|
+| SPEI-12    | 1936–1989    | +0.201             | +7.58       | 3.48e-14      | Increasing        | ✅ Highly Significant |
+|            | 1990–2025    | −0.153             | −4.72       | 2.31e-06      | Decreasing        | ✅ Highly Significant |
+| SPEI-24    | 1936–1989    | +0.315             | +11.78      | < 2.2e-16     | Increasing        | ✅ Highly Significant |
+|            | 1990–2025    | −0.269             | −8.29       | < 2.2e-16     | Decreasing        | ✅ Highly Significant |
+| SPEI-36    | 1936–1989    | +0.376             | +13.92      | < 2.2e-16     | Increasing        | ✅ Highly Significant |
+|            | 1990–2025    | −0.411             | −12.66      | < 2.2e-16     | Decreasing        | ✅ Highly Significant |
+| SPEI-48    | 1936–1989    | +0.432             | +15.86      | < 2.2e-16     | Increasing        | ✅ Highly Significant |
+|            | 1990–2025    | −0.535             | −16.47      | < 2.2e-16     | Decreasing        | ✅ Highly Significant |
+
+### 🧠 Interpretation
+
+- There is a clear **reversal in trend** direction between the two periods.
+- **Earlier decades (1936–1989)** were characterized by **gradual wetting**, whereas
+- **Recent decades (1990–2025)** show a **marked drying pattern**, especially in long-term moisture balance (SPEI-36, SPEI-48).
+
+📌 Conclusion
+The analysis of the Standardized Precipitation Evapotranspiration Index (SPEI) across multiple time scales (12, 24, 36, and 48 months) for Hamburg Fuhlsbüttel reveals a distinct climatic shift around 1990. During the historical period (1936–1989), SPEI trends consistently increased, indicating a gradual improvement in climatic moisture conditions and reduced drought stress. However, post-1990, all SPEI time scales exhibit significantly negative trends, reflecting a transition toward drier conditions. This reversal is most pronounced at the longer time scales (SPEI-36 and SPEI-48), suggesting the emergence of persistent, multi-year droughts likely driven by increased evapotranspiration and reduced moisture availability. The Mann–Kendall trend tests confirm these findings with highly significant results (p < 0.001), underscoring a long-term hydroclimatic drying trend in the region. These results highlight the need for proactive water resource planning and climate adaptation strategies to address escalating drought risk in the decades ahead.
 
 
 
-
-
-
-
-
+# SPI Index
 
 
 ### Software Program:-
