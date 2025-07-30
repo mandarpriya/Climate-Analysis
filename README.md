@@ -322,7 +322,8 @@ Statistical trends in SPEI indices were tested using the Mann–Kendall non-para
 - **Earlier decades (1936–1989)** were characterized by **gradual wetting**, whereas
 - **Recent decades (1990–2025)** show a **marked drying pattern**, especially in long-term moisture balance (SPEI-36, SPEI-48).
 
-
+📌 Conclusion
+The analysis of the Standardized Precipitation Evapotranspiration Index (SPEI) across multiple time scales (12, 24, 36, and 48 months) for Hamburg Fuhlsbüttel reveals a distinct climatic shift around 1990. During the historical period (1936–1989), SPEI trends consistently increased, indicating a gradual improvement in climatic moisture conditions and reduced drought stress. However, post-1990, all SPEI time scales exhibit significantly negative trends, reflecting a transition toward drier conditions. This reversal is most pronounced at the longer time scales (SPEI-36 and SPEI-48), suggesting the emergence of persistent, multi-year droughts likely driven by increased evapotranspiration and reduced moisture availability. The Mann–Kendall trend tests confirm these findings with highly significant results (p < 0.001), underscoring a long-term hydroclimatic drying trend in the region. These results highlight the need for proactive water resource planning and climate adaptation strategies to address escalating drought risk in the decades ahead.
 
 
 
