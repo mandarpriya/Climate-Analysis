@@ -1,6 +1,6 @@
  # Climate Analysis :- 
- This  project  analyses  the Climate data for Hamburg Fuhlsbüttel. 
-## Data Source:-
+ This  project is about analysing  the Climate data for Hamburg Fuhlsbüttel. 
+# Data Source:-
 The source for this data is in the following link :- opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily
 The data collected  is from the time period  1936-2025(May) based on daily frequency. 
 Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881
@@ -327,7 +327,7 @@ The analysis of the Standardized Precipitation Evapotranspiration Index (SPEI) a
 
 
 
-
+# SPI Index
 
 
 ### Software Program:-
