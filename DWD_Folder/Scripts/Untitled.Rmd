@@ -1,0 +1,40 @@
+---
+title: "index.html"
+author: "MANDAR"
+date: "2025-07-31"
+output: html_document
+---
+
+```{r setup, }
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+```{r }
+
+```
+
+<h3>Reconnaissance Drought Index (RDI) Summary: Hamburg Fuhlsbüttel</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Time Scale</th>
+      <th>Period</th>
+      <th>Drought Conditions</th>
+      <th>Severe Drought</th>
+      <th>Wet Events</th>
+      <th>Key Extreme (Dry)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>12-month</td><td>1936–1989</td><td>23.6%</td><td>6.8%</td><td>31.7%</td><td>Oct 1959 (−3.9)</td></tr>
+    <!-- rest of table rows -->
+  </tbody>
+</table>
+```{r}
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

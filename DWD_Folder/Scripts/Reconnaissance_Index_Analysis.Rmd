@@ -3,8 +3,8 @@ title: "Reconnaissance Drought Index Analysis"
 author: "MANDAR PRIYA PHATAK"
 date: "2025-07-18"
 output:
-   word_document: default
    html_document: default
+   word_document: default
    pdf_document:
     latex_engine: xelatex
 ---
@@ -36,7 +36,7 @@ library(fitdistrplus)
 ```
 # Data upload from the folder
 ```{r}
-data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/Deutscher Wetterdienst (DWD)_Folder/Data_Deutscher Wetterdienst (DWD)/Hamburg_Fuhlsbüttel.rds")
+data <- readRDS("/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Data_DWD/Hamburg_Fuhlsbüttel.rds")
 plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots"
 ```
 # Monthly frequency
@@ -157,7 +157,7 @@ calculate_rdist_for_scales <- function(data, scales = c(3,6,9,12,24,36,48)) {
 
 
 monthly_rdist_tbl <- calculate_rdist_for_scales(data = monthly_tbl)
-plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/Deutscher Wetterdienst (DWD)_Folder/Plots"
+
 ```
 # We have 3,6,9,12,24,36,48 monthly scale. So then which scales are important for the analysis. Since the period is 1936-2025, so 3,6,9 scales will not be that informative as these will refelect very short term changes. So 12,24,36,48 are better choices
 
@@ -2591,6 +2591,62 @@ mk.test(rdi_36tbl_1990_2025$RDI_36)
 mk.test(rdi_48tbl_1990_2025$RDI_48)
 ```
 
+
+
+
+
+<h3>Reconnaissance Drought Index (RDI) Summary: Hamburg Fuhlsbüttel</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Time Scale</th>
+      <th>Period</th>
+      <th>Drought Conditions</th>
+      <th>Severe Drought</th>
+      <th>Wet Events</th>
+      <th>Key Extreme (Dry)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>12-month</td><td>1936–1989</td><td>23.6%</td><td>6.8%</td><td>31.7%</td><td>Oct 1959 (−3.9)</td></tr>
+    <tr><td>12-month</td><td>1990–2025</td><td>28.2%</td><td>7.8%</td><td>27.1%</td><td>Jan 2019 (−3.0)</td></tr>
+    <tr><td>24-month</td><td>1936–1989</td><td>29.6%</td><td>6.2%</td><td>33.3%</td><td>Jul 1960 (−2.7)</td></tr>
+    <tr><td>24-month</td><td>1936–2025</td><td>32.9%</td><td>5.6%</td><td>31.5%</td><td>Jul 1960 (−2.75)</td></tr>
+    <tr><td>36-month</td><td>1936–1989</td><td>36.1%</td><td>3.3%</td><td>33.4%</td><td>Jul 1940 (−2.0)</td></tr>
+    <tr><td>36-month</td><td>1990–2025</td><td>37.2%</td><td>6.1%</td><td>29.2%</td><td>Jan 2021 (−2.9)</td></tr>
+    <tr><td>48-month</td><td>1936–1989</td><td>36.1%</td><td>2.7%</td><td>27.6%</td><td>Jul 1941 (−1.85)</td></tr>
+    <tr><td>48-month</td><td>1990–2025</td><td>36.9%</td><td>8.2%</td><td>27.1%</td><td>Jan 2022 (−2.7)</td></tr>
+  </tbody>
+</table>
+
+<h3>Mann–Kendall Trend Test Summary</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Scale</th>
+      <th>Period</th>
+      <th>Tau</th>
+      <th>Z-statistic</th>
+      <th>p-value</th>
+      <th>Trend Direction</th>
+      <th>Significance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>12-month</td><td>1936–2025</td><td>+0.0232</td><td>1.133</td><td>0.2572</td><td>Slight Increase</td><td>✗</td></tr>
+    <tr><td>24-month</td><td>1936–2025</td><td>+0.0353</td><td>1.711</td><td>0.0871</td><td>Mild Increase</td><td>•</td></tr>
+    <tr><td>36-month</td><td>1936–2025</td><td>+0.0434</td><td>2.093</td><td>0.0364</td><td>Moderate Increase</td><td>✓</td></tr>
+    <tr><td>48-month</td><td>1936–2025</td><td>+0.0528</td><td>2.534</td><td>0.0113</td><td>Moderate Increase</td><td>✓✓</td></tr>
+    <tr><td>12-month</td><td>1936–1989</td><td>+0.2098</td><td>7.920</td><td>&lt; 2.4e-15</td><td>Strong Increase</td><td>✓✓✓</td></tr>
+    <tr><td>24-month</td><td>1936–1989</td><td>+0.3233</td><td>12.088</td><td>&lt; 2.2e-16</td><td>Strong Increase</td><td>✓✓✓</td></tr>
+    <tr><td>36-month</td><td>1936–1989</td><td>+0.3839</td><td>14.215</td><td>&lt; 2.2e-16</td><td>Strong Increase</td><td>✓✓✓</td></tr>
+    <tr><td>48-month</td><td>1936–1989</td><td>+0.4417</td><td>16.194</td><td>&lt; 2.2e-16</td><td>Strong Increase</td><td>✓✓✓</td></tr>
+    <tr><td>12-month</td><td>1990–2025</td><td>-0.1626</td><td>-5.008</td><td>5.49e-07</td><td>Moderate Decrease</td><td>✓✓✓</td></tr>
+    <tr><td>24-month</td><td>1990–2025</td><td>-0.2820</td><td>-8.678</td><td>&lt; 2.2e-16</td><td>Strong Decrease</td><td>✓✓✓</td></tr>
+    <tr><td>36-month</td><td>1990–2025</td><td>-0.4383</td><td>-13.497</td><td>&lt; 2.2e-16</td><td>Strong Decrease</td><td>✓✓✓</td></tr>
+    <tr><td>48-month</td><td>1990–2025</td><td>-0.5629</td><td>-17.337</td><td>&lt; 2.2e-16</td><td>Very Strong Decrease</td><td>✓✓✓</td></tr>
+  </tbody>
+</table>
 
 
 
