@@ -330,6 +330,20 @@ The analysis of the Standardized Precipitation Evapotranspiration Index (SPEI) a
 # SPI Index
 
 
+
+| **Time Scale** | **Period** | **Tau** | **Z-statistic** | **p-value** | **Trend Direction**     | **Significance**      |
+| -------------- | ---------- | ------- | --------------- | ----------- | ----------------------- | --------------------- |
+| SPI-12         | 1936–1989  | +0.138  | 5.208           | 1.91e−07    | Increasing (Wetter)     | ✅ Highly Significant  |
+|                | 1990–2025  | −0.059  | −1.818          | 0.0691      | Weak Decreasing (Drier) | ⚠ Marginal (p ≈ 0.07) |
+| SPI-24         | 1936–1989  | +0.138  | 5.208           | 1.91e−07    | Increasing (Wetter)     | ✅ Highly Significant  |
+|                | 1990–2025  | −0.059  | −1.818          | 0.0691      | Weak Decreasing (Drier) | ⚠ Marginal (p ≈ 0.07) |
+| SPI-36         | 1936–1989  | +0.138  | 5.208           | 1.91e−07    | Increasing (Wetter)     | ✅ Highly Significant  |
+|                | 1990–2025  | −0.059  | −1.818          | 0.0691      | Weak Decreasing (Drier) | ⚠ Marginal (p ≈ 0.07) |
+| SPI-48         | 1936–1989  | +0.138  | 5.208           | 1.91e−07    | Increasing (Wetter)     | ✅ Highly Significant  |
+|                | 1990–2025  | −0.059  | −1.818          | 0.0691      | Weak Decreasing (Drier) | ⚠ Marginal (p ≈ 0.07) |
+
+
+
 ### Software Program:-
 R  has been extensively used for the whole analysis, visualiaztion. 
 
