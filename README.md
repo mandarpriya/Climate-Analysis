@@ -331,16 +331,17 @@ The analysis of the Standardized Precipitation Evapotranspiration Index (SPEI) a
 
 
 
-| **Time Scale** | **Period** | **Tau** | **Z-statistic** | **p-value** | **Trend Direction**     | **Significance**      |
-| -------------- | ---------- | ------- | --------------- | ----------- | ----------------------- | --------------------- |
-| SPI-12         | 1936–1989  | +0.138  | 5.208           | 1.91e−07    | Increasing (Wetter)     | ✅ Highly Significant  |
-|                | 1990–2025  | −0.059  | −1.818          | 0.0691      | Weak Decreasing (Drier) | ⚠ Marginal (p ≈ 0.07) |
-| SPI-24         | 1936–1989  | +0.138  | 5.208           | 1.91e−07    | Increasing (Wetter)     | ✅ Highly Significant  |
-|                | 1990–2025  | −0.059  | −1.818          | 0.0691      | Weak Decreasing (Drier) | ⚠ Marginal (p ≈ 0.07) |
-| SPI-36         | 1936–1989  | +0.138  | 5.208           | 1.91e−07    | Increasing (Wetter)     | ✅ Highly Significant  |
-|                | 1990–2025  | −0.059  | −1.818          | 0.0691      | Weak Decreasing (Drier) | ⚠ Marginal (p ≈ 0.07) |
-| SPI-48         | 1936–1989  | +0.138  | 5.208           | 1.91e−07    | Increasing (Wetter)     | ✅ Highly Significant  |
-|                | 1990–2025  | −0.059  | −1.818          | 0.0691      | Weak Decreasing (Drier) | ⚠ Marginal (p ≈ 0.07) |
+| SPI Scale | Period     | Moderate Dry (%) | Severe Drought (%) | Extreme Drought (%) | Wet Events (%) | Wettest Event       | Driest Event         |
+|-----------|------------|------------------|---------------------|----------------------|----------------|---------------------|----------------------|
+| 12-Month  | 1936–1989  | 6.44             | 3.77                | 3.92                 | 11.6           | May 1981 (3.02)     | Dec 1959 (−3.48)     |
+| 12-Month  | 1990–2025  | 4.47             | 2.35                | 3.76                 | 21.2           | Apr 1994 (2.58)     | Sep 1996 (−3.55)     |
+| 24-Month  | 1936–1989  | 9.92             | 7.04                | 1.60                 | 12.0           | Nov 1981 (2.55)     | Jul 1960 (−2.74)     |
+| 24-Month  | 1990–2025  | 4.00             | 1.65                | 1.41                 | 21.4           | Apr 1995 (3.2)      | Apr 1997 (−2.76)     |
+| 36-Month  | 1936–1989  | 15.33            | 6.04                | 0.33                 | 12.1           | May 1983 (2.71)     | Jun 1954 (−2.14)     |
+| 36-Month  | 1990–2025  | 3.06             | 2.35                | 0.47                 | 23.5           | Sep 1995 (3.36)     | May 1998 (−2.1)      |
+| 48-Month  | 1936–1989  | 16.81            | 3.99                | 1.16                 | 12.0           | Jun 1983 (2.26)     | Mar 1960 (−2.22)     |
+| 48-Month  | 1990–2025  | 5.41             | 1.18                | 0.00                 | 20.9           | Apr 1995 (3.2)      | Jan 2022 (−1.98)     |
+
 
 
 
