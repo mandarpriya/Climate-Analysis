@@ -1116,7 +1116,7 @@ ggplot(spi36_1936_1989 |> filter(!is.na(drought_category)),
     legend.key.size = unit(1, "cm")
   )
 ggsave(
-  filename = file.path(plot_dir, "SPI_36_Monthly_1990_2025.png"),
+  filename = file.path(plot_dir, "SPI_36_Monthly_1936_1989.png"),
   plot = last_plot(),
   width = 15,
   height = 10,
