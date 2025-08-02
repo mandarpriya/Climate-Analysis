@@ -344,6 +344,19 @@ The analysis of the Standardized Precipitation Evapotranspiration Index (SPEI) a
 
 
 
+| SPI Scale | Period     | Kendall’s Tau | Trend (M-K Test) |
+|-----------|------------|----------------|------------------|
+| 12-Month  | 1936–1989  | 0.138          | ↑ Significant     |
+| 12-Month  | 1990–2025  | -0.059         | ↓ Marginal        |
+| 24-Month  | 1936–1989  | 0.234          | ↑ Significant     |
+| 24-Month  | 1990–2025  | -0.120         | ↓ Significant     |
+| 36-Month  | 1936–1989  | 0.264          | ↑ Significant     |
+| 36-Month  | 1990–2025  | -0.198         | ↓ Significant     |
+| 48-Month  | 1936–1989  | 0.291          | ↑ Significant     |
+| 48-Month  | 1990–2025  | -0.281         | ↓ Significant     |
+
+
+
 
 ### Software Program:-
 R  has been extensively used for the whole analysis, visualiaztion. 
