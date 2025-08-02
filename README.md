@@ -330,6 +330,7 @@ The analysis of the Standardized Precipitation Evapotranspiration Index (SPEI) a
 # SPI Index
 
 
+# SPI Summary
 
 | SPI Scale | Period     | Moderate Dry (%) | Severe Drought (%) | Extreme Drought (%) | Wet Events (%) | Wettest Event       | Driest Event         |
 |-----------|------------|------------------|---------------------|----------------------|----------------|---------------------|----------------------|
@@ -342,7 +343,7 @@ The analysis of the Standardized Precipitation Evapotranspiration Index (SPEI) a
 | 48-Month  | 1936–1989  | 16.81            | 3.99                | 1.16                 | 12.0           | Jun 1983 (2.26)     | Mar 1960 (−2.22)     |
 | 48-Month  | 1990–2025  | 5.41             | 1.18                | 0.00                 | 20.9           | Apr 1995 (3.2)      | Jan 2022 (−1.98)     |
 
-
+# 📈 Mann–Kendall Trend Analysis (SPI)
 
 | SPI Scale | Period     | Kendall’s Tau | Trend (M-K Test) |
 |-----------|------------|----------------|------------------|
