@@ -50,6 +50,8 @@ monthly_tbl <- data |>
 
 monthly_tbl <- monthly_tbl |> drop_na()
 monthly_tbl <- monthly_tbl |> dplyr::select(prec)
+
+plot_dir <- "/Users/mandarphatak/Documents/GitHub/Climate-Analysis/DWD_Folder/Plots"
 ```
 
 # SPI Index computation
@@ -78,10 +80,14 @@ spi12tbl  <- data.frame(
     date = ymd(paste(year, month, "01", sep = "-"))
   ) %>%
  dplyr:: select(year, month, date, spi_12)
+```
+
+
+```{r}
 
 spi24tbl <- data.frame(
   time_decimal = as.numeric(time(spi24$fitted)),
-  spi_24 = as.numeric(ts_data)
+  spi_24 = as.numeric(spi24$fitted)
 ) %>%
   filter(!is.na(spi_24)) %>%  # Remove NA values
   dplyr::mutate(
@@ -90,10 +96,13 @@ spi24tbl <- data.frame(
     date = ymd(paste(year, month, "01", sep = "-"))
   ) %>%
  dplyr:: select(year, month, date, spi_24)
+```
 
+
+```{r}
 spi36tbl <- data.frame(
   time_decimal = as.numeric(time(spi36$fitted)),
-  spi_36 = as.numeric(ts_data)
+  spi_36 = as.numeric(spi36$fitted)
 ) %>%
   filter(!is.na(spi_36)) %>%  # Remove NA values
   dplyr::mutate(
@@ -102,10 +111,13 @@ spi36tbl <- data.frame(
     date = ymd(paste(year, month, "01", sep = "-"))
   ) %>%
  dplyr:: select(year, month, date, spi_36)
+```
 
+
+```{r}
 spi48tbl <- data.frame(
   time_decimal = as.numeric(time(spi48$fitted)),
-  spi_48 = as.numeric(ts_data)
+  spi_48 = as.numeric(spi48$fitted)
 ) %>%
   filter(!is.na(spi_48)) %>%  # Remove NA values
   dplyr::mutate(
@@ -114,6 +126,9 @@ spi48tbl <- data.frame(
     date = ymd(paste(year, month, "01", sep = "-"))
   ) %>%
  dplyr:: select(year, month, date, spi_48)
+
+
+spi48tbl
 ```
 
 ### visualiaztion
@@ -322,6 +337,14 @@ ggplot(spi12_1936_1989 |> filter(!is.na(drought_category)),
     legend.key.size = unit(1, "cm")
   )
 
+ggsave(
+  filename = file.path(plot_dir, "SPI_12_Monthly_1936_1989.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
+
 ```
 # SPI 12 1990-2025
 
@@ -486,6 +509,14 @@ ggplot(spi12_1990_2025 |> filter(!is.na(drought_category)),
     legend.text = element_text(size = 10),
     legend.key.size = unit(1, "cm")
   )
+
+ggsave(
+  filename = file.path(plot_dir, "SPI_12_Monthly_1990_2025.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 
 
@@ -694,6 +725,14 @@ ggplot(spi24_1936_1989 |> filter(!is.na(drought_category)),
     legend.key.size = unit(1, "cm")
   )
 
+ggsave(
+  filename = file.path(plot_dir, "SPI_24_Monthly_1936_1989.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
+
 
 ```
 # spi 24 1990-2025
@@ -867,7 +906,13 @@ ggplot(spi24_1990_2025 |> filter(!is.na(drought_category)),
     legend.key.size = unit(1, "cm")
   )
 
-
+ggsave(
+  filename = file.path(plot_dir, "SPI_24_Monthly_1990_2025.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 
 ```
 # spi 36
@@ -1070,7 +1115,13 @@ ggplot(spi36_1936_1989 |> filter(!is.na(drought_category)),
     legend.text = element_text(size = 10),
     legend.key.size = unit(1, "cm")
   )
-
+ggsave(
+  filename = file.path(plot_dir, "SPI_36_Monthly_1990_2025.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 # spi 36 1990-2025
 ```{r}
@@ -1131,10 +1182,7 @@ date_range <- range(spi36_1990_2025$date, na.rm = TRUE)
 mid_date <- mean(as.numeric(date_range)) |> as.Date(origin = "1970-01-01")
 annotation_start <- mid_date %m+% years(2)
 annotation_end   <- mid_date %m+% years(10)
-```
 
-
-```{r}
 # Final plot
 ggplot(spi36_1990_2025 |> filter(!is.na(drought_category)),
        aes(x = date, y = spi_36, fill = drought_category)) +
@@ -1243,6 +1291,14 @@ ggplot(spi36_1990_2025 |> filter(!is.na(drought_category)),
     legend.text = element_text(size = 10),
     legend.key.size = unit(1, "cm")
   )
+
+ggsave(
+  filename = file.path(plot_dir, "SPI_36_Monthly_1990_2025.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 # spi 48
 ```{r}
@@ -1313,13 +1369,8 @@ drought_colors <- c(
   "Extremely Wet"                 = "#00008B"    # navy
 )
 
-```
 
 
-```{r}
-library(ggplot2)
-library(dplyr)
-library(lubridate)
 
 # Re-ensure factor levels match drought_colors
 spi48_1936_1989 <- spi48_1936_1989 |>
@@ -1445,6 +1496,14 @@ ggplot(spi48_1936_1989 |> filter(!is.na(drought_category)),
     legend.key.size = unit(1, "cm")
   )
 
+ggsave(
+  filename = file.path(plot_dir, "SPI_48_Monthly_1936_1989.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
+
 ```
 # spi 48 1990-2025
 ```{r}
@@ -1549,7 +1608,7 @@ ggplot(spi48_1990_2025 |> filter(!is.na(drought_category)),
            y = drought_stats$min_spi,
            label = paste0("", format(drought_stats$min_date, "%b %Y"),
                           " (", round(drought_stats$min_spi, 2), ")"),
-           fill = "#8B0000", color = "white", fontface = "bold", size = 6, label.size = NA, hjust = 1) +
+           fill = "#FF0000", color = "white", fontface = "bold", size = 6, label.size = NA, hjust = 1) +
 
   annotate("label",
            x = drought_stats$max_date,
@@ -1611,6 +1670,26 @@ ggplot(spi48_1990_2025 |> filter(!is.na(drought_category)),
     legend.text = element_text(size = 10),
     legend.key.size = unit(1, "cm")
   )
+
+ggsave(
+  filename = file.path(plot_dir, "SPI_48_Monthly_1990_2025.png"),
+  plot = last_plot(),
+  width = 15,
+  height = 10,
+  dpi = 450
+)
 ```
 
+# Mann kendall test
+```{r}
+library(trend)
+mk.test(spi12_1936_1989$spi_12)
+mk.test(spi12_1990_2025$spi_12)
+mk.test(spi24_1936_1989$spi_24)
+mk.test(spi24_1990_2025$spi_24)
+mk.test(spi36_1936_1989$spi_36)
+mk.test(spi36_1990_2025$spi_36)
+mk.test(spi48_1936_1989$spi_48)
+mk.test(spi48_1990_2025$spi_48)
+```
 
