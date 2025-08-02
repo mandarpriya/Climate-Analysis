@@ -343,6 +343,63 @@ The analysis of the Standardized Precipitation Evapotranspiration Index (SPEI) a
 | 48-Month  | 1936–1989  | 16.81            | 3.99                | 1.16                 | 12.0           | Jun 1983 (2.26)     | Mar 1960 (−2.22)     |
 | 48-Month  | 1990–2025  | 5.41             | 1.18                | 0.00                 | 20.9           | Apr 1995 (3.2)      | Jan 2022 (−1.98)     |
 
+
+# 📌 Interpretation of SPI Trends in Hamburg (1936–2025)
+The Standardized Precipitation Index (SPI), calculated over 12-, 24-, 36-, and 48-month time scales, reveals distinct patterns across two climate periods:
+
+1936–1989:
+SPI exhibits a significant positive trend across all time scales (Kendall’s τ ranging from 0.13 to 0.29).
+
+This indicates a gradual shift toward wetter conditions, particularly noticeable in the 36- and 48-month scales.
+
+Extreme drought events, while present, were infrequent and short-lived, especially on longer time scales.
+
+Overall, this period reflects a climatic phase of stable or increasing precipitation in Hamburg.
+
+1990–2025:
+SPI trends reverse sharply, with significant negative trends at 24-, 36-, and 48-month scales (τ = −0.12 to −0.28).
+
+Short-term SPI-12 shows a marginally decreasing trend, though more frequent wet events appear at this scale.
+
+Despite the visual impression of "wetness" in some SPI plots, the long-term drying signal becomes prominent in the 36- and 48-month SPI.
+
+The contrast between wet and dry phases post-1990 highlights a more variable climate, where wet periods are punctuated by increasingly intense droughts.
+
+Interpretation Caveat:
+SPI is based solely on precipitation. It does not account for temperature-driven evapotranspiration, which has risen significantly in recent decades. As such, SPI may underestimate drought risk under warming conditions, especially in humid temperate regions like Hamburg.
+
+🔹 SPI-12 (Short-Term Droughts and Wet Spells)
+1936–1989: Mildly increasing trend (τ = 0.138), with moderate droughts and wet events occurring periodically.
+
+1990–2025: Trend reverses (τ = −0.059, marginal), but wet events nearly double (11.6% → 21.2%).
+
+Interpretation: The SPI-12 reveals an increase in short-term wet anomalies post-1990, suggesting intermittent heavy precipitation, even as droughts remain significant.
+
+🔹 SPI-24 (Mid-Term Climatic Fluctuations)
+1936–1989: Strong wetting trend (τ = 0.234), indicating consistently favorable precipitation.
+
+1990–2025: Significant drying trend (τ = −0.120), with severe drought events becoming more extreme.
+
+Interpretation: The 24-month SPI exposes a clear shift toward hydroclimatic stress in the recent period, despite short-term rainfall episodes.
+
+🔹 SPI-36 (Long-Term Moisture Conditions)
+1936–1989: Highly significant wetting trend (τ = 0.264), with long wet periods dominating the climate.
+
+1990–2025: Strong reversal (τ = −0.198), with increased frequency and persistence of drought.
+
+Interpretation: SPI-36 highlights emerging long-term drought conditions, which are not apparent in short-term SPI scales.
+
+🔹 SPI-48 (Multi-Year Climate Stress)
+1936–1989: Very strong positive trend (τ = 0.291), aligned with decades of stable water balance.
+
+1990–2025: Marked drying trend (τ = −0.281), the strongest negative signal among all SPI scales.
+
+Interpretation: The SPI-48 reveals systemic drying, possibly related to cumulative effects of climate warming and shifting precipitation patterns. No extreme wet events have been observed in the recent decades.
+
+
+📎 Key Takeaway
+While SPI initially suggested increased wetness in post-1990 Hamburg, longer time scales (24–48 months) reveal a strong drying signal. This confirms that short-term rainfall events may mask underlying multi-year drought trends. SPI’s exclusive reliance on precipitation also means it does not reflect increased evapotranspiration due to rising temperatures, unlike SPEI or RDI.
+
 # 📈 Mann–Kendall Trend Analysis (SPI)
 
 | SPI Scale | Period     | Kendall’s Tau | Trend (M-K Test) |
