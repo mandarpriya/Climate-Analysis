@@ -343,7 +343,7 @@ PLOTS FOR SPI INDEX FOR SCALE 12,24,36,48 MONTHLY
 - ![SPI 36 (1936–1989)](DWD_Folder/Plots/SPI_36_Monthly_1936_1989.png)
 - ![SPI 36 (1990–2025)](DWD_Folder/Plots/SPI_36_Monthly_1990_2025.png)
 
-### 🔹 SPEI-48
+### 🔹 SPI-48
 - ![SPI 48 (1936–1989)](DWD_Folder/Plots/SPI_48_Monthly_1936_1989.png)
 - ![SPI 48 (1990–2025)](DWD_Folder/Plots/SPI_48_Monthly_1990_2025.png)
 
