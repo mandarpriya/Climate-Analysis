@@ -343,7 +343,7 @@ PLOTS FOR SPI INDEX FOR SCALE 12,24,36,48 MONTHLY
 - ![SPI 36 (1936–1989)](DWD_Folder/Plots/SPI_36_Monthly_1936_1989.png)
 - ![SPI 36 (1990–2025)](DWD_Folder/Plots/SPI_36_Monthly_1990_2025.png)
 
-### 🔹 SPEI-48
+### 🔹 SPI-48
 - ![SPI 48 (1936–1989)](DWD_Folder/Plots/SPI_48_Monthly_1936_1989.png)
 - ![SPI 48 (1990–2025)](DWD_Folder/Plots/SPI_48_Monthly_1990_2025.png)
 
@@ -434,6 +434,9 @@ While SPI initially suggested increased wetness in post-1990 Hamburg, longer tim
 | 48-Month  | 1990–2025  | -0.281         | ↓ Significant     |
 
 
+
+# Conclusion:- 
+Climate data analysis for Hamburg Fuhlsbüttel reveals a clear hydrological regime shift after 1990, with drought indices (RDI, SPEI, SPI) showing a transition from consistently wetting trends (1936-1989) to intensifying multi-year drought conditions, particularly severe at 36-48 month timescales. The computed indices demonstrate that while short-term precipitation variability has increased, the most significant finding is the tripling of persistent drought frequency, indicating a fundamental change in the region's long-term water balance
 
 
 ### Software Program:-
