@@ -435,6 +435,9 @@ While SPI initially suggested increased wetness in post-1990 Hamburg, longer tim
 
 
 
+# Conclusion:- 
+Climate data analysis for Hamburg Fuhlsbüttel reveals a clear hydrological regime shift after 1990, with drought indices (RDI, SPEI, SPI) showing a transition from consistently wetting trends (1936-1989) to intensifying multi-year drought conditions, particularly severe at 36-48 month timescales. The computed indices demonstrate that while short-term precipitation variability has increased, the most significant finding is the tripling of persistent drought frequency, indicating a fundamental change in the region's long-term water balance
+
 
 ### Software Program:-
 R  has been extensively used for the whole analysis, visualiaztion. 
