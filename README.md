@@ -1,14 +1,14 @@
  # Climate Analysis :- 
- This  project is about analysing  the Climate data for Hamburg Fuhlsbüttel. 
+The  project is about analysing the Climate data for Hamburg Fuhlsbüttel for the period 1936-2025. 
 # Data Source:-
 The source for this data is in the following link :- opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily
 The data collected  is from the time period  1936-2025(May) based on daily frequency. 
 Station i.d. :-  Hamburg Fuhlsbüttel Latitutde 53.6332 Longitude is 9.9881
 
-# Analysis is done in following steps
-1) Temperature
-2) Precipitation
-3) Drought Indices:
+# The Analysis is done in following steps:
+1) Temperature Analysis
+2) Precipitation Analysis
+3) Computation of Drought Indices and Analysis:
    a) Reconnaissance Drought Index (RDI)
    b) Standarized Precipitation Evapotranspitation Indexc (SPEI)
    c) Standardized Precipitation Index (SPI) 
