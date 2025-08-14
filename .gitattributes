@@ -1,0 +1,12 @@
+# Treat website output as generated so it doesn't dominate language stats
+/docs/**            linguist-vendored
+/_site/**           linguist-vendored
+*.html              linguist-vendored
+*.css               linguist-vendored
+*.js                linguist-vendored
+*.map               linguist-vendored
+
+# Make sure R source is counted
+*.R                 linguist-detectable=true
+*.Rmd               linguist-language=R
+*.qmd               linguist-language=R
